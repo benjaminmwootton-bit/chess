@@ -10,11 +10,25 @@ import java.util.Collection;
  */
 public class ChessPiece
 {
+    public ChessGame.TeamColor pieceColor;
+    public PieceType type;
+    public boolean hasMoved;
+    public int row;
+    public int column;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type)
     {
+        this.pieceColor = pieceColor;
+        this.type = type;
+        this.hasMoved = false;
     }
 
+    //"It don't matter if you're black or white" - Michael Jackson
+    public enum TeamColor
+    {
+        Black,
+        White
+    }
     /**
      * The various different chess piece options
      */
@@ -31,15 +45,19 @@ public class ChessPiece
     /**
      * @return Which team this chess piece belongs to
      */
-    public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+    public ChessGame.TeamColor getTeamColor()
+    {
+        return this.pieceColor;
+        //throw new RuntimeException("Not implemented");
     }
 
     /**
      * @return which type of chess piece this piece is
      */
-    public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+    public PieceType getPieceType()
+    {
+        return this.type;
+        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -49,7 +67,29 @@ public class ChessPiece
      *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
+    {
+        row = this.getRow();
+        column = this.getColumn();
+        //I love pawns. They move so simply...
+        if(this.getPieceType() == PAWN)
+        {
+            if (this.getTeamColor() == WHITE)
+            {
+                if (this.hasMoved == false)
+                {
+                    if(this.getRow() )
+                }
+            }
+            else
+            {
+                if (this.hasMoved == false)
+                {
+
+                }
+            }
+        }
+        return ChessMove;
+        //throw new RuntimeException("Not implemented");
     }
 }
