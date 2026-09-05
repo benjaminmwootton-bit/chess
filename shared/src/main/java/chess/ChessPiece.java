@@ -23,12 +23,6 @@ public class ChessPiece
         this.hasMoved = false;
     }
 
-    //"It don't matter if you're black or white" - Michael Jackson
-    public enum TeamColor
-    {
-        Black,
-        White
-    }
     /**
      * The various different chess piece options
      */
