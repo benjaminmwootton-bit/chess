@@ -8,15 +8,18 @@ import java.util.Collection;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessPiece {
+public class ChessPiece
+{
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type)
+    {
     }
 
     /**
      * The various different chess piece options
      */
-    public enum PieceType {
+    public enum PieceType
+    {
         KING,
         QUEEN,
         BISHOP,

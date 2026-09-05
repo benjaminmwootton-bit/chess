@@ -1,1 +1,14 @@
 notes file
+
+example class
+
+public class Person
+{
+private String name = "Ben";
+private int age = 21;
+
+public void display()
+{
+System.out.println("Name: " + name + "\nAge: " + age);
+}
+}
