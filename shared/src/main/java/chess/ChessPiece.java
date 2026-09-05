@@ -63,6 +63,7 @@ public class ChessPiece
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
+        /**
         row = this.getRow();
         column = this.getColumn();
         //I love pawns. They move so simply...
@@ -84,6 +85,7 @@ public class ChessPiece
             }
         }
         return ChessMove;
-        //throw new RuntimeException("Not implemented");
+         */
+        throw new RuntimeException("Not implemented");
     }
 }
