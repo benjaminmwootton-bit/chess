@@ -34,7 +34,8 @@ public class ChessBoard
      */
     public void addPiece(ChessPosition position, ChessPiece piece)
     {
-        throw new RuntimeException("Not implemented");
+        board[position.getRow()][position.getColumn()] = piece;
+        //throw new RuntimeException("Not implemented");
     }
     //overload
     public void addPiece(int row, int column, ChessPiece piece)
