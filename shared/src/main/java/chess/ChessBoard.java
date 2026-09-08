@@ -19,10 +19,7 @@ public class ChessBoard
 {
     private ChessPiece[][] board = new ChessPiece[8][8];
 
-    public ChessBoard()
-    {
-        resetBoard();
-    }
+    public ChessBoard() {}
 
     /**
      * Adds a chess piece to the chessboard
@@ -33,15 +30,14 @@ public class ChessBoard
     public void addPiece(ChessPosition position, ChessPiece piece)
     {
         board[position.getRow()-1][position.getColumn()-1] = piece;
-        //throw new RuntimeException("Not implemented");
     }
     //overload. takes row, column, and piece
     public void addPiece(int row, int column, ChessPiece piece)
     {
         board[row-1][column-1] = piece;
     }
-    //another overload. Sets square at row and column to null
-    public void addPiece(int row, int column)
+    //set piece to null
+    public void removePiece(int row, int column)
     {
         board[row-1][column-1] = null;
     }
@@ -56,7 +52,6 @@ public class ChessBoard
     public ChessPiece getPiece(ChessPosition position)
     {
         return board[position.getRow()-1][position.getColumn()-1];
-        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -65,59 +60,47 @@ public class ChessBoard
      */
     public void resetBoard()
     {
-        /**
-        *        this.board = {{new ChessPiece(BLACK, ROOK), new ChessPiece(BLACK, KNIGHT), new ChessPiece(BLACK, BISHOP), new ChessPiece(BLACK, QUEEN), new ChessPiece(BLACK, KING), new ChessPiece(BLACK, BISHOP), new ChessPiece(BLACK, KNIGHT), new ChessPiece(BLACK, ROOK)},
-        *        {new ChessPiece(BLACK, PAWN), new ChessPiece(BLACK, PAWN), new ChessPiece(BLACK, PAWN), new ChessPiece(BLACK, PAWN), new ChessPiece(BLACK, PAWN), new ChessPiece(BLACK, PAWN), new ChessPiece(BLACK, PAWN), new ChessPiece(BLACK, PAWN)},
-        *        {null, null, null, null, null, null, null, null},
-        *        {null, null, null, null, null, null, null, null},
-        *        {null, null, null, null, null, null, null, null},
-        *        {null, null, null, null, null, null, null, null},
-        *        {new ChessPiece(WHITE, PAWN), new ChessPiece(WHITE, PAWN), new ChessPiece(WHITE, PAWN), new ChessPiece(WHITE, PAWN), new ChessPiece(WHITE, PAWN), new ChessPiece(WHITE, PAWN), new ChessPiece(WHITE, PAWN), new ChessPiece(WHITE, PAWN)},
-        *        {new ChessPiece(WHITE, ROOK), new ChessPiece(WHITE, KNIGHT), new ChessPiece(WHITE, BISHOP), new ChessPiece(WHITE, QUEEN), new ChessPiece(WHITE, KING), new ChessPiece(WHITE, BISHOP), new ChessPiece(WHITE, KNIGHT), new ChessPiece(WHITE, ROOK)}
-        *};
-         */
-        for(int i = 0; i < board.length;i++)
+        for(int i = 1; i < 9;i++)
         {
-            for(int x = 0; i < board[0].length; x++)
+            for(int x = 1; x < 9; x++)
             {
-                addPiece(x,i);
+                removePiece(x,i);
             }
         }
-        addPiece(7, 0, new ChessPiece(BLACK, ROOK));
-        addPiece(7, 1, new ChessPiece(BLACK, KNIGHT));
-        addPiece(7, 2, new ChessPiece(BLACK, BISHOP));
-        addPiece(7, 3, new ChessPiece(BLACK, QUEEN));
-        addPiece(7, 4, new ChessPiece(BLACK, KING));
-        addPiece(7, 5, new ChessPiece(BLACK, BISHOP));
-        addPiece(7, 6, new ChessPiece(BLACK, KNIGHT));
-        addPiece(7, 7, new ChessPiece(BLACK, ROOK));
+        addPiece(8, 1, new ChessPiece(BLACK, ROOK));
+        addPiece(8, 2, new ChessPiece(BLACK, KNIGHT));
+        addPiece(8, 3, new ChessPiece(BLACK, BISHOP));
+        addPiece(8, 4, new ChessPiece(BLACK, QUEEN));
+        addPiece(8, 5, new ChessPiece(BLACK, KING));
+        addPiece(8, 6, new ChessPiece(BLACK, BISHOP));
+        addPiece(8, 7, new ChessPiece(BLACK, KNIGHT));
+        addPiece(8, 8, new ChessPiece(BLACK, ROOK));
 
-        addPiece(6, 0, new ChessPiece(BLACK, PAWN));
-        addPiece(6, 1, new ChessPiece(BLACK, PAWN));
-        addPiece(6, 2, new ChessPiece(BLACK, PAWN));
-        addPiece(6, 3, new ChessPiece(BLACK, PAWN));
-        addPiece(6, 4, new ChessPiece(BLACK, PAWN));
-        addPiece(6, 5, new ChessPiece(BLACK, PAWN));
-        addPiece(6, 6, new ChessPiece(BLACK, PAWN));
-        addPiece(6, 7, new ChessPiece(BLACK, PAWN));
+        addPiece(7, 1, new ChessPiece(BLACK, PAWN));
+        addPiece(7, 2, new ChessPiece(BLACK, PAWN));
+        addPiece(7, 3, new ChessPiece(BLACK, PAWN));
+        addPiece(7, 4, new ChessPiece(BLACK, PAWN));
+        addPiece(7, 5, new ChessPiece(BLACK, PAWN));
+        addPiece(7, 6, new ChessPiece(BLACK, PAWN));
+        addPiece(7, 7, new ChessPiece(BLACK, PAWN));
+        addPiece(7, 8, new ChessPiece(BLACK, PAWN));
 
-        addPiece(1, 0, new ChessPiece(WHITE, PAWN));
-        addPiece(1, 1, new ChessPiece(WHITE, PAWN));
-        addPiece(1, 2, new ChessPiece(WHITE, PAWN));
-        addPiece(1, 3, new ChessPiece(WHITE, PAWN));
-        addPiece(1, 4, new ChessPiece(WHITE, PAWN));
-        addPiece(1, 5, new ChessPiece(WHITE, PAWN));
-        addPiece(1, 6, new ChessPiece(WHITE, PAWN));
-        addPiece(1, 7, new ChessPiece(WHITE, PAWN));
+        addPiece(2, 1, new ChessPiece(WHITE, PAWN));
+        addPiece(2, 2, new ChessPiece(WHITE, PAWN));
+        addPiece(2, 3, new ChessPiece(WHITE, PAWN));
+        addPiece(2, 4, new ChessPiece(WHITE, PAWN));
+        addPiece(2, 5, new ChessPiece(WHITE, PAWN));
+        addPiece(2, 6, new ChessPiece(WHITE, PAWN));
+        addPiece(2, 7, new ChessPiece(WHITE, PAWN));
+        addPiece(2, 8, new ChessPiece(WHITE, PAWN));
 
-        addPiece(0, 0, new ChessPiece(WHITE, ROOK));
-        addPiece(0, 1, new ChessPiece(WHITE, KNIGHT));
-        addPiece(0, 2, new ChessPiece(WHITE, BISHOP));
-        addPiece(0, 3, new ChessPiece(WHITE, QUEEN));
-        addPiece(0, 4, new ChessPiece(WHITE, KING));
-        addPiece(0, 5, new ChessPiece(WHITE, BISHOP));
-        addPiece(0, 6, new ChessPiece(WHITE, KNIGHT));
-        addPiece(0, 7, new ChessPiece(WHITE, ROOK));
-        //throw new RuntimeException("Not implemented");
+        addPiece(1, 1, new ChessPiece(WHITE, ROOK));
+        addPiece(1, 2, new ChessPiece(WHITE, KNIGHT));
+        addPiece(1, 3, new ChessPiece(WHITE, BISHOP));
+        addPiece(1, 4, new ChessPiece(WHITE, QUEEN));
+        addPiece(1, 5, new ChessPiece(WHITE, KING));
+        addPiece(1, 6, new ChessPiece(WHITE, BISHOP));
+        addPiece(1, 7, new ChessPiece(WHITE, KNIGHT));
+        addPiece(1, 8, new ChessPiece(WHITE, ROOK));
     }
 }
