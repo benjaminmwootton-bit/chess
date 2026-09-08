@@ -107,4 +107,23 @@ public class ChessBoard
         addPiece(1, 7, new ChessPiece(WHITE, KNIGHT));
         addPiece(1, 8, new ChessPiece(WHITE, ROOK));
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder();
+        for(int i = 1; i < 9;i++)
+        {
+            for (int x = 1; x < 9; x++) {
+                if (board[i - 1][x - 1] != null) {
+                    String temp = ("|" + board[i - 1][x - 1] + "|");
+                    str.append(temp);
+                } else
+                    str.append("| |");
+            }
+            if (i != 8)
+                str.append("\n");
+        }
+        return str.toString();
+    }
 }

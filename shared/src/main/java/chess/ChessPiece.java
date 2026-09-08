@@ -33,6 +33,46 @@ public class ChessPiece
         this.hasMoved = false;
     }
 
+    public String toString()
+    {
+        if (this.pieceColor == BLACK)
+        {
+            if (this.type == ROOK)
+                return "♜";
+            else if(this.type == KNIGHT)
+                return "♞";
+            else if (this.type == BISHOP)
+                return "♝";
+            else if (this.type == QUEEN)
+                return "♛";
+            else if (this.type == KING)
+                return "♚";
+            else if (this.type == PAWN)
+                return "♟";
+            else
+                return null;
+        }
+        else if (this.pieceColor == WHITE)
+        {
+            if (this.type == ROOK)
+                return "♖";
+            else if(this.type == KNIGHT)
+                return "♘";
+            else if (this.type == BISHOP)
+                return "♗";
+            else if (this.type == QUEEN)
+                return "♕";
+            else if (this.type == KING)
+                return "♔";
+            else if (this.type == PAWN)
+                return "♙";
+            else
+                return null;
+        }
+        else
+            return null;
+    }
+
     /**
      * The various different chess piece options
      */
@@ -145,7 +185,6 @@ public class ChessPiece
         }
         if(colPos <= 8 && board.getPiece(rowPos,colPos).pieceColor != board.getPiece(myPosition).pieceColor)
             rookMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos, colPos), null));
-        colPos = myPosition.getRow();
         return rookMoves;
     }
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition)
