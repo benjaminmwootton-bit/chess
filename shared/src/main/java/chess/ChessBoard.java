@@ -9,8 +9,6 @@ import static chess.ChessPiece.PieceType.PAWN;
 import static chess.ChessPiece.PieceType.QUEEN;
 import static chess.ChessPiece.PieceType.KING;
 
-import static java.awt.Color.black;
-
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -19,7 +17,7 @@ import static java.awt.Color.black;
  */
 public class ChessBoard
 {
-    public ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPiece[][] board = new ChessPiece[8][8];
 
     public ChessBoard()
     {
@@ -34,14 +32,18 @@ public class ChessBoard
      */
     public void addPiece(ChessPosition position, ChessPiece piece)
     {
-        board[position.getRow()][position.getColumn()] = piece;
+        board[position.getRow()-1][position.getColumn()-1] = piece;
         //throw new RuntimeException("Not implemented");
     }
-    //overload
+    //overload. takes row, column, and piece
     public void addPiece(int row, int column, ChessPiece piece)
     {
-        board[row][column] = piece;
-        //throw new RuntimeException("Not implemented");
+        board[row-1][column-1] = piece;
+    }
+    //another overload. Sets square at row and column to null
+    public void addPiece(int row, int column)
+    {
+        board[row-1][column-1] = null;
     }
 
     /**
@@ -53,7 +55,7 @@ public class ChessBoard
      */
     public ChessPiece getPiece(ChessPosition position)
     {
-        return board[position.getRow()][position.getColumn()];
+        return board[position.getRow()-1][position.getColumn()-1];
         //throw new RuntimeException("Not implemented");
     }
 
@@ -74,6 +76,13 @@ public class ChessBoard
         *        {new ChessPiece(WHITE, ROOK), new ChessPiece(WHITE, KNIGHT), new ChessPiece(WHITE, BISHOP), new ChessPiece(WHITE, QUEEN), new ChessPiece(WHITE, KING), new ChessPiece(WHITE, BISHOP), new ChessPiece(WHITE, KNIGHT), new ChessPiece(WHITE, ROOK)}
         *};
          */
+        for(int i = 0; i < board.length;i++)
+        {
+            for(int x = 0; i < board[0].length; x++)
+            {
+                addPiece(x,i);
+            }
+        }
         addPiece(7, 0, new ChessPiece(BLACK, ROOK));
         addPiece(7, 1, new ChessPiece(BLACK, KNIGHT));
         addPiece(7, 2, new ChessPiece(BLACK, BISHOP));

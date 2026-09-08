@@ -10,11 +10,11 @@ import java.util.Collection;
  */
 public class ChessPiece
 {
-    public ChessGame.TeamColor pieceColor;
-    public PieceType type;
-    public boolean hasMoved;
-    public int row;
-    public int column;
+    private ChessGame.TeamColor pieceColor;
+    private PieceType type;
+    private boolean hasMoved;
+    private int row;
+    private int column;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type)
     {
