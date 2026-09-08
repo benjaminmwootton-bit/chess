@@ -53,6 +53,10 @@ public class ChessBoard
     {
         return board[position.getRow()-1][position.getColumn()-1];
     }
+    public ChessPiece getPiece(int row, int column)
+    {
+        return board[row-1][column-1];
+    }
 
     /**
      * Sets the board to the default starting board
