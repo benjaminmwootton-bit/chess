@@ -1,5 +1,6 @@
 package chess;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -242,7 +243,10 @@ public class ChessPiece
 
     public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition)
     {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> queenMoves = new ArrayList<>();
+        queenMoves.addAll(rookMoves(board,myPosition));
+        queenMoves.addAll(bishopMoves(board,myPosition));
+        return queenMoves;
     }
 
     public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition)
