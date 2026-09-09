@@ -46,4 +46,13 @@ public class ChessMove {
     {
         return this.piece;
     }
+
+    //(very) simplified chess notation
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder();
+        //str.append(startPosition);
+        str.append(endPosition);
+        return str.toString();
+    }
 }

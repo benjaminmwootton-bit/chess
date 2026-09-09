@@ -86,6 +86,7 @@ public class ChessPiece
         PAWN
     }
 
+
     /**
      * @return Which team this chess piece belongs to
      */
@@ -172,7 +173,6 @@ public class ChessPiece
             rookMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos, colPos), null));
             colPos--;
         }
-        //capture
         if(colPos >= 1 && board.getPiece(rowPos,colPos).pieceColor != board.getPiece(myPosition).pieceColor)
             rookMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos, colPos), null));
         colPos = myPosition.getColumn();
@@ -187,47 +187,71 @@ public class ChessPiece
             rookMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos, colPos), null));
         return rookMoves;
     }
+
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition)
     {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> bishopMoves = new ArrayList<>();
+        int rowPos = myPosition.getRow(); int colPos = myPosition.getColumn();
+        var piece = board.getPiece(rowPos,colPos);
+        rowPos--;colPos--; // left down
+        while(outOfBounds(rowPos,colPos) && board.getPiece(rowPos,colPos) == null)
+        {
+            bishopMoves.add(new ChessMove(myPosition,new ChessPosition(rowPos,colPos), null));
+            rowPos--;colPos--;
+        }
+        if (outOfBounds(rowPos,colPos) && board.getPiece(rowPos,colPos) != null && piece.pieceColor != board.getPiece(rowPos,colPos).pieceColor)//capture
+            bishopMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos,colPos), null));
+        rowPos = myPosition.getRow(); colPos = myPosition.getColumn();//reset
+
+        rowPos++;colPos--; // left up
+        while(outOfBounds(rowPos,colPos) && board.getPiece(rowPos,colPos) == null)
+        {
+            bishopMoves.add(new ChessMove(myPosition,new ChessPosition(rowPos,colPos), null));
+            rowPos++;colPos--;
+        }
+        if (outOfBounds(rowPos,colPos) && board.getPiece(rowPos,colPos) != null && piece.pieceColor != board.getPiece(rowPos,colPos).pieceColor)//capture
+            bishopMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos,colPos), null));
+        rowPos = myPosition.getRow(); colPos = myPosition.getColumn();//reset
+
+        rowPos++;colPos++; // right up
+        while(outOfBounds(rowPos,colPos) && board.getPiece(rowPos,colPos) == null)
+        {
+            bishopMoves.add(new ChessMove(myPosition,new ChessPosition(rowPos,colPos), null));
+            rowPos++;colPos++;
+        }
+        if (outOfBounds(rowPos,colPos) && board.getPiece(rowPos,colPos) != null && piece.pieceColor != board.getPiece(rowPos,colPos).pieceColor)//capture
+            bishopMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos,colPos), null));
+        rowPos = myPosition.getRow(); colPos = myPosition.getColumn();//reset
+
+        rowPos--;colPos++; // right down
+        while(outOfBounds(rowPos,colPos) && board.getPiece(rowPos,colPos) == null)
+        {
+            bishopMoves.add(new ChessMove(myPosition,new ChessPosition(rowPos,colPos), null));
+            rowPos--;colPos++;
+        }
+        if (outOfBounds(rowPos,colPos) && board.getPiece(rowPos,colPos) != null && piece.pieceColor != board.getPiece(rowPos,colPos).pieceColor)//capture
+            bishopMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos,colPos), null));
+
+        return bishopMoves;
     }
+
     public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition)
     {
         throw new RuntimeException("Not implemented");
     }
+
     public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition)
     {
         throw new RuntimeException("Not implemented");
     }
+
     public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition)
     {
         throw new RuntimeException("Not implemented");
     }
+
     public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition)
     {
-        /**
-         row = this.getRow();
-         column = this.getColumn();
-         //I love pawns. They move so simply...
-         if(this.getPieceType() == PAWN)
-         {
-         if (this.getTeamColor() == WHITE)
-         {
-         if (this.hasMoved == false)
-         {
-         if(this.getRow() )
-         }
-         }
-         else
-         {
-         if (this.hasMoved == false)
-         {
-
-         }
-         }
-         }
-         return ChessMove;
-         */
         ArrayList<ChessMove> pawnMoves = new ArrayList<>();
         ChessMove move = new ChessMove(myPosition, new ChessPosition(5,5), null);
         pawnMoves.add(move);
@@ -237,5 +261,11 @@ public class ChessPiece
     public Collection<ChessMove> duckMoves(ChessBoard board, ChessPosition myPosition)
     {
         throw new RuntimeException("Not implemented");
+    }
+
+    // returns true if not out of bounds
+    public boolean outOfBounds(int row, int col)
+    {
+        return row < 9 && row > 0 && col < 9 && col > 0;
     }
 }
