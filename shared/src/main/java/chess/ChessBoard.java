@@ -117,11 +117,14 @@ public class ChessBoard
         StringBuilder str = new StringBuilder();
         for(int i = 1; i < 9;i++)
         {
-            for (int x = 1; x < 9; x++) {
-                if (board[i - 1][x - 1] != null) {
+            for (int x = 1; x < 9; x++)
+            {
+                if (board[i - 1][x - 1] != null)
+                {
                     String temp = ("|" + board[i - 1][x - 1] + "|");
                     str.append(temp);
-                } else
+                }
+                else
                     str.append("| |");
             }
             if (i != 8)
@@ -134,9 +137,7 @@ public class ChessBoard
     public boolean equals(Object o)
     {
         if (o == null || getClass() != o.getClass())
-        {
             return false;
-        }
         ChessBoard that = (ChessBoard) o;
         return Objects.deepEquals(board, that.board);
     }

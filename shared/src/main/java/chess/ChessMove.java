@@ -55,6 +55,8 @@ public class ChessMove {
         StringBuilder str = new StringBuilder();
         //str.append(startPosition);
         str.append(endPosition);
+        if(piece != null)
+            str.append(piece);
         return str.toString();
     }
 
@@ -62,9 +64,7 @@ public class ChessMove {
     public boolean equals(Object o)
     {
         if (o == null || getClass() != o.getClass())
-        {
             return false;
-        }
         ChessMove chessMove = (ChessMove) o;
         return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && piece == chessMove.piece;
     }

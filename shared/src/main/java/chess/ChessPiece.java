@@ -1,6 +1,7 @@
 package chess;
 
-import java.lang.reflect.Array;
+import com.sun.source.tree.WhileLoopTree;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import static chess.ChessPiece.PieceType.ROOK;
 import static chess.ChessPiece.PieceType.PAWN;
 import static chess.ChessPiece.PieceType.QUEEN;
 import static chess.ChessPiece.PieceType.KING;
+import static chess.ChessPiece.PieceType.DUCK;
 
 /**
  * Represents a single chess piece
@@ -25,14 +27,14 @@ public class ChessPiece
     private ChessGame.TeamColor pieceColor;
     private PieceType type;
     private boolean hasMoved;
-    private int row;
-    private int column;
+    private boolean pushed;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type)
     {
         this.pieceColor = pieceColor;
         this.type = type;
         this.hasMoved = false;
+        this.pushed = false;
     }
 
     public String toString()
@@ -51,6 +53,8 @@ public class ChessPiece
                 return "♚";
             else if (this.type == PAWN)
                 return "♟";
+            else if (this.type == DUCK)
+                return "D";
             else
                 return null;
         }
@@ -68,6 +72,8 @@ public class ChessPiece
                 return "♔";
             else if (this.type == PAWN)
                 return "♙";
+            else if (this.type == DUCK)
+                return "D";
             else
                 return null;
         }
@@ -79,9 +85,7 @@ public class ChessPiece
     public boolean equals(Object o)
     {
         if (o == null || getClass() != o.getClass())
-        {
             return false;
-        }
         ChessPiece that = (ChessPiece) o;
         return pieceColor == that.pieceColor && type == that.type;
     }
@@ -133,29 +137,19 @@ public class ChessPiece
     {
         Collection<ChessMove> moves = new ArrayList<>();
         if(board.getPiece(myPosition).type == PAWN)
-        {
             moves = pawnMoves(board, myPosition);
-        }
         else if(board.getPiece(myPosition).type == ROOK)
-        {
             moves = rookMoves(board, myPosition);
-        }
         else if(board.getPiece(myPosition).type == BISHOP)
-        {
             moves = bishopMoves(board, myPosition);
-        }
         else if(board.getPiece(myPosition).type == KNIGHT)
-        {
             moves = knightMoves(board, myPosition);
-        }
         else if(board.getPiece(myPosition).type == QUEEN)
-        {
             moves = queenMoves(board, myPosition);
-        }
         else if(board.getPiece(myPosition).type == KING)
-        {
             moves = kingMoves(board, myPosition);
-        }
+        else if(board.getPiece(myPosition).type == DUCK)
+            moves = duckMoves(board, myPosition);
         return moves;
     }
 
@@ -313,16 +307,95 @@ public class ChessPiece
     public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition)
     {
         ArrayList<ChessMove> pawnMoves = new ArrayList<>();
-        ChessMove move = new ChessMove(myPosition, new ChessPosition(5,5), null);
-        pawnMoves.add(move);
-        return pawnMoves;
-        //throw new RuntimeException("Not implemented");
+        ChessPiece pawn = board.getPiece(myPosition);
+        var color = pawn.getTeamColor();
+        int col = myPosition.getColumn(); int row = myPosition.getRow();
+        if(color == BLACK)
+        {
+            if(row == 7)//moving forward if the pawn hasn't been moved
+            {
+                if(outOfBounds(row-1,col) && board.getPiece(new ChessPosition(row-1, col)) == null)
+                {
+                    pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col), null));
+                    if (outOfBounds(row-2,col) && board.getPiece(new ChessPosition(row - 2, col)) == null)
+                        pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 2, col), null));
+                }
+            }
+            else//moving forward if the pawn has moved
+            {
+                if(outOfBounds(row-1,col) && board.getPiece(new ChessPosition(row-1, col)) == null)
+                    pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col), null));
+            }
+            //capturing pieces
+            if(outOfBounds(row-1,col-1) && board.getPiece(row-1, col-1) != null && board.getPiece(row-1, col-1).pieceColor != color)
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col-1), null));
+            if(outOfBounds(row-1,col+1) && board.getPiece(row-1, col+1) != null && board.getPiece(row-1, col+1).pieceColor != color)
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col+1), null));
+            //en passant
+            if(outOfBounds(row, col + 1) && board.getPiece(row,col+1) != null && board.getPiece(row,col+1).type == PAWN && board.getPiece(row,col+1).pushed == true)
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row,col+1), null));
+            if(outOfBounds(row, col - 1) && board.getPiece(row,col-1) != null && board.getPiece(row,col-1).type == PAWN && board.getPiece(row,col-1).pushed == true)
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row,col-1), null));
+        }
+        if(color == WHITE)
+        {
+            if(row == 2)//moving forward if the pawn hasn't been moved
+            {
+                if(outOfBounds(row - 1,col) &&outOfBounds(row-1,col) && board.getPiece(new ChessPosition(row+1, col)) == null)
+                {
+                    pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col), null));
+                    if (outOfBounds(row + 2,col) && board.getPiece(new ChessPosition(row + 2, col)) == null)
+                        pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 2, col), null));
+                }
+            }
+            else//moving forward if the pawn has moved
+            {
+                if(outOfBounds(row+1,col) && board.getPiece(new ChessPosition(row + 1, col)) == null)
+                    pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col), null));
+            }
+            //capturing pieces
+            if(outOfBounds(row + 1,col-1) && board.getPiece(row + 1, col-1) != null && board.getPiece(row + 1, col-1).pieceColor != color)
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1,col-1), null));
+            if(outOfBounds(row + 1,col+1) && board.getPiece(row + 1, col+1) != null && board.getPiece(row + 1, col+1).pieceColor != color)
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1,col+1), null));
+            //en passant
+            if(outOfBounds(row, col + 1) && board.getPiece(row,col+1) != null && board.getPiece(row,col+1).type == PAWN && board.getPiece(row,col+1).pushed == true)
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row,col+1), null));
+            if(outOfBounds(row, col - 1) && board.getPiece(row,col-1) != null && board.getPiece(row,col-1).type == PAWN && board.getPiece(row,col-1).pushed == true)
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row,col-1), null));
+        }
+        //promotions
+        ArrayList<ChessMove> pawnMovesPromotions = new ArrayList<>();
+        for(ChessMove move:pawnMoves)
+        {
+            int tempEnd = move.getEndPosition().getRow();
+            if((color == WHITE && tempEnd == 8) || (color == BLACK && tempEnd == 1))
+            {
+                pawnMovesPromotions.add(new ChessMove(move.getStartPosition(),move.getEndPosition(),QUEEN));
+                pawnMovesPromotions.add(new ChessMove(move.getStartPosition(),move.getEndPosition(),ROOK));
+                pawnMovesPromotions.add(new ChessMove(move.getStartPosition(),move.getEndPosition(),BISHOP));
+                pawnMovesPromotions.add(new ChessMove(move.getStartPosition(),move.getEndPosition(),KNIGHT));
+            }
+            else
+                pawnMovesPromotions.add(move);
+        }
+        return pawnMovesPromotions;
     }
 
     //You ever played duck chess? It's fun!
     public Collection<ChessMove> duckMoves(ChessBoard board, ChessPosition myPosition)
     {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> duckMoves = new ArrayList<>();
+        for (int i = 1; i < 9; i++)
+        {
+            for (int x = 1; x < 9; x++)
+            {
+                var newPosition = new ChessPosition(i,x);
+                if(board.getPiece(i,x) == null && myPosition != newPosition)
+                    duckMoves.add(new ChessMove(myPosition,newPosition,null));
+            }
+        }
+        return duckMoves;
     }
 
     // returns true if not out of bounds
