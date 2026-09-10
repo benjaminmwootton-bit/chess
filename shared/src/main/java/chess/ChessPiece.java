@@ -251,7 +251,26 @@ public class ChessPiece
 
     public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition)
     {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> kingMoves = new ArrayList<>();
+        var rowPos = myPosition.getRow(); int colPos = myPosition.getColumn();
+        var color = board.getPiece(myPosition).getTeamColor();
+        if(outOfBounds(rowPos -1,colPos) && (board.getPiece(rowPos -1, colPos) == null || board.getPiece(rowPos-1, colPos).pieceColor != color))
+            kingMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos-1,colPos), null));
+        if(outOfBounds(rowPos-1,colPos-1) && (board.getPiece(rowPos -1, colPos-1) == null || board.getPiece(rowPos-1, colPos-1).pieceColor != color))
+            kingMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos-1,colPos-1), null));
+        if(outOfBounds(rowPos,colPos-1) && (board.getPiece(rowPos , colPos-1) == null || board.getPiece(rowPos, colPos-1).pieceColor != color))
+            kingMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos,colPos-1), null));
+        if(outOfBounds(rowPos +1,colPos) && (board.getPiece(rowPos +1, colPos) == null || board.getPiece(rowPos+1, colPos).pieceColor != color))
+            kingMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos+1,colPos), null));
+        if(outOfBounds(rowPos+1,colPos+1) && (board.getPiece(rowPos+1, colPos+1) == null || board.getPiece(rowPos+1, colPos+1).pieceColor != color))
+            kingMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos+1,colPos+1), null));
+        if(outOfBounds(rowPos,colPos+1) && (board.getPiece(rowPos , colPos+1) == null || board.getPiece(rowPos, colPos+1).pieceColor != color))
+            kingMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos,colPos+1), null));
+        if(outOfBounds(rowPos-1,colPos+1) && (board.getPiece(rowPos-1, colPos+1) == null || board.getPiece(rowPos-1, colPos+1).pieceColor != color))
+            kingMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos-1,colPos+1), null));
+        if(outOfBounds(rowPos+1,colPos-1) && (board.getPiece(rowPos+1, colPos-1) == null || board.getPiece(rowPos+1, colPos-1).pieceColor != color))
+            kingMoves.add(new ChessMove(myPosition, new ChessPosition(rowPos+1,colPos-1), null));
+        return kingMoves;
     }
 
     public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition)
