@@ -3,6 +3,7 @@ package chess;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.WHITE;
 import static chess.ChessGame.TeamColor.BLACK;
@@ -72,6 +73,23 @@ public class ChessPiece
         }
         else
             return null;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(pieceColor, type) * 17;
     }
 
     /**
@@ -281,6 +299,8 @@ public class ChessPiece
         return pawnMoves;
         //throw new RuntimeException("Not implemented");
     }
+
+    //You ever played duck chess? It's fun!
     public Collection<ChessMove> duckMoves(ChessBoard board, ChessPosition myPosition)
     {
         throw new RuntimeException("Not implemented");

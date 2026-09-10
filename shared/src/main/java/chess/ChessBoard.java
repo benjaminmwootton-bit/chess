@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import static chess.ChessGame.TeamColor.WHITE;
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessPiece.PieceType.BISHOP;
@@ -125,5 +128,22 @@ public class ChessBoard
                 str.append("\n");
         }
         return str.toString();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(board, that.board);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Arrays.deepHashCode(board) * 17;
     }
 }
