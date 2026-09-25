@@ -8,9 +8,9 @@ public class testing
         System.out.println(board1);
         board1.resetBoard();
         System.out.println(board1);
-        board1.addPiece(3,5,new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.DUCK));
+        board1.addPiece(5,5,new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
         System.out.println(board1);
-        System.out.print("Duck Moves:");
+        System.out.print("Queen Moves:");
         System.out.println(board1.getPiece(5,5).pieceMoves(board1,new ChessPosition(5,5)));
     }
 }

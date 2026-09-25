@@ -2,6 +2,16 @@ package chess;
 
 import java.util.Collection;
 
+import static chess.ChessGame.TeamColor.WHITE;
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessPiece.PieceType.BISHOP;
+import static chess.ChessPiece.PieceType.KNIGHT;
+import static chess.ChessPiece.PieceType.ROOK;
+import static chess.ChessPiece.PieceType.PAWN;
+import static chess.ChessPiece.PieceType.QUEEN;
+import static chess.ChessPiece.PieceType.KING;
+import static chess.ChessPiece.PieceType.DUCK;
+
 /**
  * A class that can manage a chess game, making moves on a board
  * <p>
@@ -10,10 +20,11 @@ import java.util.Collection;
  */
 public class ChessGame
 {
+    private boolean whiteTurn;
 
     public ChessGame()
     {
-
+        whiteTurn = true;
     }
 
     /**
@@ -21,7 +32,8 @@ public class ChessGame
      */
     public TeamColor getTeamTurn()
     {
-        throw new RuntimeException("Not implemented");
+        if(whiteTurn) return WHITE;
+        else return BLACK;
     }
 
     /**
@@ -31,7 +43,8 @@ public class ChessGame
      */
     public void setTeamTurn(TeamColor team)
     {
-        throw new RuntimeException("Not implemented");
+        if(team == WHITE) whiteTurn = true;
+        else whiteTurn = false;
     }
 
     /**
