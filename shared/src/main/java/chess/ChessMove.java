@@ -21,6 +21,12 @@ public class ChessMove {
         this.endPosition = endPosition;
         this.piece = promotionPiece;
     }
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition)
+    {
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.piece = null;
+    }
 
     /**
      * @return ChessPosition of starting location
