@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -90,10 +91,95 @@ public class ChessGame
     public boolean isInCheck(TeamColor teamColor)
     {
         ChessPosition kingPosition = kingPosition(teamColor);
-
-        return true;
+        int[][] KnightDirections = {{2,1},{2,-1},{1,2},{1,-2},{-1,2},{-1,-2},{-2,1},{-2,-1}};
+        if (nonLinearChecks(board,kingPosition,KnightDirections))
+            return true;
+        int[][] rookDirections = {{0,1},{1,0},{0,-1},{-1,0}};
+        if (linearChecks(board,kingPosition,rookDirections,ROOK))
+            return true;
+        int[][] bishopDirections = {{-1,1},{1,-1},{-1,-1},{1,1}};
+        if (linearChecks(board,kingPosition,rookDirections,BISHOP))
+            return true;
+        return pawnChecks(board,kingPosition);
     }
-
+    public boolean linearChecks(ChessBoard board, ChessPosition myPosition, int[][] directions, ChessPiece.PieceType type)
+    {
+        ChessPiece piece = board.getPiece(myPosition);
+        ChessGame.TeamColor color = piece.getTeamColor();
+        for(int[] dir:directions)
+        {
+            int row = myPosition.getRow() + dir[0]; int col = myPosition.getColumn() + dir[1];
+            while (bounds(row, col))
+            {
+                ChessPiece target = board.getPiece(row,col);
+                if(target != null)
+                {
+                    ChessPiece.PieceType targetType = target.getPieceType();
+                    if (target.getTeamColor() != color && (targetType == type || targetType == QUEEN))
+                        return true;
+                    break;
+                }
+                row += dir[0]; col += dir[1];
+            }
+        }
+        return false;
+    }
+    public boolean nonLinearChecks(ChessBoard board, ChessPosition myPosition, int[][] directions)
+    {
+        ChessPiece piece = board.getPiece(myPosition);
+        ChessGame.TeamColor color = piece.getTeamColor();
+        for(int[] dir:directions)
+        {
+            int row = myPosition.getRow() + dir[0]; int col = myPosition.getColumn() + dir[1];
+            if(bounds(row,col))
+            {
+                ChessPiece target = board.getPiece(row,col);
+                if(target != null && target.getTeamColor() != color && target.getPieceType() == KNIGHT)
+                    return true;
+            }
+        }
+        return false;
+    }
+    public boolean pawnChecks(ChessBoard board, ChessPosition myPosition)
+    {
+        ChessPiece king = board.getPiece(myPosition);
+        ChessGame.TeamColor color = king.getTeamColor();
+        int row = myPosition.getRow(); int col = myPosition.getColumn();
+        if(color == WHITE)
+        {
+            if (bounds(row+1,col+1))
+            {
+                ChessPiece target = board.getPiece(row+1,col+1);
+                if (target.getPieceType() == PAWN && target.getTeamColor() != color)
+                    return true;
+            }
+            if(bounds(row+1,col-1))
+            {
+                ChessPiece target = board.getPiece(row+1,col+1);
+                if (target.getPieceType() == PAWN && target.getTeamColor() != color)
+                    return true;
+            }
+        }
+        else if (color == BLACK)
+        {
+            if (bounds(row-1,col+1))
+            {
+                ChessPiece target = board.getPiece(row+1,col+1);
+                if (target != null && target.getPieceType() == PAWN && target.getTeamColor() != color)
+                    return true;
+            }
+            if(bounds(row-1,col-1))
+            {
+                ChessPiece target = board.getPiece(row+1,col+1);
+                return (target != null && target.getPieceType() == PAWN && target.getTeamColor() != color);
+            }
+        }
+        return false;
+    }
+    public boolean bounds(int row, int col)
+    {
+        return row < 9 && row > 0 && col < 9 && col > 0;
+    }
     /**
      * Determines if the given team is in checkmate
      *

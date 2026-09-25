@@ -21,7 +21,7 @@ import static chess.ChessPiece.PieceType.KING;
  */
 public class ChessPiece
 {
-    private ChessGame.TeamColor pieceColor;
+    private final ChessGame.TeamColor pieceColor;
     private PieceType type;
     private boolean hasMoved;
     private boolean pushed;
@@ -37,7 +37,8 @@ public class ChessPiece
     //Sets hasMoved to true. Important to know if a pawn can push or if the king can castle
     public static void movePiece(ChessPiece piece)
     {
-        piece.hasMoved = true;
+        if(piece != null)
+            piece.hasMoved = true;
     }
 
     public String toString()
@@ -306,11 +307,13 @@ public class ChessPiece
     //Only need this because of en passant
     public static void pushPawn(ChessPiece piece)
     {
-        piece.pushed = true;
+        if(piece != null)
+            piece.pushed = true;
     }
     public static void unpushPawn(ChessPiece piece)
     {
-        piece.pushed = false;
+        if(piece != null)
+            piece.pushed = false;
     }
 
     //checks if in bounds
