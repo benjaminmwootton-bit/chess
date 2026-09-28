@@ -28,6 +28,7 @@ public class ChessGame
     {
         whiteTurn = true;
         board = new ChessBoard();
+        board.resetBoard();
     }
 
     /**
