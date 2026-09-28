@@ -98,7 +98,7 @@ public class ChessGame
         if (linearChecks(board,kingPosition,rookDirections,ROOK))
             return true;
         int[][] bishopDirections = {{-1,1},{1,-1},{-1,-1},{1,1}};
-        if (linearChecks(board,kingPosition,rookDirections,BISHOP))
+        if (linearChecks(board,kingPosition,bishopDirections,BISHOP))
             return true;
         return pawnChecks(board,kingPosition);
     }
@@ -155,7 +155,7 @@ public class ChessGame
             }
             if(bounds(row+1,col-1))
             {
-                ChessPiece target = board.getPiece(row+1,col+1);
+                ChessPiece target = board.getPiece(row+1,col-1);
                 if (target.getPieceType() == PAWN && target.getTeamColor() != color)
                     return true;
             }
@@ -164,13 +164,13 @@ public class ChessGame
         {
             if (bounds(row-1,col+1))
             {
-                ChessPiece target = board.getPiece(row+1,col+1);
+                ChessPiece target = board.getPiece(row-1,col+1);
                 if (target != null && target.getPieceType() == PAWN && target.getTeamColor() != color)
                     return true;
             }
             if(bounds(row-1,col-1))
             {
-                ChessPiece target = board.getPiece(row+1,col+1);
+                ChessPiece target = board.getPiece(row-1,col-1);
                 return (target != null && target.getPieceType() == PAWN && target.getTeamColor() != color);
             }
         }
