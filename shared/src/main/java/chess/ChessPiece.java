@@ -40,6 +40,11 @@ public class ChessPiece
         if(piece != null)
             piece.hasMoved = true;
     }
+    public static void unMovePiece(ChessPiece piece)
+    {
+        if(piece != null)
+            piece.hasMoved = false;
+    }
 
     public String toString()
     {
