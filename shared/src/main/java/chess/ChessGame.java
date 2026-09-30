@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -47,8 +46,7 @@ public class ChessGame
      */
     public void setTeamTurn(TeamColor team)
     {
-        if(team == WHITE) whiteTurn = true;
-        else whiteTurn = false;
+        whiteTurn = (team == WHITE);
     }
 
     /**
