@@ -1,5 +1,6 @@
 package chess;
 
+import java.nio.channels.ScatteringByteChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -32,8 +33,25 @@ public class ChessGame
     }
 
     /**
+     * Sets this game's chessboard to a given board
+     *
+     * @param board the new board to use
+     */
+    public void setBoard(ChessBoard board)
+    {
+        this.board = board;
+    }
+
+    /**
+     * Gets the current chessboard
+     *
+     * @return the chessboard
+     */
+    public ChessBoard getBoard() {return board;}
+    /**
      * @return Which team's turn it is
      */
+
     public TeamColor getTeamTurn()
     {
         if(whiteTurn) return WHITE;
@@ -81,7 +99,7 @@ public class ChessGame
                 {
                     ChessPiece target = board.getPiece(row, col);
                     ChessPosition pos = new ChessPosition(row, col);
-                    if (target != null && !kingBlocks(pos, color) && isInCheck(color, pos))
+                    if (!kingBlocks(pos, color) && !isInCheck(color, pos) && (target == null || target.getTeamColor() != piece.getTeamColor()))
                         validMoves.add(new ChessMove(startPosition, pos));
                 }
             }
@@ -92,14 +110,17 @@ public class ChessGame
             ChessPosition kingPosition = kingPosition(color);
             for (ChessMove move: possibleMoves)
             {
-                ChessPiece taken = board.getPiece(move.getEndPosition());
-                makeMove(move, 0);
+                ChessPiece capture = board.getPiece(move.getEndPosition());
+                try{makeMove(move);}
+                catch (InvalidMoveException e)
+                {
+                    throw new RuntimeException(e);
+                }
                 if(!isInCheck(color,kingPosition))
                     validMoves.add(move);
-                unMakeMove(move, taken);
+                unMakeMove(move, capture);
             }
         }
-
         return validMoves;
     }
 
@@ -111,35 +132,22 @@ public class ChessGame
      */
     public void makeMove(ChessMove move) throws InvalidMoveException
     {
-        try
-        {
-            if (!bounds(move.getEndPosition()))
-                throw new InvalidMoveException("Invalid Move");
-            board.addPiece(move.getEndPosition(),board.getPiece(move.getStartPosition()));
-            board.removePiece(move.getStartPosition());
-            ChessPiece.movePiece(board.getPiece(move.getEndPosition()));
-        }
-        catch(InvalidMoveException e)
-        {
-        System.out.println("Invalid Move");
-        }
-    }
-    public void makeMove(ChessMove move, int x)
-    {
-        if(board.getPiece(move.getStartPosition()) != null)
+        if(!validMoves(move.getStartPosition()).contains(move) || ((whiteTurn && board.getPiece(move.getStartPosition()).getTeamColor() == BLACK) || (!whiteTurn && board.getPiece(move.getStartPosition()).getTeamColor() == WHITE)))
+            throw new InvalidMoveException();
+        else
         {
             board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
             board.removePiece(move.getStartPosition());
-            ChessPiece.movePiece(board.getPiece(move.getEndPosition()));
         }
     }
-    public void unMakeMove(ChessMove move, ChessPiece takenPiece)
+    public void unMakeMove(ChessMove move, ChessPiece capture)
     {
-        if(board.getPiece(move.getEndPosition()) != null)
-        {
-            board.addPiece(move.getStartPosition(), board.getPiece(move.getEndPosition()));
+        board.addPiece(move.getStartPosition(), board.getPiece(move.getEndPosition()));
+        if(capture != null)
+            board.addPiece(move.getEndPosition(), capture);
+        else
             board.removePiece(move.getEndPosition());
-        }
+        //
     }
     /**
      * Determines if the given team is in check
@@ -156,13 +164,13 @@ public class ChessGame
     public boolean isInCheck(TeamColor teamColor, ChessPosition kingPosition)
     {
         int[][] KnightDirections = {{2,1},{2,-1},{1,2},{1,-2},{-1,2},{-1,-2},{-2,1},{-2,-1}};
-        if (nonLinearChecks(kingPosition,KnightDirections, teamColor))
+        if (nonLinearChecks(kingPosition,KnightDirections,teamColor))
             return true;
         int[][] rookDirections = {{0,1},{1,0},{0,-1},{-1,0}};
-        if (linearChecks(kingPosition,rookDirections, ROOK, teamColor))
+        if (linearChecks(kingPosition,rookDirections,ROOK,teamColor))
             return true;
         int[][] bishopDirections = {{-1,1},{1,-1},{-1,-1},{1,1}};
-        if (linearChecks(kingPosition,bishopDirections, BISHOP, teamColor))
+        if (linearChecks(kingPosition,bishopDirections,BISHOP,teamColor))
             return true;
         return (pawnChecks(kingPosition, teamColor));
     }
@@ -205,7 +213,6 @@ public class ChessGame
 
     public boolean pawnChecks(ChessPosition myPosition, TeamColor color)
     {
-        ChessPiece king = board.getPiece(myPosition);
         int row = myPosition.getRow(); int col = myPosition.getColumn();
         if(color == WHITE)
         {
@@ -255,21 +262,15 @@ public class ChessGame
      */
     public boolean isInCheckmate(TeamColor teamColor)
     {
-        ChessPosition kingPosition = kingPosition(teamColor);
         if(!isInCheck(teamColor))
             return false;
-        int[][] directions = {{1,1},{1,-1},{-1,1},{-1,-1},{1,0},{-1,0},{0,1},{0,-1}};
-        for(int[] dir:directions)
-        {
-            int row = kingPosition.getRow() + dir[0]; int col = kingPosition.getColumn() + dir[1];
-            if(bounds(row,col))
+        for(int i = 1; i < 9;i++)
+            for (int x = 1; x < 9; x++)
             {
-                ChessPosition pos = new ChessPosition(row, col);
-                ChessPiece target = board.getPiece(pos);
-                if(!kingBlocks(pos, teamColor) && ((target == null && !isInCheck(teamColor, pos)) || (target != null && target.getTeamColor() != teamColor && !isInCheck(teamColor, pos))))
+                ChessPiece piece = board.getPiece(i,x);
+                if(piece != null && piece.getTeamColor() == teamColor && !validMoves(new ChessPosition(i,x)).isEmpty())
                     return false;
             }
-        }
         return true;
     }
     public boolean kingBlocks(ChessPosition myPosition, TeamColor color)
@@ -326,25 +327,7 @@ public class ChessGame
             }
         return null;
     }
-    /**
-     * Sets this game's chessboard to a given board
-     *
-     * @param board the new board to use
-     */
-    public void setBoard(ChessBoard board)
-    {
-        this.board = board;
-    }
 
-    /**
-     * Gets the current chessboard
-     *
-     * @return the chessboard
-     */
-    public ChessBoard getBoard()
-    {
-        return board;
-    }
 
     @Override
     public boolean equals(Object o)

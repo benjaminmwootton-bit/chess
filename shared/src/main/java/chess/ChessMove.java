@@ -59,7 +59,7 @@ public class ChessMove {
     public String toString()
     {
         StringBuilder str = new StringBuilder();
-        //str.append(startPosition);
+        str.append(startPosition);
         str.append(endPosition);
         if(piece != null)
             str.append(piece);
