@@ -107,12 +107,6 @@ public class ChessGame
         return (pawnChecks(kingPosition, teamColor));
     }
 
-    public boolean linearChecks(ChessPosition myPosition, int[][] directions, ChessPiece.PieceType type)
-    {
-        ChessPiece piece = board.getPiece(myPosition);
-        ChessGame.TeamColor color = piece.getTeamColor();
-        return linearChecks(myPosition,directions,type, color);
-    }
     public boolean linearChecks(ChessPosition myPosition, int[][] directions, ChessPiece.PieceType type, TeamColor color)
     {
         ChessPiece piece = board.getPiece(myPosition);
@@ -135,12 +129,6 @@ public class ChessGame
         return false;
     }
 
-    public boolean nonLinearChecks(ChessPosition myPosition, int[][] directions)
-    {
-        ChessPiece piece = board.getPiece(myPosition);
-        ChessGame.TeamColor color = piece.getTeamColor();
-        return nonLinearChecks(myPosition,directions,color);
-    }
     public boolean nonLinearChecks(ChessPosition myPosition, int[][] directions, TeamColor color)
     {
         ChessPiece piece = board.getPiece(myPosition);
@@ -157,12 +145,6 @@ public class ChessGame
         return false;
     }
 
-    public boolean pawnChecks(ChessPosition myPosition)
-    {
-        ChessPiece king = board.getPiece(myPosition);
-        ChessGame.TeamColor color = king.getTeamColor();
-        return pawnChecks(myPosition,color);
-    }
     public boolean pawnChecks(ChessPosition myPosition, TeamColor color)
     {
         ChessPiece king = board.getPiece(myPosition);
