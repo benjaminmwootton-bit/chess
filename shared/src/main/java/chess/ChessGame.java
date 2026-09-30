@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -253,7 +254,26 @@ public class ChessGame
      */
     public boolean isInStalemate(TeamColor teamColor)
     {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPosition = kingPosition(teamColor);
+        ChessPiece king = board.getPiece(kingPosition);
+        Collection<ChessMove> moves = king.pieceMoves(board,kingPosition);
+        for (ChessMove move:moves)
+        {
+            if(!isInCheck(teamColor, kingPosition))
+                return false;
+        }
+        for(int i = 1; i < 9;i++)
+            for (int x = 1; x < 9; x++)
+            {
+                ChessPiece piece = board.getPiece(i,x);
+                if(piece != null && piece.getTeamColor() == teamColor)
+                {
+                    Collection<ChessMove> moves1 = piece.pieceMoves(board,new ChessPosition(i,x));
+                    if(!moves1.isEmpty())
+                        return false;
+                }
+            }
+        return true;
     }
 
     //returns the position of a team's King
