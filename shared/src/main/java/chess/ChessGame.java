@@ -153,7 +153,9 @@ public class ChessGame
                 board.addPiece(end,piece);
             board.removePiece(start);
 
-            if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
+            if(type == KING && abs(end.getColumn()- start.getColumn()) > 1)
+                castleRooks(end);
+            else if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
                 pushPawn(piece);
             movePiece(piece);
             switchTurn();
@@ -180,7 +182,9 @@ public class ChessGame
             board.addPiece(end,piece);
         board.removePiece(start);
 
-        if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
+        if(type == KING && abs(end.getColumn()- start.getColumn()) > 1)
+            castleRooks(end);
+        else if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
             pushPawn(piece);
         movePiece(piece);
         switchTurn();
@@ -208,16 +212,77 @@ public class ChessGame
             board.addPiece(end, capture);
         else
             board.removePiece(end);
+        if(board.getPiece(start).getPieceType() == KING && abs(end.getColumn()- start.getColumn()) > 1)
+            unCastleRooks(start);
         setMoved(board.getPiece(end), hasMoved);
         switchTurn();
     }
+
+    public void castleRooks(ChessPosition end)
+    {
+        if(end.getRow() == 1)
+        {
+            if(end.getColumn() == 3)
+            {
+                board.addPiece(1,4, new ChessPiece(WHITE,ROOK));
+                board.removePiece(1,1);
+            }
+            else
+            {
+                board.addPiece(1,6, new ChessPiece(WHITE,ROOK));
+                board.removePiece(1,8);
+            }
+        }
+        else
+        {
+            if(end.getColumn() == 3)
+            {
+                board.addPiece(8,4, new ChessPiece(BLACK,ROOK));
+                board.removePiece(8,1);
+            }
+            else
+            {
+                board.addPiece(8,6, new ChessPiece(BLACK,ROOK));
+                board.removePiece(8,8);
+            }
+        }
+    }
+    public void unCastleRooks(ChessPosition start)
+    {
+        if(start.getRow() == 1)
+        {
+            if(start.getColumn() == 3)
+            {
+                board.removePiece(1,4);
+                board.addPiece(1,1, new ChessPiece(WHITE,ROOK));
+            }
+            else
+            {
+                board.removePiece(1,6);
+                board.addPiece(1,8, new ChessPiece(WHITE,ROOK));
+            }
+        }
+        else
+        {
+            if(start.getColumn() == 3)
+            {
+                board.removePiece(8,4);
+                board.addPiece(8,1, new ChessPiece(BLACK,ROOK));
+            }
+            else
+            {
+                board.removePiece(8,6);
+                board.addPiece(8,8, new ChessPiece(BLACK,ROOK));
+            }
+        }
+    }
+
     /**
      * Determines if the given team is in check
      *
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-
     public boolean isInCheck(TeamColor teamColor)
     {
         ChessPosition kingPosition = kingPosition(teamColor);
