@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.*;
-import static chess.ChessPiece.*;
 import static chess.ChessPiece.PieceType.*;
+import static chess.ChessPiece.*;
 import static java.lang.Math.abs;
 
 /**
@@ -107,10 +107,11 @@ public class ChessGame
             for (ChessMove move: possibleMoves)
             {
                 ChessPiece capture = board.getPiece(move.getEndPosition());
+                boolean wasPawn = (type == PAWN);
                 moveMake(move);
                 if(!isInCheck(color,kingPosition))
                     validMoves.add(move);
-                unMakeMove(move, capture);
+                unMakeMove(move, capture, wasPawn);
             }
         }
         return validMoves;
@@ -126,21 +127,29 @@ public class ChessGame
     {
         if (board.getPiece(move.getStartPosition()) == null)
             throw new InvalidMoveException();
+        if(board.getPiece(move.getStartPosition()).getTeamColor() != getTeamTurn())
+            throw new InvalidMoveException();
         if(!validMoves(move.getStartPosition()).contains(move))
             throw new InvalidMoveException();
         else
         {
-            ChessPiece piece = board.getPiece(move.getStartPosition());
-            PieceType type = piece.getPieceType();
-            TeamColor color = piece.getTeamColor();
-
             ChessPosition end = move.getEndPosition();
             ChessPosition start = move.getStartPosition();
 
+            ChessPiece piece = board.getPiece(start);
+            PieceType type = piece.getPieceType();
+            TeamColor color = piece.getTeamColor();
+            PieceType promotion = move.getPromotionPiece();
+
             unPushAllPieces(piece, color);
 
-            board.addPiece(end,piece);
-            board.removePiece(end);
+            if(type == PAWN && promotion != null)
+            {
+                board.addPiece(end, new ChessPiece(color, promotion));
+            }
+            else
+                board.addPiece(end,piece);
+            board.removePiece(start);
 
             if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
                 pushPawn(piece);
@@ -150,19 +159,23 @@ public class ChessGame
 
     public void moveMake(ChessMove move)
     {
-        if(board.getPiece(move.getStartPosition()) == null)
-            return;
-        ChessPiece piece = board.getPiece(move.getStartPosition());
-        PieceType type = piece.getPieceType();
-        TeamColor color = piece.getTeamColor();
-
         ChessPosition end = move.getEndPosition();
         ChessPosition start = move.getStartPosition();
 
+        ChessPiece piece = board.getPiece(start);
+        PieceType type = piece.getPieceType();
+        TeamColor color = piece.getTeamColor();
+        PieceType promotion = move.getPromotionPiece();
+
         unPushAllPieces(piece, color);
 
-        board.addPiece(end,piece);
-        board.removePiece(end);
+        if(type == PAWN && promotion != null)
+        {
+            board.addPiece(end, new ChessPiece(color, promotion));
+        }
+        else
+            board.addPiece(end,piece);
+        board.removePiece(start);
 
         if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
             pushPawn(piece);
@@ -179,13 +192,18 @@ public class ChessGame
                 }
     }
 
-    public void unMakeMove(ChessMove move, ChessPiece capture)
+    public void unMakeMove(ChessMove move, ChessPiece capture, boolean wasPawn)
     {
-        board.addPiece(move.getStartPosition(), board.getPiece(move.getEndPosition()));
-        if(capture != null)
-            board.addPiece(move.getEndPosition(), capture);
+        ChessPosition end = move.getEndPosition();
+        ChessPosition start = move.getStartPosition();
+        if(wasPawn)
+            board.addPiece(start, new ChessPiece(board.getPiece(end).getTeamColor(), PAWN));
         else
-            board.removePiece(move.getEndPosition());
+            board.addPiece(start,board.getPiece(end));
+        if(capture != null)
+            board.addPiece(end, capture);
+        else
+            board.removePiece(end);
     }
     /**
      * Determines if the given team is in check
