@@ -63,7 +63,7 @@ public class ChessGame
     {
         whiteTurn = (team == WHITE);
     }
-    public void switchTurn(TeamColor color){whiteTurn = !whiteTurn;};
+    public void switchTurn(){whiteTurn = !whiteTurn;};
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -153,7 +153,7 @@ public class ChessGame
 
             if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
                 pushPawn(piece);
-            switchTurn(color);
+            switchTurn();
         }
     }
 
@@ -179,7 +179,7 @@ public class ChessGame
 
         if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
             pushPawn(piece);
-        switchTurn(color);
+        switchTurn();
     }
 
     public void unPushAllPieces(ChessPiece piece, TeamColor color)
@@ -204,6 +204,7 @@ public class ChessGame
             board.addPiece(end, capture);
         else
             board.removePiece(end);
+        switchTurn();
     }
     /**
      * Determines if the given team is in check
