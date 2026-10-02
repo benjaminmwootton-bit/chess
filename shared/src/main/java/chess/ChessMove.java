@@ -10,11 +10,10 @@ import java.util.Objects;
  */
 public class ChessMove
 {
-
     private ChessPosition startPosition;
     private ChessPosition endPosition;
     private ChessPiece.PieceType piece;
-
+    //constructors
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece)
     {
@@ -28,7 +27,6 @@ public class ChessMove
         this.endPosition = endPosition;
         this.piece = null;
     }
-
     /**
      * @return ChessPosition of starting location
      */
@@ -36,7 +34,6 @@ public class ChessMove
     {
         return this.startPosition;
     }
-
     /**
      * @return ChessPosition of ending location
      */
@@ -44,7 +41,6 @@ public class ChessMove
     {
         return this.endPosition;
     }
-
     /**
      * Gets the type of piece to promote a pawn to if pawn promotion is part of this
      * chess move
@@ -55,7 +51,6 @@ public class ChessMove
     {
         return this.piece;
     }
-
     //(very) simplified chess notation
     public String toString()
     {

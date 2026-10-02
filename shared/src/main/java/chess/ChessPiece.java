@@ -16,7 +16,7 @@ import static chess.ChessPiece.PieceType.*;
 public class ChessPiece
 {
     private final ChessGame.TeamColor pieceColor;
-    private PieceType type;
+    private final PieceType type;
     private boolean hasMoved;
     private boolean pushed;
 
@@ -27,43 +27,24 @@ public class ChessPiece
         this.hasMoved = false;
         this.pushed = false;
     }
-
     //Sets hasMoved to true. Important to know if a pawn can push or if the king can castle
     public static void movePiece(ChessPiece piece)
     {
         if(piece != null)
             piece.hasMoved = true;
     }
+    //Set hasMoved to value passed in
     public static void setMoved(ChessPiece piece, boolean hasMoved)
     {
         if(piece != null)
             piece.hasMoved = hasMoved;
     }
-    public static boolean getMoved(ChessPiece piece)
-    {
-        return piece.hasMoved;
-    }
-
-    //Only need this because of en passant
-    public static void pushPawn(ChessPiece piece)
-    {
-        if(piece != null)
-            piece.pushed = true;
-    }
-    public static void unPushPawn(ChessPiece piece)
-    {
-        if(piece != null)
-            piece.pushed = false;
-    }
-    public static boolean getPush(ChessPiece piece)
-    {
-        return piece.pushed;
-    }
-    public static void setPush(ChessPiece piece, boolean pushed)
-    {
-        piece.pushed = pushed;
-    }
-
+    public static boolean getMoved(ChessPiece piece) {return piece.hasMoved;}
+    //Sets pushed to true
+    public static void pushPawn(ChessPiece piece) {piece.pushed = true;}
+    public static void unPushPawn(ChessPiece piece) {piece.pushed = false;}
+    public static boolean getPush(ChessPiece piece) {return piece.pushed;}
+    public static void setPush(ChessPiece piece, boolean pushed) {piece.pushed = pushed;}
     /**
      * The various different chess piece options
      */
@@ -76,23 +57,14 @@ public class ChessPiece
         ROOK,
         PAWN
     }
-
     /**
      * @return Which team this chess piece belongs to
      */
-    public ChessGame.TeamColor getTeamColor()
-    {
-        return pieceColor;
-    }
-
+    public ChessGame.TeamColor getTeamColor() {return pieceColor;}
     /**
      * @return which type of chess piece this piece is
      */
-    public PieceType getPieceType()
-    {
-        return type;
-    }
-
+    public PieceType getPieceType() {return type;}
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -117,7 +89,6 @@ public class ChessPiece
             moves = kingMoves(board, myPosition);
         return moves;
     }
-
     //handles movement for rooks, bishops, and queens
     public Collection<ChessMove> linearMoves(ChessBoard board, ChessPosition myPosition, int[][] directions)
     {
@@ -126,7 +97,7 @@ public class ChessPiece
         ChessGame.TeamColor color = piece.getTeamColor();
         for(int[] dir:directions)
         {
-            int row = myPosition.getRow() + dir[0]; int col = myPosition.getColumn() + dir[1];
+            int row = myPosition.row() + dir[0]; int col = myPosition.column() + dir[1];
             while (bounds(row, col))
             {
                 ChessPiece target = board.getPiece(row,col);
@@ -143,7 +114,6 @@ public class ChessPiece
         }
         return moves;
     }
-
     //handles King and Knight movement
     public Collection<ChessMove> nonLinearMoves(ChessBoard board, ChessPosition myPosition, int[][] directions)
     {
@@ -152,7 +122,7 @@ public class ChessPiece
         ChessGame.TeamColor color = piece.getTeamColor();
         for(int[] dir:directions)
         {
-            int row = myPosition.getRow() + dir[0]; int col = myPosition.getColumn() + dir[1];
+            int row = myPosition.row() + dir[0]; int col = myPosition.column() + dir[1];
             if(bounds(row,col))
             {
                 ChessPiece target = board.getPiece(row,col);
@@ -162,19 +132,16 @@ public class ChessPiece
         }
         return moves;
     }
-
     public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition)
     {
         int[][] directions = {{-1,0},{1,0},{0,-1},{0,1}};
         return linearMoves(board,myPosition,directions);
     }
-
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition)
     {
         int[][] directions = {{-1,1},{-1,-1},{1,-1},{1,1}};
         return linearMoves(board,myPosition,directions);
     }
-
     public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition)
     {
         ArrayList<ChessMove> queenMoves = new ArrayList<>();
@@ -182,25 +149,22 @@ public class ChessPiece
         queenMoves.addAll(bishopMoves(board,myPosition));
         return queenMoves;
     }
-
     public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition)
     {
         int[][] directions = {{2,1},{2,-1},{1,2},{1,-2},{-1,2},{-1,-2},{-2,1},{-2,-1}};
         return nonLinearMoves(board,myPosition,directions);
     }
-
     public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition)
     {
         int[][] directions = {{1,1},{1,-1},{-1,1},{-1,-1},{1,0},{-1,0},{0,1},{0,-1}};
         return nonLinearMoves(board,myPosition,directions);
     }
-
     public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition)
     {
         ArrayList<ChessMove> pawnMoves = new ArrayList<>();
         ChessPiece pawn = board.getPiece(myPosition);
         var color = pawn.getTeamColor();
-        int col = myPosition.getColumn(); int row = myPosition.getRow();
+        int col = myPosition.column(); int row = myPosition.row();
         if(color == BLACK)
         {
             if(row == 7)//moving forward if the pawn hasn't been moved
@@ -259,7 +223,7 @@ public class ChessPiece
         ArrayList<ChessMove> pawnMovesPromotions = new ArrayList<>();
         for(ChessMove move:pawnMoves)
         {
-            int tempEnd = move.getEndPosition().getRow();
+            int tempEnd = move.getEndPosition().row();
             if((color == WHITE && tempEnd == 8) || (color == BLACK && tempEnd == 1))
             {
                 pawnMovesPromotions.add(new ChessMove(move.getStartPosition(),move.getEndPosition(),QUEEN));
@@ -272,13 +236,9 @@ public class ChessPiece
         }
         return pawnMovesPromotions;
     }
-
-    //checks if in bounds
-    public boolean bounds(int row, int col)
-    {
-        return row < 9 && row > 0 && col < 9 && col > 0;
-    }
-
+    //checks if in bounds of chess board
+    public boolean bounds(int row, int col) {return row < 9 && row > 0 && col < 9 && col > 0;}
+    //returns Unicode chess pieces
     public String toString()
     {
         if (this.pieceColor == BLACK)

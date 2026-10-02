@@ -17,7 +17,6 @@ public class ChessBoard
     private ChessPiece[][] board = new ChessPiece[8][8];
 
     public ChessBoard() {}
-
     /**
      * Adds a chess piece to the chessboard
      *
@@ -26,7 +25,7 @@ public class ChessBoard
      */
     public void addPiece(ChessPosition position, ChessPiece piece)
     {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        board[position.row()-1][position.column()-1] = piece;
     }
     //overload. takes row, column, and piece
     public void addPiece(int row, int column, ChessPiece piece)
@@ -40,11 +39,9 @@ public class ChessBoard
     }
     public void removePiece(ChessPosition pos)
     {
-        int row = pos.getRow(); int column = pos.getColumn();
+        int row = pos.row(); int column = pos.column();
         board[row-1][column-1] = null;
     }
-
-
     /**
      * Gets a chess piece on the chessboard
      *
@@ -54,13 +51,12 @@ public class ChessBoard
      */
     public ChessPiece getPiece(ChessPosition position)
     {
-        return board[position.getRow()-1][position.getColumn()-1];
+        return board[position.row()-1][position.column()-1];
     }
     public ChessPiece getPiece(int row, int column)
     {
         return board[row-1][column-1];
     }
-
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
@@ -105,7 +101,7 @@ public class ChessBoard
         addPiece(1, 7, new ChessPiece(WHITE, KNIGHT));
         addPiece(1, 8, new ChessPiece(WHITE, ROOK));
     }
-
+    //prints out board
     @Override
     public String toString()
     {
