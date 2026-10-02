@@ -99,6 +99,7 @@ public class ChessGame
                         validMoves.add(new ChessMove(startPosition, pos));
                 }
             }
+            validMoves.addAll(castle(piece,color,startPosition));
         }
         else
         {
@@ -107,11 +108,12 @@ public class ChessGame
             for (ChessMove move: possibleMoves)
             {
                 ChessPiece capture = board.getPiece(move.getEndPosition());
+                boolean hasMoved = getMoved(piece);
                 boolean wasPawn = (type == PAWN);
                 moveMake(move);
                 if(!isInCheck(color,kingPosition))
                     validMoves.add(move);
-                unMakeMove(move, capture, wasPawn);
+                unMakeMove(move, capture, wasPawn, hasMoved);
             }
         }
         return validMoves;
@@ -153,6 +155,7 @@ public class ChessGame
 
             if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
                 pushPawn(piece);
+            movePiece(piece);
             switchTurn();
         }
     }
@@ -179,6 +182,7 @@ public class ChessGame
 
         if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
             pushPawn(piece);
+        movePiece(piece);
         switchTurn();
     }
 
@@ -192,7 +196,7 @@ public class ChessGame
                 }
     }
 
-    public void unMakeMove(ChessMove move, ChessPiece capture, boolean wasPawn)
+    public void unMakeMove(ChessMove move, ChessPiece capture, boolean wasPawn, boolean hasMoved)
     {
         ChessPosition end = move.getEndPosition();
         ChessPosition start = move.getStartPosition();
@@ -204,6 +208,7 @@ public class ChessGame
             board.addPiece(end, capture);
         else
             board.removePiece(end);
+        setMoved(board.getPiece(end), hasMoved);
         switchTurn();
     }
     /**
@@ -345,6 +350,18 @@ public class ChessGame
         }
         return false;
     }
+    //returns the position of a team's King
+    public ChessPosition kingPosition(TeamColor teamColor)
+    {
+        for(int i = 1; i < 9;i++)
+            for (int x = 1; x < 9; x++)
+            {
+                ChessPiece piece = board.getPiece(i,x);
+                if (piece != null && piece.getPieceType() == KING && piece.getTeamColor() == teamColor)
+                    return new ChessPosition(i,x);
+            }
+        return null;
+    }
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
@@ -372,19 +389,45 @@ public class ChessGame
         return true;
     }
 
-    //returns the position of a team's King
-    public ChessPosition kingPosition(TeamColor teamColor)
+    public Collection<ChessMove> castle(ChessPiece king, TeamColor color, ChessPosition kingPosition)
     {
-        for(int i = 1; i < 9;i++)
-            for (int x = 1; x < 9; x++)
+        Collection<ChessMove> castleMoves = new ArrayList<>();
+        if(!getMoved(king) && !isInCheck(color, kingPosition))
+        {
+            if (color == BLACK)
             {
-                ChessPiece piece = board.getPiece(i,x);
-                if (piece != null && piece.getPieceType() == KING && piece.getTeamColor() == teamColor)
-                    return new ChessPosition(i,x);
+                int[][] squares1 = {{8,3},{8,4}};
+                ChessPiece rook1 = board.getPiece(8,1);
+                if(rook1 != null && !getMoved(rook1) && board.getPiece(8,2) == null && castleHelper(color,squares1))
+                    castleMoves.add(new ChessMove(kingPosition,new ChessPosition(8,3)));
+                int[][] squares2 = {{8,6},{8,7}};
+                ChessPiece rook2 = board.getPiece(8,8);
+                if(rook1 != null && !getMoved(rook2) && castleHelper(color,squares2))
+                    castleMoves.add(new ChessMove(kingPosition,new ChessPosition(8,7)));
             }
-        return null;
+            else
+            {
+                int[][] squares1 = {{1,3},{1,4}};
+                ChessPiece rook1 = board.getPiece(1,1);
+                if(rook1 != null && !getMoved(rook1) && board.getPiece(1,2) == null && castleHelper(color,squares1))
+                    castleMoves.add(new ChessMove(kingPosition,new ChessPosition(1,3)));
+                int[][] squares2 = {{1,6},{1,7}};
+                ChessPiece rook2 = board.getPiece(1,8);
+                if(rook1 != null && !getMoved(rook2) && castleHelper(color,squares2))
+                    castleMoves.add(new ChessMove(kingPosition,new ChessPosition(1,7)));
+            }
+        }
+        return castleMoves;
     }
-
+    public boolean castleHelper(TeamColor color, int[][] squares)
+    {
+        for(int[] square:squares)
+        {
+            if(board.getPiece(square[0],square[1]) != null || isInCheck(color, new ChessPosition(square[0],square[1])))
+                return false;
+        }
+        return true;
+    }
 
     @Override
     public boolean equals(Object o)

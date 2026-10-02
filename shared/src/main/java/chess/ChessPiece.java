@@ -40,12 +40,27 @@ public class ChessPiece
         if(piece != null)
             piece.hasMoved = true;
     }
-    public static void unMovePiece(ChessPiece piece)
+    public static void setMoved(ChessPiece piece, boolean hasMoved)
     {
         if(piece != null)
-            piece.hasMoved = false;
+            piece.hasMoved = hasMoved;
+    }
+    public static boolean getMoved(ChessPiece piece)
+    {
+        return piece.hasMoved;
     }
 
+    //Only need this because of en passant
+    public static void pushPawn(ChessPiece piece)
+    {
+        if(piece != null)
+            piece.pushed = true;
+    }
+    public static void unPushPawn(ChessPiece piece)
+    {
+        if(piece != null)
+            piece.pushed = false;
+    }
 
     /**
      * The various different chess piece options
@@ -254,17 +269,6 @@ public class ChessPiece
                 pawnMovesPromotions.add(move);
         }
         return pawnMovesPromotions;
-    }
-    //Only need this because of en passant
-    public static void pushPawn(ChessPiece piece)
-    {
-        if(piece != null)
-            piece.pushed = true;
-    }
-    public static void unPushPawn(ChessPiece piece)
-    {
-        if(piece != null)
-            piece.pushed = false;
     }
 
     //checks if in bounds
