@@ -5,14 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-import static chess.ChessGame.TeamColor.WHITE;
-import static chess.ChessGame.TeamColor.BLACK;
-import static chess.ChessPiece.PieceType.BISHOP;
-import static chess.ChessPiece.PieceType.KNIGHT;
-import static chess.ChessPiece.PieceType.ROOK;
-import static chess.ChessPiece.PieceType.PAWN;
-import static chess.ChessPiece.PieceType.QUEEN;
-import static chess.ChessPiece.PieceType.KING;
+import static chess.ChessGame.TeamColor.*;
+import static chess.ChessPiece.*;
+import static chess.ChessPiece.PieceType.*;
+import static java.lang.Math.abs;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -67,7 +63,7 @@ public class ChessGame
     {
         whiteTurn = (team == WHITE);
     }
-
+    public void switchTurn(TeamColor color){whiteTurn = !whiteTurn;};
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -111,11 +107,7 @@ public class ChessGame
             for (ChessMove move: possibleMoves)
             {
                 ChessPiece capture = board.getPiece(move.getEndPosition());
-                try{makeMove(move);}
-                catch (InvalidMoveException e)
-                {
-                    throw new RuntimeException(e);
-                }
+                moveMake(move);
                 if(!isInCheck(color,kingPosition))
                     validMoves.add(move);
                 unMakeMove(move, capture);
@@ -132,14 +124,61 @@ public class ChessGame
      */
     public void makeMove(ChessMove move) throws InvalidMoveException
     {
-        if(!validMoves(move.getStartPosition()).contains(move) || ((whiteTurn && board.getPiece(move.getStartPosition()).getTeamColor() == BLACK) || (!whiteTurn && board.getPiece(move.getStartPosition()).getTeamColor() == WHITE)))
+        if (board.getPiece(move.getStartPosition()) == null)
+            throw new InvalidMoveException();
+        if(!validMoves(move.getStartPosition()).contains(move))
             throw new InvalidMoveException();
         else
         {
-            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
-            board.removePiece(move.getStartPosition());
+            ChessPiece piece = board.getPiece(move.getStartPosition());
+            PieceType type = piece.getPieceType();
+            TeamColor color = piece.getTeamColor();
+
+            ChessPosition end = move.getEndPosition();
+            ChessPosition start = move.getStartPosition();
+
+            unPushAllPieces(piece, color);
+
+            board.addPiece(end,piece);
+            board.removePiece(end);
+
+            if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
+                pushPawn(piece);
+            switchTurn(color);
         }
     }
+
+    public void moveMake(ChessMove move)
+    {
+        if(board.getPiece(move.getStartPosition()) == null)
+            return;
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        PieceType type = piece.getPieceType();
+        TeamColor color = piece.getTeamColor();
+
+        ChessPosition end = move.getEndPosition();
+        ChessPosition start = move.getStartPosition();
+
+        unPushAllPieces(piece, color);
+
+        board.addPiece(end,piece);
+        board.removePiece(end);
+
+        if(type == PAWN && abs(end.getRow() - start.getRow()) > 1)
+            pushPawn(piece);
+        switchTurn(color);
+    }
+
+    public void unPushAllPieces(ChessPiece piece, TeamColor color)
+    {
+            for(int i = 1; i < 9;i++)
+                for (int x = 1; x < 9; x++)
+                {
+                    if(board.getPiece(i,x) != null && board.getPiece(i,x).getTeamColor() == color)
+                        unPushPawn(piece);
+                }
+    }
+
     public void unMakeMove(ChessMove move, ChessPiece capture)
     {
         board.addPiece(move.getStartPosition(), board.getPiece(move.getEndPosition()));
@@ -147,7 +186,6 @@ public class ChessGame
             board.addPiece(move.getEndPosition(), capture);
         else
             board.removePiece(move.getEndPosition());
-        //
     }
     /**
      * Determines if the given team is in check

@@ -46,60 +46,6 @@ public class ChessPiece
             piece.hasMoved = false;
     }
 
-    public String toString()
-    {
-        if (this.pieceColor == BLACK)
-        {
-            if (this.type == ROOK)
-                return "♜";
-            else if(this.type == KNIGHT)
-                return "♞";
-            else if (this.type == BISHOP)
-                return "♝";
-            else if (this.type == QUEEN)
-                return "♛";
-            else if (this.type == KING)
-                return "♚";
-            else if (this.type == PAWN)
-                return "♟";
-            else
-                return null;
-        }
-        else if (this.pieceColor == WHITE)
-        {
-            if (this.type == ROOK)
-                return "♖";
-            else if(this.type == KNIGHT)
-                return "♘";
-            else if (this.type == BISHOP)
-                return "♗";
-            else if (this.type == QUEEN)
-                return "♕";
-            else if (this.type == KING)
-                return "♔";
-            else if (this.type == PAWN)
-                return "♙";
-            else
-                return null;
-        }
-        else
-            return null;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (o == null || getClass() != o.getClass())
-            return false;
-        ChessPiece that = (ChessPiece) o;
-        return pieceColor == that.pieceColor && type == that.type;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(pieceColor, type) * 17;
-    }
 
     /**
      * The various different chess piece options
@@ -315,7 +261,7 @@ public class ChessPiece
         if(piece != null)
             piece.pushed = true;
     }
-    public static void unpushPawn(ChessPiece piece)
+    public static void unPushPawn(ChessPiece piece)
     {
         if(piece != null)
             piece.pushed = false;
@@ -325,5 +271,60 @@ public class ChessPiece
     public boolean bounds(int row, int col)
     {
         return row < 9 && row > 0 && col < 9 && col > 0;
+    }
+
+    public String toString()
+    {
+        if (this.pieceColor == BLACK)
+        {
+            if (this.type == ROOK)
+                return "♜";
+            else if(this.type == KNIGHT)
+                return "♞";
+            else if (this.type == BISHOP)
+                return "♝";
+            else if (this.type == QUEEN)
+                return "♛";
+            else if (this.type == KING)
+                return "♚";
+            else if (this.type == PAWN)
+                return "♟";
+            else
+                return null;
+        }
+        else if (this.pieceColor == WHITE)
+        {
+            if (this.type == ROOK)
+                return "♖";
+            else if(this.type == KNIGHT)
+                return "♘";
+            else if (this.type == BISHOP)
+                return "♗";
+            else if (this.type == QUEEN)
+                return "♕";
+            else if (this.type == KING)
+                return "♔";
+            else if (this.type == PAWN)
+                return "♙";
+            else
+                return null;
+        }
+        else
+            return null;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(pieceColor, type) * 17;
     }
 }
