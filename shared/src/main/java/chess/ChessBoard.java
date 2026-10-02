@@ -3,14 +3,8 @@ package chess;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static chess.ChessGame.TeamColor.WHITE;
-import static chess.ChessGame.TeamColor.BLACK;
-import static chess.ChessPiece.PieceType.BISHOP;
-import static chess.ChessPiece.PieceType.KNIGHT;
-import static chess.ChessPiece.PieceType.ROOK;
-import static chess.ChessPiece.PieceType.PAWN;
-import static chess.ChessPiece.PieceType.QUEEN;
-import static chess.ChessPiece.PieceType.KING;
+import static chess.ChessGame.TeamColor.*;
+import static chess.ChessPiece.PieceType.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -73,13 +67,8 @@ public class ChessBoard
      */
     public void resetBoard()
     {
-        for(int i = 1; i < 9;i++)
-        {
-            for(int x = 1; x < 9; x++)
-            {
-                removePiece(x,i);
-            }
-        }
+        board = new ChessPiece[8][8];
+
         addPiece(8, 1, new ChessPiece(BLACK, ROOK));
         addPiece(8, 2, new ChessPiece(BLACK, KNIGHT));
         addPiece(8, 3, new ChessPiece(BLACK, BISHOP));

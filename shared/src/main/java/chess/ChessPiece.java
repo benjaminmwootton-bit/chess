@@ -4,14 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-import static chess.ChessGame.TeamColor.WHITE;
-import static chess.ChessGame.TeamColor.BLACK;
-import static chess.ChessPiece.PieceType.BISHOP;
-import static chess.ChessPiece.PieceType.KNIGHT;
-import static chess.ChessPiece.PieceType.ROOK;
-import static chess.ChessPiece.PieceType.PAWN;
-import static chess.ChessPiece.PieceType.QUEEN;
-import static chess.ChessPiece.PieceType.KING;
+import static chess.ChessGame.TeamColor.*;
+import static chess.ChessPiece.PieceType.*;
 
 /**
  * Represents a single chess piece
@@ -60,6 +54,14 @@ public class ChessPiece
     {
         if(piece != null)
             piece.pushed = false;
+    }
+    public static boolean getPush(ChessPiece piece)
+    {
+        return piece.pushed;
+    }
+    public static void setPush(ChessPiece piece, boolean pushed)
+    {
+        piece.pushed = pushed;
     }
 
     /**
@@ -222,9 +224,9 @@ public class ChessPiece
                 pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col+1)));
             //en passant
             if(bounds(row, col + 1) && board.getPiece(row,col+1) != null && board.getPiece(row,col+1).type == PAWN && board.getPiece(row,col+1).pushed)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row,col+1)));
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col+1)));
             if(bounds(row, col - 1) && board.getPiece(row,col-1) != null && board.getPiece(row,col-1).type == PAWN && board.getPiece(row,col-1).pushed)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row,col-1)));
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col-1)));
         }
         else if(color == WHITE)
         {
@@ -249,9 +251,9 @@ public class ChessPiece
                 pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1,col+1)));
             //en passant
             if(bounds(row, col + 1) && board.getPiece(row,col+1) != null && board.getPiece(row,col+1).type == PAWN && board.getPiece(row,col+1).pushed)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row,col+1)));
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row+1,col+1)));
             if(bounds(row, col - 1) && board.getPiece(row,col-1) != null && board.getPiece(row,col-1).type == PAWN && board.getPiece(row,col-1).pushed)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row,col-1)));
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row+1,col-1)));
         }
         //promotions
         ArrayList<ChessMove> pawnMovesPromotions = new ArrayList<>();
