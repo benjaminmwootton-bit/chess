@@ -75,18 +75,15 @@ public class ChessPiece
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
         Collection<ChessMove> moves = new ArrayList<>();
-        if(board.getPiece(myPosition).type == PAWN)
-            moves = pawnMoves(board, myPosition);
-        else if(board.getPiece(myPosition).type == ROOK)
-            moves = rookMoves(board, myPosition);
-        else if(board.getPiece(myPosition).type == BISHOP)
-            moves = bishopMoves(board, myPosition);
-        else if(board.getPiece(myPosition).type == KNIGHT)
-            moves = knightMoves(board, myPosition);
-        else if(board.getPiece(myPosition).type == QUEEN)
-            moves = queenMoves(board, myPosition);
-        else if(board.getPiece(myPosition).type == KING)
-            moves = kingMoves(board, myPosition);
+        switch (board.getPiece(myPosition).type)
+        {
+            case PAWN -> moves = pawnMoves(board, myPosition);
+            case ROOK -> moves = rookMoves(board, myPosition);
+            case KNIGHT -> moves = knightMoves(board, myPosition);
+            case BISHOP -> moves = bishopMoves(board, myPosition);
+            case QUEEN -> moves = queenMoves(board, myPosition);
+            case KING -> moves =kingMoves(board, myPosition);
+        }
         return moves;
     }
     //handles movement for rooks, bishops, and queens
@@ -241,42 +238,32 @@ public class ChessPiece
     //returns Unicode chess pieces
     public String toString()
     {
+        String piece = null;
         if (this.pieceColor == BLACK)
         {
-            if (this.type == ROOK)
-                return "♜";
-            else if(this.type == KNIGHT)
-                return "♞";
-            else if (this.type == BISHOP)
-                return "♝";
-            else if (this.type == QUEEN)
-                return "♛";
-            else if (this.type == KING)
-                return "♚";
-            else if (this.type == PAWN)
-                return "♟";
-            else
-                return null;
+            switch (this.type)
+            {
+                case ROOK -> piece = "♜";
+                case KNIGHT -> piece = "♞";
+                case BISHOP -> piece = "♝";
+                case QUEEN -> piece = "♛";
+                case KING -> piece = "♚";
+                case PAWN -> piece = "♟";
+            }
         }
         else if (this.pieceColor == WHITE)
         {
-            if (this.type == ROOK)
-                return "♖";
-            else if(this.type == KNIGHT)
-                return "♘";
-            else if (this.type == BISHOP)
-                return "♗";
-            else if (this.type == QUEEN)
-                return "♕";
-            else if (this.type == KING)
-                return "♔";
-            else if (this.type == PAWN)
-                return "♙";
-            else
-                return null;
+            switch (this.type)
+            {
+                case ROOK -> piece = "♖";
+                case KNIGHT -> piece = "♘";
+                case BISHOP -> piece = "♗";
+                case QUEEN -> piece = "♕";
+                case KING -> piece = "♔";
+                case PAWN -> piece = "♙";
+            }
         }
-        else
-            return null;
+        return piece;
     }
 
     @Override

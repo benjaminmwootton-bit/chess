@@ -52,10 +52,7 @@ public class ChessGame
         else return BLACK;
     }
     //returns turn count
-    public int getTurnCount()
-    {
-        return turnCount;
-    }
+    public int getTurnCount() {return turnCount;}
 
     /**
      * Sets which teams turn it is
@@ -66,7 +63,7 @@ public class ChessGame
     {
         whiteTurn = (team == WHITE);
     }
-    public void switchTurn(){whiteTurn = !whiteTurn;};
+    public void switchTurn(){whiteTurn = !whiteTurn;}
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
