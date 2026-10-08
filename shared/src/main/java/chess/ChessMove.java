@@ -55,10 +55,11 @@ public class ChessMove
     public String toString()
     {
         StringBuilder str = new StringBuilder();
-        str.append(startPosition);
-        str.append(endPosition);
+        String[] col = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        str.append(col[startPosition.column() - 1]).append(startPosition.row());
+        str.append(col[endPosition.column() - 1]).append(endPosition.row());
         if(piece != null)
-            str.append(piece);
+            str.append("=").append(piece);
         return str.toString();
     }
 
