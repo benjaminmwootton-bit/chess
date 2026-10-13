@@ -1,11 +1,16 @@
 package dataaccess;
 
+import model.AuthData;
+import model.GameData;
+import model.UserData;
+
+import java.util.List;
+
 public interface DataAccess
 {
-    //returns authToken
-    String createUser(String username, String password, String email);
+    void createUser(UserData userData) throws DataAccessException;
     //returns UserData
-    String getUser(String username);
+    UserData getUser(String username);
 
     //return new authToken
     String createAuth();
@@ -14,14 +19,14 @@ public interface DataAccess
     void deleteAuth(String authToken);
 
     //returns gameID
-    String createGame();
+    int createGame(String gameName);
     //returns gameID
-    String getGame(String gameID);
+    GameData getGame(int gameID);
     //returns all gameData
-    String listGames();
+    List<GameData> listGames();
 
     //to join a game/make a move
-    void updateGame(String gameData);
+    void updateGame(GameData gameData) throws DataAccessException;
 
     void clear();
 }

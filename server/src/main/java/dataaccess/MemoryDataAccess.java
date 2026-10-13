@@ -1,57 +1,79 @@
 package dataaccess;
 
+import java.util.*;
+
+import chess.ChessGame;
+import model.AuthData;
+import model.UserData;
+import model.GameData;
+
 public class MemoryDataAccess implements DataAccess
 {
-    //returns authToken
-    public String createUser(String username, String password, String email)
+    private final Map<String, UserData> users = new HashMap<>();
+    private final Map<String, AuthData> authTokens = new HashMap<>();
+    private final Map<Integer, GameData> games = new HashMap<>();
+    private int gameCount = 0;
+
+    public void createUser(UserData user) throws DataAccessException
     {
-        return "not implemented";
+        if(users.containsKey(user.username()))
+            throw new DataAccessException("Username already taken");
+        users.put(user.username(), user);
     }
     //returns UserData
-    public String getUser(String username)
+    public UserData getUser(String username)
     {
-        return "not implemented";
+        return users.get(username);
     }
 
     //return new authToken
     public String createAuth()
     {
-        return "not implemented";
+        return UUID.randomUUID().toString();
     }
     //return if authorization token exists
     public boolean getAuth(String authToken)
     {
-        return false;
+        return authTokens.containsKey(authToken);
     }
     public void deleteAuth(String authToken)
     {
-
+        authTokens.remove(authToken);
     }
 
     //returns gameID
-    public String createGame()
+    public int createGame(String gameName)
     {
-        return "not implemented";
+        int gameID = ++gameCount;
+        GameData gameData = new GameData(gameID,null,null,gameName, new ChessGame());
+        games.put(gameID, gameData);
+        return gameID;
     }
     //returns gameID
-    public String getGame(String gameID)
+    public GameData getGame(int gameID)
     {
-        return "not implemented";
+        return games.get(gameID);
     }
     //returns all gameData
-    public String listGames()
+    public List<GameData> listGames()
     {
-        return "not implemented";
+        return new ArrayList<>(games.values());
     }
 
     //to join a game/make a move
-    public void updateGame(String gameData)
+    public void updateGame(GameData gameData) throws DataAccessException
     {
-
+        if (!games.containsKey(gameData.gameID()))
+            throw new DataAccessException("Game does not exist");
+        games.put(gameData.gameID(), gameData);
     }
 
+    //clears all data
     public void clear()
     {
-
+        users.clear();
+        games.clear();
+        authTokens.clear();
+        gameCount = 0;
     }
 }

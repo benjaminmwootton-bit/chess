@@ -1,5 +1,7 @@
 package server;
 
+import dataaccess.DataAccess;
+import dataaccess.MemoryDataAccess;
 import io.javalin.*;
 import io.javalin.http.Context;
 import java.util.Map;
@@ -9,23 +11,33 @@ public class    Server
 {
 
     private final Javalin javalin;
+    private final DataAccess dataAccess;
 
     public Server()
     {
+        dataAccess = new MemoryDataAccess();
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        javalin.delete("/db", ctx -> ctx.json(Map.of()));
+        javalin.delete("/db", ctx ->
+        {
+            try
+            {
+                dataAccess.clear();
+                ctx.status(200);
+                ctx.json(Map.of());
+            }
+            catch (Exception e)
+            {
+                ctx.status(500);
+                ctx.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+        });
         // Register your endpoints and exception handlers here.
     }
 
-    private static void handle(Context ctx)
+    public int run(int desiredPort)
     {
-        var r = Map.of();
-        var json = new Gson();
-        ctx.json(json.toJson(r));
-    }
-
-    public int run(int desiredPort) {
         javalin.start(desiredPort);
         return javalin.port();
     }
