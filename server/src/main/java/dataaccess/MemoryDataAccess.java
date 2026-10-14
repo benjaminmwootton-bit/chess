@@ -14,16 +14,24 @@ public class MemoryDataAccess implements DataAccess
     private final Map<Integer, GameData> games = new HashMap<>();
     private int gameCount = 0;
 
-    public void createUser(UserData user) throws DataAccessException
+    public String createUser(UserData user) throws DataAccessException
     {
         if(users.containsKey(user.username()))
             throw new DataAccessException("Username already taken");
         users.put(user.username(), user);
+        var authToken = createAuth();
+        authTokens.put(user.username(), new AuthData(authToken, user.username()));
+        return authToken;
     }
     //returns UserData
     public UserData getUser(String username)
     {
         return users.get(username);
+    }
+    //returns if username is in users
+    public boolean userExists(String username)
+    {
+        return users.containsKey(username);
     }
 
     //return new authToken

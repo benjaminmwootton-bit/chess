@@ -8,9 +8,11 @@ import java.util.List;
 
 public interface DataAccess
 {
-    void createUser(UserData userData) throws DataAccessException;
+    //return authToken
+    String createUser(UserData userData) throws DataAccessException;
     //returns UserData
     UserData getUser(String username);
+    boolean userExists(String username);
 
     //return new authToken
     String createAuth();

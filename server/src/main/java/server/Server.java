@@ -3,13 +3,14 @@ package server;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import io.javalin.*;
-import io.javalin.http.Context;
 import java.util.Map;
 import com.google.gson.Gson;
+import service.registerRequest;
+import service.registerResult;
+import service.service;
 
-public class    Server
+public class Server
 {
-
     private final Javalin javalin;
     private final DataAccess dataAccess;
 
@@ -19,18 +20,35 @@ public class    Server
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        javalin.delete("/db", ctx ->
+        javalin.delete("/db", context ->
         {
             try
             {
                 dataAccess.clear();
-                ctx.status(200);
-                ctx.json(Map.of());
+                context.status(200);
+                context.json(Map.of());
             }
             catch (Exception e)
             {
-                ctx.status(500);
-                ctx.json(Map.of("message", "Error: " + e.getMessage()));
+                context.status(500);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+        });
+
+        javalin.post("/user", context ->
+        {
+            try
+            {
+                registerRequest request = new Gson().fromJson(context.body(), registerRequest.class);
+                var service = new service();
+                registerResult result = service.register(request);
+                context.status(200);
+                context.json(Map.of("username",""));
+            }
+            catch (Exception e)
+            {
+                context.status(400);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
             }
         });
         // Register your endpoints and exception handlers here.
