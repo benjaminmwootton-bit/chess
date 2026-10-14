@@ -35,4 +35,13 @@ public class service
         var authToken = dataAccess.logInUser(dataAccess.getUser(request.username()));
         return new logInResult(request.username(), authToken);
     }
+    //logIn. Return logOutResult object
+    public logOutResult logOut(logOutRequest request) throws Exception
+    {
+        if(request == null || request.authToken() == null)
+            throw new badRequestException("bad request");
+        if(!dataAccess.getAuth(request.authToken()))
+            throw new unauthorizedException("unauthorized");
+        return new logOutResult(true);
+    }
 }

@@ -9,6 +9,8 @@ import service.registerRequest;
 import service.registerResult;
 import service.logInRequest;
 import service.logInResult;
+import service.logOutRequest;
+import service.logOutResult;
 import service.service;
 
 public class Server
@@ -92,7 +94,28 @@ public class Server
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
         });
-        // Register your endpoints and exception handlers here.
+
+        //LogOut
+        javalin.post("/session", context ->
+        {
+            try
+            {
+                logOutRequest request = new Gson().fromJson(context.body(), logOutRequest.class);
+                logOutResult result = service.logOut(request);
+                context.status(200);
+                context.json(result);
+            }
+            catch (unauthorizedException e)
+            {
+                context.status(401);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+            catch (Exception e)
+            {
+                context.status(500);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+        });
     }
 
     public int run(int desiredPort)
