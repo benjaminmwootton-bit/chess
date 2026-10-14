@@ -6,9 +6,14 @@ import chess.ChessPosition;
 import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MemoryDataAccessTests
@@ -29,7 +34,7 @@ public class MemoryDataAccessTests
     }
 
     @Test
-    void addUser()
+    void addAndGetUser()
     {
         try
         {
@@ -75,6 +80,28 @@ public class MemoryDataAccessTests
         {
             System.out.println("Invalid Move");
         }
+    }
+
+    @Test
+    void listGames()
+    {
+        var gameID1 = DAO.createGame("testGame1");
+        var gameID2 = DAO.createGame("testGame2");
+        List<GameData> expected = new ArrayList<GameData>(List.of(DAO.getGame(gameID1),DAO.getGame(gameID2)));
+        var games = DAO.listGames();
+        assertEquals(expected, games);
+        var gameID3 = DAO.createGame("testGame3");
+        List<GameData> notExpected = new ArrayList<GameData>(List.of(DAO.getGame(gameID1),DAO.getGame(gameID2),DAO.getGame(gameID3)));
+        assertNotEquals(notExpected, games);
+    }
+
+    @Test
+    void createAuthToken()
+    {
+        var token1 = DAO.createAuth();
+        var token2 = DAO.createAuth();
+        assertNotNull(token1);
+        assertNotEquals(token1,token2);
     }
 
     public UserData createNewUser()
