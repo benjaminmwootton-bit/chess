@@ -10,6 +10,7 @@ public interface DataAccess
 {
     //return authToken
     String createUser(UserData userData) throws DataAccessException;
+    public String logInUser(UserData user);
     //returns UserData
     UserData getUser(String username);
     boolean userExists(String username);
@@ -19,6 +20,7 @@ public interface DataAccess
     //return if authorization token exists
     boolean getAuth(String authToken);
     void deleteAuth(String authToken);
+    public boolean checkPassword(String username, String password);
 
     //returns gameID
     int createGame(String gameName);

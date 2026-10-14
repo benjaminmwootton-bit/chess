@@ -23,6 +23,12 @@ public class MemoryDataAccess implements DataAccess
         authTokens.put(authToken, new AuthData(authToken, user.username()));
         return authToken;
     }
+    public String logInUser(UserData user)
+    {
+        String authToken = createAuth();
+        authTokens.put(authToken, new AuthData(authToken, user.username()));
+        return authToken;
+    }
     //returns UserData
     public UserData getUser(String username)
     {
@@ -32,6 +38,11 @@ public class MemoryDataAccess implements DataAccess
     public boolean userExists(String username)
     {
         return users.containsKey(username);
+    }
+    //returns true if username and password match
+    public boolean checkPassword(String username, String password)
+    {
+        return users.get(username).password().equals(password);
     }
 
     //return new authToken

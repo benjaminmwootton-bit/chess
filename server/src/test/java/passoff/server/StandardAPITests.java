@@ -4,7 +4,10 @@ package passoff.server;
 
 import chess.ChessGame;
 import org.junit.jupiter.api.*;
-import passoff.model.*;
+//import passoff.model.*;
+import model.UserData;
+import model.GameData;
+import model.AuthData;
 import server.Server;
 
 import java.net.HttpURLConnection;
