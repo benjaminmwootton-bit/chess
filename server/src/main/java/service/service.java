@@ -15,6 +15,12 @@ public class service
     {
         this.dataAccess = new MemoryDataAccess();
     }
+    //clear
+    public deleteResult delete(deleteRequest request)
+    {
+        dataAccess.clear();
+        return new deleteResult(true);
+    }
     //register. Return registerResult object
     public registerResult register(registerRequest request) throws Exception
     {
@@ -35,7 +41,7 @@ public class service
         var authToken = dataAccess.logInUser(dataAccess.getUser(request.username()));
         return new logInResult(request.username(), authToken);
     }
-    //logIn. Return logOutResult object
+    //logOut. Return logOutResult object
     public logOutResult logOut(logOutRequest request) throws Exception
     {
         if(request == null || request.authToken() == null)

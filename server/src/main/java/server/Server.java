@@ -11,16 +11,16 @@ import service.logInRequest;
 import service.logInResult;
 import service.logOutRequest;
 import service.logOutResult;
+import service.deleteRequest;
+import service.deleteResult;
 import service.service;
 
 public class Server
 {
     private final Javalin javalin;
-    private final DataAccess dataAccess;
 
     public Server()
     {
-        dataAccess = new MemoryDataAccess();
         var service = new service();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -30,7 +30,8 @@ public class Server
         {
             try
             {
-                dataAccess.clear();
+                deleteRequest request = new Gson().fromJson(context.body(), deleteRequest.class);
+                deleteResult result = service.delete(request);
                 context.status(200);
                 context.json(Map.of());
             }
