@@ -17,6 +17,7 @@ public class Server
     public Server()
     {
         dataAccess = new MemoryDataAccess();
+        var service = new service();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
@@ -40,16 +41,16 @@ public class Server
             try
             {
                 registerRequest request = new Gson().fromJson(context.body(), registerRequest.class);
-                var service = new service();
                 registerResult result = service.register(request);
                 context.status(200);
-                context.json(Map.of("username",""));
+                context.json(result);
             }
             catch (Exception e)
             {
                 context.status(400);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
+
         });
         // Register your endpoints and exception handlers here.
     }

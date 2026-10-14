@@ -19,8 +19,8 @@ public class MemoryDataAccess implements DataAccess
         if(users.containsKey(user.username()))
             throw new DataAccessException("Username already taken");
         users.put(user.username(), user);
-        var authToken = createAuth();
-        authTokens.put(user.username(), new AuthData(authToken, user.username()));
+        String authToken = createAuth();
+        authTokens.put(authToken, new AuthData(authToken, user.username()));
         return authToken;
     }
     //returns UserData

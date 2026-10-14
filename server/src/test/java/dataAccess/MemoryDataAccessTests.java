@@ -47,7 +47,7 @@ public class MemoryDataAccessTests
         assertNotNull(DAO);
         assertEquals("Ben",DAO.getUser("Ben").username());
         assertEquals("password123",DAO.getUser("Ben").password());
-        assertEquals("benwootton2@gmail.com",DAO.getUser("Ben").email());
+        assertEquals("ben2@gmail.com",DAO.getUser("Ben").email());
     }
 
     @Test
@@ -106,6 +106,6 @@ public class MemoryDataAccessTests
 
     public UserData createNewUser()
     {
-        return new UserData("Ben", "password123", "benwootton2@gmail.com");
+        return new UserData("Ben", "password123", "ben2@gmail.com");
     }
 }
