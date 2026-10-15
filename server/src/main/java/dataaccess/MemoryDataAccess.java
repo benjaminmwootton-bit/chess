@@ -74,7 +74,7 @@ public class MemoryDataAccess implements DataAccess
         return games.get(gameID);
     }
     //returns all gameData
-    public List<GameData> listGames()
+    public ArrayList<GameData> listGames()
     {
         return new ArrayList<>(games.values());
     }

@@ -4,7 +4,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public interface DataAccess
 {
@@ -27,7 +27,7 @@ public interface DataAccess
     //returns gameID
     GameData getGame(int gameID);
     //returns all gameData
-    List<GameData> listGames();
+    ArrayList<GameData> listGames();
 
     //to join a game/make a move
     void updateGame(GameData gameData) throws DataAccessException;

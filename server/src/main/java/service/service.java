@@ -11,9 +11,9 @@ public class service
 {
     private final DataAccess dataAccess;
 
-    public service()
+    public service(DataAccess dataAccess)
     {
-        this.dataAccess = new MemoryDataAccess();
+        this.dataAccess = dataAccess;
     }
     //clear
     public deleteResult delete(deleteRequest request)
@@ -48,6 +48,17 @@ public class service
             throw new badRequestException("bad request");
         if(!dataAccess.getAuth(request.authToken()))
             throw new unauthorizedException("unauthorized");
+        dataAccess.deleteAuth(request.authToken());
         return new logOutResult(true);
+    }
+    //list games. Return listGamesResult object
+    public listGamesResult listGames(listGamesRequest request)
+    {
+        if(request == null || request.authToken() == null)
+            throw new badRequestException("bad request");
+        if(!dataAccess.getAuth(request.authToken()))
+            throw new unauthorizedException("unauthorized");
+        var games = dataAccess.listGames();
+        return new listGamesResult(games);
     }
 }

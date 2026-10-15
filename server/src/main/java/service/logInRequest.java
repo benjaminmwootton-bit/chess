@@ -1,3 +1,3 @@
 package service;
 
-public record logInRequest(String username, String password) { }
+public record logInRequest(String username, String password) {}

@@ -1,3 +1,3 @@
 package service;
 
-public record deleteRequest() { }
+public record deleteRequest() {}
