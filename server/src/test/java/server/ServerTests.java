@@ -1,10 +1,6 @@
 package server;
 
-import com.google.gson.Gson;
-import server.Server.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.Test;
-import service.registerResult;
 
 public class ServerTests
 {

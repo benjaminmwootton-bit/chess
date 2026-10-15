@@ -1,11 +1,12 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
 import model.UserData;
 import server.alreadyTakenException;
 import server.badRequestException;
 import server.unauthorizedException;
+import service.requestsAndResults.*;
 
 public class service
 {
@@ -60,5 +61,28 @@ public class service
             throw new unauthorizedException("unauthorized");
         var games = dataAccess.listGames();
         return new listGamesResult(games);
+    }
+    //create game. Returns a createGameResult object
+    public createGameResult createGame(createGameRequest request) throws Exception
+    {
+        if(request == null || request.authToken() == null || request.gameName() == null)
+            throw new badRequestException("bad request");
+        if(!dataAccess.getAuth(request.authToken()))
+            throw new unauthorizedException("unauthorized");
+        return new createGameResult(dataAccess.createGame(request.gameName()));
+    }
+    //join game. Returns a joinGameResult object
+    public joinGameResult joinGame(joinGameRequest request) throws Exception
+    {
+        if(request == null || request.authToken() == null || request.color() == null || !dataAccess.gameExists(request.gameID()))
+            throw new badRequestException("bad request");
+        if(!dataAccess.getAuth(request.authToken()))
+            throw new unauthorizedException("unauthorized");
+        if(request.color() == ChessGame.TeamColor.WHITE && dataAccess.getGame(request.gameID()).whiteUsername() == null)
+            throw new alreadyTakenException("already taken");
+        else if (request.color() == ChessGame.TeamColor.BLACK && dataAccess.getGame(request.gameID()).blackUsername() == null)
+            throw new alreadyTakenException("already taken");
+        dataAccess.joinGame(request.gameID(),dataAccess.getUsernameWithAuthToken(request.authToken()),request.color());
+        return new joinGameResult(true);
     }
 }

@@ -4,19 +4,10 @@ import dataaccess.MemoryDataAccess;
 import io.javalin.*;
 import java.util.Map;
 import com.google.gson.Gson;
-import service.registerRequest;
-import service.registerResult;
-import service.logInRequest;
-import service.logInResult;
-import service.logOutRequest;
-import service.logOutResult;
-import service.deleteRequest;
-import service.deleteResult;
-import service.listGamesRequest;
-import service.listGamesResult;
+import service.requestsAndResults.*;
 import service.service;
 
-public class Server
+public class    Server
 {
     private final Javalin javalin;
 
@@ -102,7 +93,8 @@ public class Server
         {
             try
             {
-                logOutRequest request = new Gson().fromJson(context.body(), logOutRequest.class);
+                String authToken = context.header("authorization");
+                logOutRequest request = new logOutRequest(authToken);
                 logOutResult result = service.logOut(request);
                 context.status(200);
                 context.json(result);
@@ -124,7 +116,8 @@ public class Server
         {
             try
             {
-                listGamesRequest request = new Gson().fromJson(context.body(), listGamesRequest.class);
+                String authToken = context.header("authorization");
+                listGamesRequest request = new listGamesRequest(authToken);
                 listGamesResult result = service.listGames(request);
                 context.status(200);
                 context.json(result);
@@ -140,6 +133,71 @@ public class Server
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
         });
+
+        //createGame
+        javalin.post("/game", context ->
+        {
+            try
+            {
+                String authToken = context.header("authorization");
+                createGameRequest bodyRequest = new Gson().fromJson(context.body(), createGameRequest.class);
+                createGameRequest request = new createGameRequest(authToken, bodyRequest.gameName());
+                createGameResult result = service.createGame(request);
+                context.status(200);
+                context.json(result);
+            }
+            catch (badRequestException e)
+            {
+                context.status(400);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+            catch (unauthorizedException e)
+            {
+                context.status(401);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+            catch (Exception e)
+            {
+                context.status(500);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+        });
+
+        //joinGame
+        javalin.put("/game", context ->
+        {
+            try
+            {
+                String authToken = context.header("authorization");
+                joinGameRequest bodyRequest = new Gson().fromJson(context.body(), joinGameRequest.class);
+                joinGameRequest request = new joinGameRequest(authToken, bodyRequest.color(), bodyRequest.gameID());
+                joinGameResult result = service.joinGame(request);
+                context.status(200);
+                context.json(result);
+            }
+            catch (badRequestException e)
+            {
+                context.status(400);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+            catch (unauthorizedException e)
+            {
+                context.status(401);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+            catch (alreadyTakenException e)
+            {
+                context.status(403);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+            catch (Exception e)
+            {
+                context.status(500);
+                context.json(Map.of("message", "Error: " + e.getMessage()));
+            }
+        });
+
+
     }
 
     public int run(int desiredPort)

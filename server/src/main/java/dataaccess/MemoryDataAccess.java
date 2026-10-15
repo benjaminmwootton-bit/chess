@@ -34,6 +34,10 @@ public class MemoryDataAccess implements DataAccess
     {
         return users.get(username);
     }
+    public String getUsernameWithAuthToken(String authToken)
+    {
+        return authTokens.get(authToken).username();
+    }
     //returns if username is in users
     public boolean userExists(String username)
     {
@@ -78,6 +82,10 @@ public class MemoryDataAccess implements DataAccess
     {
         return new ArrayList<>(games.values());
     }
+    public boolean gameExists(int gameID)
+    {
+        return gameID > 0 && gameID <= gameCount;
+    }
 
     //to join a game/make a move
     public void updateGame(GameData gameData) throws DataAccessException
@@ -86,7 +94,23 @@ public class MemoryDataAccess implements DataAccess
             throw new DataAccessException("Game does not exist");
         games.put(gameData.gameID(), gameData);
     }
-
+    public void joinGame(int gameID, String username, ChessGame.TeamColor color)
+    {
+        var game = getGame(gameID);
+        GameData newGame;
+        if(color == ChessGame.TeamColor.WHITE)
+            newGame = new GameData(gameID,username,game.blackUsername(),game.gameName(),game.ChessGame());
+        else
+            newGame = new GameData(gameID,game.whiteUsername(),username,game.gameName(),game.ChessGame());
+        try
+        {
+            updateGame(newGame);
+        }
+        catch (Exception e)
+        {
+            System.out.println("GameID not found");
+        }
+    }
     //clears all data
     public void clear()
     {

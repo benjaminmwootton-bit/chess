@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -13,6 +14,7 @@ public interface DataAccess
     public String logInUser(UserData user);
     //returns UserData
     UserData getUser(String username);
+    public String getUsernameWithAuthToken(String authToken);
     boolean userExists(String username);
 
     //return new authToken
@@ -28,9 +30,11 @@ public interface DataAccess
     GameData getGame(int gameID);
     //returns all gameData
     ArrayList<GameData> listGames();
+    boolean gameExists(int gameID);
 
     //to join a game/make a move
     void updateGame(GameData gameData) throws DataAccessException;
+    void joinGame(int gameID, String username, ChessGame.TeamColor color);
 
     void clear();
 }
