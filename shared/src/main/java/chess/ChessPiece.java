@@ -30,14 +30,14 @@ public class ChessPiece
     //Sets hasMoved to true. Important to know if a pawn can push or if the king can castle
     public static void movePiece(ChessPiece piece)
     {
-        if(piece != null)
-            piece.hasMoved = true;
+        if(piece != null) {
+            piece.hasMoved = true;}
     }
     //Set hasMoved to value passed in
     public static void setMoved(ChessPiece piece, boolean hasMoved)
     {
-        if(piece != null)
-            piece.hasMoved = hasMoved;
+        if(piece != null) {
+            piece.hasMoved = hasMoved;}
     }
     public static boolean getMoved(ChessPiece piece) {return piece.hasMoved;}
     //Sets pushed to true
@@ -98,12 +98,12 @@ public class ChessPiece
             while (bounds(row, col))
             {
                 ChessPiece target = board.getPiece(row,col);
-                if(target == null)
-                    moves.add(new ChessMove(myPosition,new ChessPosition(row,col)));
+                if(target == null) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col)));}
                 else
                 {
-                    if(target.getTeamColor() != color)
-                        moves.add(new ChessMove(myPosition,new ChessPosition(row,col)));
+                    if(target.getTeamColor() != color) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(row, col)));}
                     break;
                 }
                 row += dir[0]; col += dir[1];
@@ -123,8 +123,8 @@ public class ChessPiece
             if(bounds(row,col))
             {
                 ChessPiece target = board.getPiece(row,col);
-                if(target == null || target.getTeamColor() != color)
-                    moves.add(new ChessMove(myPosition,new ChessPosition(row,col)));
+                if(target == null || target.getTeamColor() != color) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(row, col)));}
             }
         }
         return moves;
@@ -169,25 +169,25 @@ public class ChessPiece
                 if(bounds(row-1,col) && board.getPiece(new ChessPosition(row-1, col)) == null)
                 {
                     pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col)));
-                    if (bounds(row-2,col) && board.getPiece(new ChessPosition(row - 2, col)) == null)
-                        pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 2, col)));
+                    if (bounds(row-2,col) && board.getPiece(new ChessPosition(row - 2, col)) == null) {
+                        pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 2, col)));}
                 }
             }
             else//moving forward if the pawn has moved
             {
-                if(bounds(row-1,col) && board.getPiece(new ChessPosition(row-1, col)) == null)
-                    pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col)));
+                if(bounds(row-1,col) && board.getPiece(new ChessPosition(row-1, col)) == null) {
+                    pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col)));}
             }
             //capturing pieces
-            if(bounds(row-1,col-1) && board.getPiece(row-1, col-1) != null && board.getPiece(row-1, col-1).pieceColor != color)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col-1)));
-            if(bounds(row-1,col+1) && board.getPiece(row-1, col+1) != null && board.getPiece(row-1, col+1).pieceColor != color)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col+1)));
+            if(bounds(row-1,col-1) && board.getPiece(row-1, col-1) != null && board.getPiece(row-1, col-1).pieceColor != color) {
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col - 1)));}
+            if(bounds(row-1,col+1) && board.getPiece(row-1, col+1) != null && board.getPiece(row-1, col+1).pieceColor != color) {
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col + 1)));}
             //en passant
-            if(bounds(row, col + 1) && board.getPiece(row,col+1) != null && board.getPiece(row,col+1).type == PAWN && board.getPiece(row,col+1).pushed)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col+1)));
-            if(bounds(row, col - 1) && board.getPiece(row,col-1) != null && board.getPiece(row,col-1).type == PAWN && board.getPiece(row,col-1).pushed)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row-1,col-1)));
+            if(bounds(row, col + 1) && board.getPiece(row,col+1) != null && board.getPiece(row,col+1).type == PAWN && board.getPiece(row,col+1).pushed) {
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col + 1)));}
+            if(bounds(row, col - 1) && board.getPiece(row,col-1) != null && board.getPiece(row,col-1).type == PAWN && board.getPiece(row,col-1).pushed) {
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col - 1)));}
         }
         else if(color == WHITE)
         {
@@ -196,25 +196,25 @@ public class ChessPiece
                 if(bounds(row - 1,col) &&bounds(row-1,col) && board.getPiece(new ChessPosition(row+1, col)) == null)
                 {
                     pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col)));
-                    if (bounds(row + 2,col) && board.getPiece(new ChessPosition(row + 2, col)) == null)
-                        pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 2, col)));
+                    if (bounds(row + 2,col) && board.getPiece(new ChessPosition(row + 2, col)) == null) {
+                        pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 2, col)));}
                 }
             }
             else//moving forward if the pawn has moved
             {
-                if(bounds(row+1,col) && board.getPiece(new ChessPosition(row + 1, col)) == null)
-                    pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col)));
+                if(bounds(row+1,col) && board.getPiece(new ChessPosition(row + 1, col)) == null) {
+                    pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col)));}
             }
             //capturing pieces
-            if(bounds(row + 1,col-1) && board.getPiece(row + 1, col-1) != null && board.getPiece(row + 1, col-1).pieceColor != color)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1,col-1)));
-            if(bounds(row + 1,col+1) && board.getPiece(row + 1, col+1) != null && board.getPiece(row + 1, col+1).pieceColor != color)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1,col+1)));
+            if(bounds(row + 1,col-1) && board.getPiece(row + 1, col-1) != null && board.getPiece(row + 1, col-1).pieceColor != color) {
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col - 1)));}
+            if(bounds(row + 1,col+1) && board.getPiece(row + 1, col+1) != null && board.getPiece(row + 1, col+1).pieceColor != color) {
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col + 1)));}
             //en passant
-            if(bounds(row, col + 1) && board.getPiece(row,col+1) != null && board.getPiece(row,col+1).type == PAWN && board.getPiece(row,col+1).pushed)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row+1,col+1)));
-            if(bounds(row, col - 1) && board.getPiece(row,col-1) != null && board.getPiece(row,col-1).type == PAWN && board.getPiece(row,col-1).pushed)
-                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row+1,col-1)));
+            if(bounds(row, col + 1) && board.getPiece(row,col+1) != null && board.getPiece(row,col+1).type == PAWN && board.getPiece(row,col+1).pushed) {
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col + 1)));}
+            if(bounds(row, col - 1) && board.getPiece(row,col-1) != null && board.getPiece(row,col-1).type == PAWN && board.getPiece(row,col-1).pushed) {
+                pawnMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col - 1)));}
         }
         //promotions
         ArrayList<ChessMove> pawnMovesPromotions = new ArrayList<>();
@@ -269,8 +269,8 @@ public class ChessPiece
     @Override
     public boolean equals(Object o)
     {
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;}
         ChessPiece that = (ChessPiece) o;
         return pieceColor == that.pieceColor && type == that.type;
     }

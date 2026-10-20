@@ -58,16 +58,16 @@ public class ChessMove
         String[] col = {"a", "b", "c", "d", "e", "f", "g", "h"};
         str.append(col[startPosition.column() - 1]).append(startPosition.row());
         str.append(col[endPosition.column() - 1]).append(endPosition.row());
-        if(piece != null)
-            str.append("=").append(piece);
+        if(piece != null) {
+            str.append("=").append(piece);}
         return str.toString();
     }
 
     @Override
     public boolean equals(Object o)
     {
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;}
         ChessMove chessMove = (ChessMove) o;
         return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && piece == chessMove.piece;
     }

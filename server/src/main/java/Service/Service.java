@@ -3,9 +3,9 @@ package Service;
 import chess.ChessGame;
 import dataaccess.DataAccess;
 import model.UserData;
-import server.alreadyTakenException;
-import server.badRequestException;
-import server.unauthorizedException;
+import server.AlreadyTakenException;
+import server.BadRequestException;
+import server.UnauthorizedException;
 import Service.requestsAndResults.*;
 
 public class Service
@@ -17,18 +17,18 @@ public class Service
         this.dataAccess = dataAccess;
     }
     //clear
-    public deleteResult delete()
+    public DeleteResult delete()
     {
         dataAccess.clear();
-        return new deleteResult(true);
+        return new DeleteResult(true);
     }
     //register. Return registerResult object
     public RegisterResult register(RegisterRequest request) throws Exception
     {
         if(request == null || request.username() == null || request.password() == null || request.email() == null)
-            throw new badRequestException("bad request");
+            throw new BadRequestException("bad request");
         if(dataAccess.userExists(request.username()))
-            throw new alreadyTakenException("already taken");
+            throw new AlreadyTakenException("already taken");
         var authToken = dataAccess.createUser(new UserData(request.username(), request.password(), request.email()));
         return new RegisterResult(request.username(), authToken);
     }
@@ -36,9 +36,9 @@ public class Service
     public LogInResult logIn(LogInRequest request) throws Exception
     {
         if(request == null || request.username() == null || request.password() == null)
-            throw new badRequestException("bad request");
+            throw new BadRequestException("bad request");
         if(!dataAccess.checkPassword(request.username(),request.password()))
-            throw new unauthorizedException("unauthorized");
+            throw new UnauthorizedException("unauthorized");
         var authToken = dataAccess.logInUser(dataAccess.getUser(request.username()));
         return new LogInResult(request.username(), authToken);
     }
@@ -46,9 +46,9 @@ public class Service
     public LogOutResult logOut(LogOutRequest request) throws Exception
     {
         if(request == null || request.authToken() == null)
-            throw new badRequestException("bad request");
+            throw new BadRequestException("bad request");
         if(!dataAccess.getAuth(request.authToken()))
-            throw new unauthorizedException("unauthorized");
+            throw new UnauthorizedException("unauthorized");
         dataAccess.deleteAuth(request.authToken());
         return new LogOutResult(true);
     }
@@ -56,9 +56,9 @@ public class Service
     public ListGamesResult listGames(ListGamesRequest request)
     {
         if(request == null || request.authToken() == null)
-            throw new badRequestException("bad request");
+            throw new BadRequestException("bad request");
         if(!dataAccess.getAuth(request.authToken()))
-            throw new unauthorizedException("unauthorized");
+            throw new UnauthorizedException("unauthorized");
         var games = dataAccess.listGames();
         return new ListGamesResult(games);
     }
@@ -66,22 +66,22 @@ public class Service
     public CreateGameResult createGame(CreateGameRequest request) throws Exception
     {
         if(request == null || request.authToken() == null || request.gameName() == null)
-            throw new badRequestException("bad request");
+            throw new BadRequestException("bad request");
         if(!dataAccess.getAuth(request.authToken()))
-            throw new unauthorizedException("unauthorized");
+            throw new UnauthorizedException("unauthorized");
         return new CreateGameResult(dataAccess.createGame(request.gameName()));
     }
     //join game. Returns a joinGameResult object
-    public JoinGameResult joinGame(joinGameRequest request) throws Exception
+    public JoinGameResult joinGame(JoinGameRequest request) throws Exception
     {
         if(request == null || request.authToken() == null || request.playerColor() == null || !dataAccess.gameExists(request.gameID()))
-            throw new badRequestException("bad request");
+            throw new BadRequestException("bad request");
         if(!dataAccess.getAuth(request.authToken()))
-            throw new unauthorizedException("unauthorized");
+            throw new UnauthorizedException("unauthorized");
         if(request.playerColor() == ChessGame.TeamColor.WHITE && dataAccess.getGame(request.gameID()).whiteUsername() != null)
-            throw new alreadyTakenException("already taken");
+            throw new AlreadyTakenException("already taken");
         else if (request.playerColor() == ChessGame.TeamColor.BLACK && dataAccess.getGame(request.gameID()).blackUsername() != null)
-            throw new alreadyTakenException("already taken");
+            throw new AlreadyTakenException("already taken");
         dataAccess.joinGame(request.gameID(),dataAccess.getUsernameWithAuthToken(request.authToken()),request.playerColor());
         return new JoinGameResult(true);
     }

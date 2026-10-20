@@ -18,19 +18,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MemoryDataAccessTests
 {
-    private MemoryDataAccess DAO;
+    private MemoryDataAccess dataAccessObject;
 
     @BeforeEach
     void setUp()
     {
-        DAO = new MemoryDataAccess();
-        DAO.clear();
+        dataAccessObject = new MemoryDataAccess();
+        dataAccessObject.clear();
     }
 
     @Test
     void newDaoIsEmpty()
     {
-        assertTrue(DAO.listGames().isEmpty());
+        assertTrue(dataAccessObject.listGames().isEmpty());
     }
 
     @Test
@@ -38,16 +38,16 @@ public class MemoryDataAccessTests
     {
         try
         {
-            DAO.createUser(createNewUser());
+            dataAccessObject.createUser(createNewUser());
         }
         catch (DataAccessException e)
         {
             System.out.println("Username already taken");
         }
-        assertNotNull(DAO);
-        assertEquals("Ben",DAO.getUser("Ben").username());
-        assertEquals("password123",DAO.getUser("Ben").password());
-        assertEquals("ben2@gmail.com",DAO.getUser("Ben").email());
+        assertNotNull(dataAccessObject);
+        assertEquals("Ben", dataAccessObject.getUser("Ben").username());
+        assertEquals("password123", dataAccessObject.getUser("Ben").password());
+        assertEquals("ben2@gmail.com", dataAccessObject.getUser("Ben").email());
     }
 
     @Test
@@ -55,26 +55,26 @@ public class MemoryDataAccessTests
     {
         try
         {
-            DAO.createUser(createNewUser());
+            dataAccessObject.createUser(createNewUser());
         }
         catch (DataAccessException e)
         {
             System.out.println("Username already taken");
         }
-        DAO.clear();
-        assertTrue(DAO.listGames().isEmpty());
+        dataAccessObject.clear();
+        assertTrue(dataAccessObject.listGames().isEmpty());
     }
 
     @Test
     void createAndUpdateGame() throws InvalidMoveException
     {
-        var gameID = DAO.createGame("testGame");
-        assertEquals(new ChessGame(), DAO.getGame(gameID).ChessGame());
+        var gameID = dataAccessObject.createGame("testGame");
+        assertEquals(new ChessGame(), dataAccessObject.getGame(gameID).ChessGame());
         try
         {
             ChessGame game2 = new ChessGame();
             game2.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1)));
-            assertNotEquals(game2,DAO.getGame(gameID).ChessGame());
+            assertNotEquals(game2, dataAccessObject.getGame(gameID).ChessGame());
         }
         catch (InvalidMoveException e)
         {
@@ -85,21 +85,21 @@ public class MemoryDataAccessTests
     @Test
     void listGames()
     {
-        var gameID1 = DAO.createGame("testGame1");
-        var gameID2 = DAO.createGame("testGame2");
-        List<GameData> expected = new ArrayList<GameData>(List.of(DAO.getGame(gameID1),DAO.getGame(gameID2)));
-        var games = DAO.listGames();
+        var gameID1 = dataAccessObject.createGame("testGame1");
+        var gameID2 = dataAccessObject.createGame("testGame2");
+        List<GameData> expected = new ArrayList<GameData>(List.of(dataAccessObject.getGame(gameID1), dataAccessObject.getGame(gameID2)));
+        var games = dataAccessObject.listGames();
         assertEquals(expected, games);
-        var gameID3 = DAO.createGame("testGame3");
-        List<GameData> notExpected = new ArrayList<GameData>(List.of(DAO.getGame(gameID1),DAO.getGame(gameID2),DAO.getGame(gameID3)));
+        var gameID3 = dataAccessObject.createGame("testGame3");
+        List<GameData> notExpected = new ArrayList<GameData>(List.of(dataAccessObject.getGame(gameID1), dataAccessObject.getGame(gameID2), dataAccessObject.getGame(gameID3)));
         assertNotEquals(notExpected, games);
     }
 
     @Test
     void createAuthToken()
     {
-        var token1 = DAO.createAuth();
-        var token2 = DAO.createAuth();
+        var token1 = dataAccessObject.createAuth();
+        var token2 = dataAccessObject.createAuth();
         assertNotNull(token1);
         assertNotEquals(token1,token2);
     }

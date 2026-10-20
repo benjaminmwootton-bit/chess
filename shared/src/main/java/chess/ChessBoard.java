@@ -118,8 +118,9 @@ public class ChessBoard
                 else
                     str.append("| |");
             }
-            if (i != 8)
+            if (i != 8) {
                 str.append("\n");
+            }
         }
         return str.toString();
     }
@@ -127,8 +128,9 @@ public class ChessBoard
     @Override
     public boolean equals(Object o)
     {
-        if (o == null || getClass() != o.getClass())
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         ChessBoard that = (ChessBoard) o;
         return Objects.deepEquals(board, that.board);
     }

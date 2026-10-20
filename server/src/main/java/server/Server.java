@@ -48,12 +48,12 @@ public class Server
                 context.status(200);
                 context.json(result);
             }
-            catch (badRequestException e)
+            catch (BadRequestException e)
             {
                 context.status(400);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
-            catch (alreadyTakenException e)
+            catch (AlreadyTakenException e)
             {
                 context.status(403);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
@@ -75,12 +75,12 @@ public class Server
                 context.status(200);
                 context.json(result);
             }
-            catch (badRequestException e)
+            catch (BadRequestException e)
             {
                 context.status(400);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
-            catch (unauthorizedException e)
+            catch (UnauthorizedException e)
             {
                 context.status(401);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
@@ -103,7 +103,7 @@ public class Server
                 context.status(200);
                 context.json(result);
             }
-            catch (unauthorizedException e)
+            catch (UnauthorizedException e)
             {
                 context.status(401);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
@@ -126,7 +126,7 @@ public class Server
                 context.status(200);
                 context.json(result);
             }
-            catch (unauthorizedException e)
+            catch (UnauthorizedException e)
             {
                 context.status(401);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
@@ -150,12 +150,12 @@ public class Server
                 context.status(200);
                 context.json(result);
             }
-            catch (badRequestException e)
+            catch (BadRequestException e)
             {
                 context.status(400);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
-            catch (unauthorizedException e)
+            catch (UnauthorizedException e)
             {
                 context.status(401);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
@@ -173,23 +173,23 @@ public class Server
             try
             {
                 String authToken = context.header("authorization");
-                joinGameRequest bodyRequest = new Gson().fromJson(context.body(), joinGameRequest.class);
-                joinGameRequest request = new joinGameRequest(authToken, bodyRequest.playerColor(), bodyRequest.gameID());
+                JoinGameRequest bodyRequest = new Gson().fromJson(context.body(), JoinGameRequest.class);
+                JoinGameRequest request = new JoinGameRequest(authToken, bodyRequest.playerColor(), bodyRequest.gameID());
                 JoinGameResult result = service.joinGame(request);
                 context.status(200);
                 context.json(result);
             }
-            catch (badRequestException e)
+            catch (BadRequestException e)
             {
                 context.status(400);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
-            catch (unauthorizedException e)
+            catch (UnauthorizedException e)
             {
                 context.status(401);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
-            catch (alreadyTakenException e)
+            catch (AlreadyTakenException e)
             {
                 context.status(403);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
