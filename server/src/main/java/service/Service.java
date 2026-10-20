@@ -17,7 +17,7 @@ public class Service
         this.dataAccess = dataAccess;
     }
     //clear
-    public DeleteResult delete()
+    public DeleteResult delete(DeleteRequest request)
     {
         dataAccess.clear();
         return new DeleteResult(true);
@@ -33,7 +33,7 @@ public class Service
         return new RegisterResult(request.username(), authToken);
     }
     //logIn. Return logInResult object
-    public LogInResult logIn(LogInRequest request) throws Exception
+    public LogInResult logIn(LogInRequest request)
     {
         if(request == null || request.username() == null || request.password() == null){
             throw new BadRequestException("bad request");}
@@ -43,7 +43,7 @@ public class Service
         return new LogInResult(request.username(), authToken);
     }
     //logOut. Return logOutResult object
-    public LogOutResult logOut(LogOutRequest request) throws Exception
+    public LogOutResult logOut(LogOutRequest request)
     {
         if(request == null || request.authToken() == null){
             throw new BadRequestException("bad request");}
@@ -63,7 +63,7 @@ public class Service
         return new ListGamesResult(games);
     }
     //create game. Returns a createGameResult object
-    public CreateGameResult createGame(CreateGameRequest request) throws Exception
+    public CreateGameResult createGame(CreateGameRequest request)
     {
         if(request == null || request.authToken() == null || request.gameName() == null){
             throw new BadRequestException("bad request");}
@@ -72,7 +72,7 @@ public class Service
         return new CreateGameResult(dataAccess.createGame(request.gameName()));
     }
     //join game. Returns a joinGameResult object
-    public JoinGameResult joinGame(JoinGameRequest request) throws Exception
+    public JoinGameResult joinGame(JoinGameRequest request)
     {
         if(request == null || request.authToken() == null || request.playerColor() == null || !dataAccess.gameExists(request.gameID())){
             throw new BadRequestException("bad request");}

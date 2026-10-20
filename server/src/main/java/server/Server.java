@@ -19,7 +19,6 @@ public class Server {
             config.staticFiles.add("web");
             config.jsonMapper(new JavalinGson());
         });
-
         clearRoute(service);
         registerRoute(service);
         loginRoute(service);
@@ -34,7 +33,7 @@ public class Server {
         javalin.delete("/db", context ->
         {
             try {
-                service.delete();
+                service.delete(new DeleteRequest());
                 context.status(200);
                 context.json(Map.of());
             } catch (Exception e) {

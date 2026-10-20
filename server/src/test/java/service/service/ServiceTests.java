@@ -26,7 +26,7 @@ public class ServiceTests
     //Happy cases
     @Test
     void delete(){
-        var result = service.delete();
+        var result = service.delete(new DeleteRequest());
         assertTrue(result.deleted());
     }
 
@@ -86,6 +86,7 @@ public class ServiceTests
         assertTrue(result.joined());
     }
 
+    //sad cases
     @Test
     void registerMissingData(){
         assertThrows(BadRequestException.class, () -> service.register(new RegisterRequest(null, "password123", "ben2@gmail.com")));
