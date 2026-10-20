@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.AlreadyTakenException;
 import server.BadRequestException;
+import server.UnauthorizedException;
 import service.Service;
 import service.requestsandresults.*;
 
@@ -23,7 +24,7 @@ public class ServiceTests
 
     //Happy cases
     @Test
-    void delete() throws Exception{
+    void delete(){
         var result = service.delete();
         assertTrue(result.deleted());
     }
@@ -85,7 +86,7 @@ public class ServiceTests
     }
 
     @Test
-    void registerMissingData() throws Exception {
+    void registerMissingData(){
         assertThrows(BadRequestException.class, () -> service.register(new RegisterRequest(null, "password123", "ben2@gmail.com")));
         assertThrows(BadRequestException.class, () -> service.register(new RegisterRequest("Ben", null, "ben2@gmail.com")));
         assertThrows(BadRequestException.class, () -> service.register(new RegisterRequest("Ben", "password123", null)));
@@ -96,6 +97,20 @@ public class ServiceTests
         registerTestUser();
         assertThrows(AlreadyTakenException.class, this::registerTestUser);
     }
+
+    @Test
+    void loginMissingData() throws Exception{
+        registerTestUser();
+        assertThrows(BadRequestException.class, () -> service.logIn(new LogInRequest(null, "password123")));
+        assertThrows(BadRequestException.class, () -> service.logIn(new LogInRequest("Ben", null)));
+    }
+
+    @Test
+    void usernamePasswordDontMatch() throws Exception{
+        registerTestUser();
+        assertThrows(UnauthorizedException.class, () -> service.logIn(new LogInRequest("Ben", "password321")));
+    }
+
 
 
     private RegisterResult registerTestUser() throws Exception {
