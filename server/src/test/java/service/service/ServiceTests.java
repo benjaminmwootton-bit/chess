@@ -111,6 +111,13 @@ public class ServiceTests
         assertThrows(UnauthorizedException.class, () -> service.logIn(new LogInRequest("Ben", "password321")));
     }
 
+    @Test
+    void logOutNotAuthorized() throws Exception
+    {
+        registerTestUser();
+        assertThrows(UnauthorizedException.class, () -> service.logOut(new LogOutRequest("Life before death")));
+    }
+
 
 
     private RegisterResult registerTestUser() throws Exception {
