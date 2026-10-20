@@ -4,8 +4,8 @@ import dataaccess.MemoryDataAccess;
 import io.javalin.*;
 import java.util.Map;
 import com.google.gson.Gson;
-import service.requestsAndResults.*;
-import service.service;
+import Service.requestsAndResults.*;
+import Service.Service;
 import io.javalin.json.JavalinGson;
 
 public class Server
@@ -14,7 +14,7 @@ public class Server
 
     public Server()
     {
-        var service = new service(new MemoryDataAccess());
+        var service = new Service(new MemoryDataAccess());
 
         javalin = Javalin.create(config ->
         {
@@ -43,8 +43,8 @@ public class Server
         {
             try
             {
-                registerRequest request = new Gson().fromJson(context.body(), registerRequest.class);
-                registerResult result = service.register(request);
+                RegisterRequest request = new Gson().fromJson(context.body(), RegisterRequest.class);
+                RegisterResult result = service.register(request);
                 context.status(200);
                 context.json(result);
             }
@@ -70,8 +70,8 @@ public class Server
         {
             try
             {
-                logInRequest request = new Gson().fromJson(context.body(), logInRequest.class);
-                logInResult result = service.logIn(request);
+                LogInRequest request = new Gson().fromJson(context.body(), LogInRequest.class);
+                LogInResult result = service.logIn(request);
                 context.status(200);
                 context.json(result);
             }
@@ -98,8 +98,8 @@ public class Server
             try
             {
                 String authToken = context.header("authorization");
-                logOutRequest request = new logOutRequest(authToken);
-                logOutResult result = service.logOut(request);
+                LogOutRequest request = new LogOutRequest(authToken);
+                LogOutResult result = service.logOut(request);
                 context.status(200);
                 context.json(result);
             }
@@ -121,8 +121,8 @@ public class Server
             try
             {
                 String authToken = context.header("authorization");
-                listGamesRequest request = new listGamesRequest(authToken);
-                listGamesResult result = service.listGames(request);
+                ListGamesRequest request = new ListGamesRequest(authToken);
+                ListGamesResult result = service.listGames(request);
                 context.status(200);
                 context.json(result);
             }
@@ -144,9 +144,9 @@ public class Server
             try
             {
                 String authToken = context.header("authorization");
-                createGameRequest bodyRequest = new Gson().fromJson(context.body(), createGameRequest.class);
-                createGameRequest request = new createGameRequest(authToken, bodyRequest.gameName());
-                createGameResult result = service.createGame(request);
+                CreateGameRequest bodyRequest = new Gson().fromJson(context.body(), CreateGameRequest.class);
+                CreateGameRequest request = new CreateGameRequest(authToken, bodyRequest.gameName());
+                CreateGameResult result = service.createGame(request);
                 context.status(200);
                 context.json(result);
             }
@@ -175,7 +175,7 @@ public class Server
                 String authToken = context.header("authorization");
                 joinGameRequest bodyRequest = new Gson().fromJson(context.body(), joinGameRequest.class);
                 joinGameRequest request = new joinGameRequest(authToken, bodyRequest.playerColor(), bodyRequest.gameID());
-                joinGameResult result = service.joinGame(request);
+                JoinGameResult result = service.joinGame(request);
                 context.status(200);
                 context.json(result);
             }
