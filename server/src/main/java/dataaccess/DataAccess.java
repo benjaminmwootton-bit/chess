@@ -1,7 +1,6 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 import model.UserData;
 
@@ -11,10 +10,10 @@ public interface DataAccess
 {
     //return authToken
     String createUser(UserData userData) throws DataAccessException;
-    public String logInUser(UserData user);
+    String logInUser(UserData user);
     //returns UserData
-    UserData getUser(String username);
-    public String getUsernameWithAuthToken(String authToken);
+    UserData getUserWithUsername(String username);
+    String getUsernameWithAuthToken(String authToken);
     boolean userExists(String username);
 
     //return new authToken
@@ -22,7 +21,7 @@ public interface DataAccess
     //return if authorization token exists
     boolean getAuth(String authToken);
     void deleteAuth(String authToken);
-    public boolean checkPassword(String username, String password);
+    boolean checkPassword(String username, String password);
 
     //returns gameID
     int createGame(String gameName);

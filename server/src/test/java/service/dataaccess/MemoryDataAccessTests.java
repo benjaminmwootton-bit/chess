@@ -1,9 +1,11 @@
-package dataaccess;
+package service.dataaccess;
 
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
+import dataaccess.DataAccessException;
+import dataaccess.MemoryDataAccess;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
@@ -43,9 +45,25 @@ public class MemoryDataAccessTests
             System.out.println("Username already taken");
         }
         assertNotNull(dataAccessObject);
-        assertEquals("Ben", dataAccessObject.getUser("Ben").username());
-        assertEquals("password123", dataAccessObject.getUser("Ben").password());
-        assertEquals("ben2@gmail.com", dataAccessObject.getUser("Ben").email());
+        assertTrue(dataAccessObject.userExists("Ben"));
+        assertFalse(dataAccessObject.userExists("Jack"));
+        assertEquals("Ben", dataAccessObject.getUserWithUsername("Ben").username());
+        assertEquals("password123", dataAccessObject.getUserWithUsername("Ben").password());
+        assertEquals("ben2@gmail.com", dataAccessObject.getUserWithUsername("Ben").email());
+    }
+
+    @Test
+    void getUserWithAuthToken()
+    {
+        String authToken;
+        try
+        {
+            authToken = dataAccessObject.createUser(createNewUser());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        assertNotNull(dataAccessObject);
+        assertEquals("Ben", dataAccessObject.getUserWithUsername(dataAccessObject.getUsernameWithAuthToken(authToken)).username());
     }
 
     @Test
@@ -61,7 +79,18 @@ public class MemoryDataAccessTests
         }
         dataAccessObject.clear();
         assertTrue(dataAccessObject.listGames().isEmpty());
+        assertFalse(dataAccessObject.userExists("Ben"));
     }
+
+    @Test
+    void createAuthToken()
+    {
+        var token1 = dataAccessObject.createAuth();
+        var token2 = dataAccessObject.createAuth();
+        assertNotNull(token1);
+        assertNotEquals(token1,token2);
+    }
+
 
     @Test
     void createAndUpdateGame() throws InvalidMoveException
@@ -81,6 +110,24 @@ public class MemoryDataAccessTests
     }
 
     @Test
+    void joinGame()
+    {
+        var gameID = dataAccessObject.createGame("testGame");
+        try
+        {
+            dataAccessObject.createUser(createNewUser());
+        } catch (DataAccessException e) {
+            System.out.println("Username already taken");
+        }
+        dataAccessObject.joinGame(gameID,"Ben", ChessGame.TeamColor.WHITE);
+        assertTrue(dataAccessObject.listGames().contains(dataAccessObject.getGame(gameID)));
+        assertEquals("Ben", dataAccessObject.getGame(gameID).whiteUsername());
+        dataAccessObject.joinGame(gameID,"Jack", ChessGame.TeamColor.BLACK);
+        assertEquals("Ben", dataAccessObject.getGame(gameID).whiteUsername());
+        assertEquals("Jack", dataAccessObject.getGame(gameID).blackUsername());
+    }
+
+    @Test
     void listGames()
     {
         var gameID1 = dataAccessObject.createGame("testGame1");
@@ -91,15 +138,6 @@ public class MemoryDataAccessTests
         var gameID3 = dataAccessObject.createGame("testGame3");
         List<GameData> notExpected = new ArrayList<GameData>(List.of(dataAccessObject.getGame(gameID3)));
         assertNotEquals(notExpected, games);
-    }
-
-    @Test
-    void createAuthToken()
-    {
-        var token1 = dataAccessObject.createAuth();
-        var token2 = dataAccessObject.createAuth();
-        assertNotNull(token1);
-        assertNotEquals(token1,token2);
     }
 
     public UserData createNewUser()

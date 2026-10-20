@@ -30,10 +30,11 @@ public class MemoryDataAccess implements DataAccess
         return authToken;
     }
     //returns UserData
-    public UserData getUser(String username)
+    public UserData getUserWithUsername(String username)
     {
         return users.get(username);
     }
+    //returns username
     public String getUsernameWithAuthToken(String authToken)
     {
         return authTokens.get(authToken).username();
