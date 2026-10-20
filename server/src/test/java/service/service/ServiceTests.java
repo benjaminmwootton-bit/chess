@@ -1,14 +1,12 @@
 package service.service;
 
+import chess.ChessGame;
 import dataaccess.MemoryDataAccess;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.Service;
-import service.requestsandresults.LogInRequest;
-import service.requestsandresults.LogOutRequest;
-import service.requestsandresults.RegisterRequest;
-import service.requestsandresults.RegisterResult;
+import service.requestsandresults.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,12 +52,24 @@ public class ServiceTests
 
     @Test
     void createGame() throws Exception {
-
+        var testUser = registerTestUser();
+        var result = service.createGame(new CreateGameRequest(testUser.authToken(),"testGame"));
+        assertNotNull(result);
     }
 
     @Test
     void listGames() throws Exception {
+        var testUser = registerTestUser();
+        var game1 = service.createGame(new CreateGameRequest(testUser.authToken(),"testGame1"));
+        var data1 = new GameData(game1.gameID(),null,null, "testGame1", new ChessGame());
+        var result = service.listGames(new ListGamesRequest(testUser.authToken()));
+        assertNotNull(result);
+        assertTrue(result.games().contains(data1));
 
+        var game2 = service.createGame(new CreateGameRequest(testUser.authToken(),"testGame2"));
+        var data2 = new GameData(game2.gameID(),null,null, "testGame2", new ChessGame());
+        result = service.listGames(new ListGamesRequest(testUser.authToken()));
+        assertTrue(result.games().contains(data1) && result.games().contains(data2));
     }
 
     @Test
