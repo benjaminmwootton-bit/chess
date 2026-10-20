@@ -148,7 +148,7 @@ public class ServiceTests
     void joinGameUnauthorized() throws Exception {
         var user = registerTestUser();
         service.createGame(new CreateGameRequest(user.authToken(), "testGame"));
-        assertThrows(UnauthorizedException.class, () -> service.joinGame(new JoinGameRequest("These words are not accepted", ChessGame.TeamColor.WHITE,1)));
+assertThrows(UnauthorizedException.class, () -> service.joinGame(new JoinGameRequest("These words are not accepted", ChessGame.TeamColor.WHITE,1)));
     }
 
     @Test
