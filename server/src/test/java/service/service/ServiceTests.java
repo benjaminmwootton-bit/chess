@@ -1,11 +1,12 @@
 package service.service;
 
 import dataaccess.MemoryDataAccess;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.Service;
 import service.requestsandresults.LogInRequest;
+import service.requestsandresults.LogOutRequest;
 import service.requestsandresults.RegisterRequest;
 import service.requestsandresults.RegisterResult;
 
@@ -41,6 +42,29 @@ public class ServiceTests
         assertNotNull(result);
         assertNotNull(result.authToken());
         assertEquals("Ben", result.username());
+    }
+
+    @Test
+    void logOut() throws Exception {
+        var testUser = registerTestUser();
+        var result = service.logOut(new LogOutRequest(testUser.authToken()));
+        assertNotNull(result);
+        assertTrue(result.loggedOut());
+    }
+
+    @Test
+    void createGame() throws Exception {
+
+    }
+
+    @Test
+    void listGames() throws Exception {
+
+    }
+
+    @Test
+    void joinGame() throws Exception {
+
     }
 
     public RegisterResult registerTestUser() throws Exception {
