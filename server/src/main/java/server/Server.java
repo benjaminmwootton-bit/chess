@@ -6,8 +6,9 @@ import java.util.Map;
 import com.google.gson.Gson;
 import service.requestsAndResults.*;
 import service.service;
+import io.javalin.json.JavalinGson;
 
-public class    Server
+public class Server
 {
     private final Javalin javalin;
 
@@ -15,20 +16,24 @@ public class    Server
     {
         var service = new service(new MemoryDataAccess());
 
-        javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        javalin = Javalin.create(config ->
+        {
+            config.staticFiles.add("web");
+            config.jsonMapper(new JavalinGson());
+        });
 
         //Clear
         javalin.delete("/db", context ->
         {
             try
             {
-                deleteRequest request = new Gson().fromJson(context.body(), deleteRequest.class);
-                deleteResult result = service.delete(request);
+                service.delete();
                 context.status(200);
                 context.json(Map.of());
             }
             catch (Exception e)
             {
+                e.printStackTrace();
                 context.status(500);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }

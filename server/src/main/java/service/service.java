@@ -17,7 +17,7 @@ public class service
         this.dataAccess = dataAccess;
     }
     //clear
-    public deleteResult delete(deleteRequest request)
+    public deleteResult delete()
     {
         dataAccess.clear();
         return new deleteResult(true);
@@ -78,9 +78,9 @@ public class service
             throw new badRequestException("bad request");
         if(!dataAccess.getAuth(request.authToken()))
             throw new unauthorizedException("unauthorized");
-        if(request.color() == ChessGame.TeamColor.WHITE && dataAccess.getGame(request.gameID()).whiteUsername() == null)
+        if(request.color() == ChessGame.TeamColor.WHITE && dataAccess.getGame(request.gameID()).whiteUsername() != null)
             throw new alreadyTakenException("already taken");
-        else if (request.color() == ChessGame.TeamColor.BLACK && dataAccess.getGame(request.gameID()).blackUsername() == null)
+        else if (request.color() == ChessGame.TeamColor.BLACK && dataAccess.getGame(request.gameID()).blackUsername() != null)
             throw new alreadyTakenException("already taken");
         dataAccess.joinGame(request.gameID(),dataAccess.getUsernameWithAuthToken(request.authToken()),request.color());
         return new joinGameResult(true);
