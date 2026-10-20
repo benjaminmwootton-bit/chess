@@ -123,6 +123,23 @@ public class ServiceTests
         assertThrows(UnauthorizedException.class, () -> service.listGames(new ListGamesRequest("Strength before weakness")));
     }
 
+    @Test
+    void createGameMissingData() throws Exception {
+        var user = registerTestUser();
+        assertThrows(BadRequestException.class, () -> service.createGame(new CreateGameRequest(null, "TestGame")));
+        assertThrows(BadRequestException.class, () -> service.createGame(new CreateGameRequest(user.authToken(), null)));
+    }
+
+    @Test
+    void createGameUnauthorized() {
+        assertThrows(UnauthorizedException.class, () -> service.createGame(new CreateGameRequest("Journey before destination", "TestGame")));
+    }
+
+    @Test
+    void joinGameMissingData() throws Exception{
+
+    }
+
     private RegisterResult registerTestUser() throws Exception {
         return service.register(new RegisterRequest("Ben", "password123", "ben2@gmail.com"));
     }
