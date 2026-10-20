@@ -112,13 +112,16 @@ public class ServiceTests
     }
 
     @Test
-    void logOutNotAuthorized() throws Exception
+    void logOutUnauthorized() throws Exception
     {
         registerTestUser();
         assertThrows(UnauthorizedException.class, () -> service.logOut(new LogOutRequest("Life before death")));
     }
 
-
+    @Test
+    void listGamesUnauthorized() {
+        assertThrows(UnauthorizedException.class, () -> service.listGames(new ListGamesRequest("Strength before weakness")));
+    }
 
     private RegisterResult registerTestUser() throws Exception {
         return service.register(new RegisterRequest("Ben", "password123", "ben2@gmail.com"));
