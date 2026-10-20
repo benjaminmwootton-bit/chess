@@ -115,8 +115,8 @@ public class ChessBoard
                     String temp = ("|" + board[i - 1][x - 1] + "|");
                     str.append(temp);
                 }
-                else
-                    str.append("| |");
+                else{
+                    str.append("| |");}
             }
             if (i != 8) {
                 str.append("\n");

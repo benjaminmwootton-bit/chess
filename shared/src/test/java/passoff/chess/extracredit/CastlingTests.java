@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import passoff.chess.TestUtilities;
 
 /**
- * Tests if the ChessGame implementation can handle Castling moves
+ * Tests if the chessGame implementation can handle Castling moves
  * Castling is a situational move the king can make as it's first move. If one of the rooks has not yet moved
  * and there are no pieces between the rook and the king, and the path is "safe", the king can castle. Castling is
  * performed by moving the king 2 spaces towards the qualifying rook, and the rook "jumping" the king to sit next
@@ -16,8 +16,8 @@ import passoff.chess.TestUtilities;
  * and 2: neither the space the king moves past nor the space the king ends up at can be reached by an opponents piece.
  */
 public class CastlingTests {
-    private static final String INVALID_CASTLE_PRESENT = "ChessGame validMoves contained an invalid castling move";
-    private static final String VALID_CASTLE_MISSING = "ChessGame validMoves did not contain valid castle move";
+    private static final String INVALID_CASTLE_PRESENT = "chessGame validMoves contained an invalid castling move";
+    private static final String VALID_CASTLE_MISSING = "chessGame validMoves did not contain valid castle move";
     private static final String INCORRECT_BOARD = "Wrong board after castle move made";
 
     private static final ChessPosition WHITE_KING_POSITION = new ChessPosition(1, 5);

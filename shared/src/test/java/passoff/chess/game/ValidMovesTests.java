@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ValidMovesTests {
-    private static final String TRAPPED_PIECE_MOVES = "ChessGame validMoves returned valid moves for a trapped piece";
+    private static final String TRAPPED_PIECE_MOVES = "chessGame validMoves returned valid moves for a trapped piece";
 
     @Test
     @DisplayName("Check Forces Movement")

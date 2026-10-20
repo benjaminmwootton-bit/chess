@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import passoff.chess.TestUtilities;
 
 /**
- * Tests if the ChessGame implementation can handle En Passant moves
+ * Tests if the chessGame implementation can handle En Passant moves
  * En Passant is a situational move in chess taken directly after your opponent has double moved a pawn
  * If their pawn moves next to one of your pawns, so it passes where your pawn could have captured it, you
  * may capture their pawn with your pawn as if they had only moved a single space. You may only take this move
@@ -225,7 +225,7 @@ public class EnPassantTests {
         ChessPosition enPassantPosition = new ChessPosition(5, 2);
         ChessMove enPassantMove = new ChessMove(enPassantPosition, new ChessPosition(6, 3), null);
         Assertions.assertFalse(game.validMoves(enPassantPosition).contains(enPassantMove),
-                "ChessGame validMoves contained a En Passant move after the move became invalid");
+                "chessGame validMoves contained a En Passant move after the move became invalid");
     }
 
     private void assertValidEnPassant(ChessBoard board, ChessGame.TeamColor turn, ChessMove setupMove,
@@ -239,7 +239,7 @@ public class EnPassantTests {
 
         //make sure pawn has En Passant move
         Assertions.assertTrue(game.validMoves(enPassantMove.getStartPosition()).contains(enPassantMove),
-                "ChessGame validMoves did not contain a valid En Passant move");
+                "chessGame validMoves did not contain a valid En Passant move");
 
         //en passant move works correctly
         Assertions.assertDoesNotThrow(() -> game.makeMove(enPassantMove));

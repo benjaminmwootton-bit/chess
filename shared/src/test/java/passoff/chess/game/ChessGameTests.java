@@ -12,7 +12,7 @@ import java.util.Collection;
 
 public class ChessGameTests extends EqualsTestingUtility<ChessGame> {
     public ChessGameTests() {
-        super("ChessGame", "games");
+        super("chessGame", "games");
     }
 
     @Override

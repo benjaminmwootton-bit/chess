@@ -17,7 +17,7 @@ import java.util.Set;
  * and then it automatically adds multiple tests to the evaluation suite
  * which assert that the <pre>equals()</pre> and <pre>hashCode()</pre> methods function.
  *
- * @param <T> The type to be compared during testing.
+ * @param <T> The type to be compared during Testing.
  */
 public abstract class EqualsTestingUtility<T> {
     private final String className;

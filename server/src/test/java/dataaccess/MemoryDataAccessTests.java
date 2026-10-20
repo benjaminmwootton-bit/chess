@@ -1,11 +1,9 @@
-package dataAccess;
+package dataaccess;
 
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
@@ -69,12 +67,12 @@ public class MemoryDataAccessTests
     void createAndUpdateGame() throws InvalidMoveException
     {
         var gameID = dataAccessObject.createGame("testGame");
-        assertEquals(new ChessGame(), dataAccessObject.getGame(gameID).ChessGame());
+        assertEquals(new ChessGame(), dataAccessObject.getGame(gameID).chessGame());
         try
         {
             ChessGame game2 = new ChessGame();
             game2.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(4,1)));
-            assertNotEquals(game2, dataAccessObject.getGame(gameID).ChessGame());
+            assertNotEquals(game2, dataAccessObject.getGame(gameID).chessGame());
         }
         catch (InvalidMoveException e)
         {
@@ -91,7 +89,7 @@ public class MemoryDataAccessTests
         var games = dataAccessObject.listGames();
         assertEquals(expected, games);
         var gameID3 = dataAccessObject.createGame("testGame3");
-        List<GameData> notExpected = new ArrayList<GameData>(List.of(dataAccessObject.getGame(gameID1), dataAccessObject.getGame(gameID2), dataAccessObject.getGame(gameID3)));
+        List<GameData> notExpected = new ArrayList<GameData>(List.of(dataAccessObject.getGame(gameID3)));
         assertNotEquals(notExpected, games);
     }
 

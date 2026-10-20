@@ -16,8 +16,8 @@ public class MemoryDataAccess implements DataAccess
 
     public String createUser(UserData user) throws DataAccessException
     {
-        if(users.containsKey(user.username()))
-            throw new DataAccessException("Username already taken");
+        if(users.containsKey(user.username())){
+            throw new DataAccessException("Username already taken");}
         users.put(user.username(), user);
         String authToken = createAuth();
         authTokens.put(authToken, new AuthData(authToken, user.username()));
@@ -91,18 +91,18 @@ public class MemoryDataAccess implements DataAccess
     //to join a game/make a move
     public void updateGame(GameData gameData) throws DataAccessException
     {
-        if (!games.containsKey(gameData.gameID()))
-            throw new DataAccessException("Game does not exist");
+        if (!games.containsKey(gameData.gameID())){
+            throw new DataAccessException("Game does not exist");}
         games.put(gameData.gameID(), gameData);
     }
     public void joinGame(int gameID, String username, ChessGame.TeamColor color)
     {
         var game = getGame(gameID);
         GameData newGame;
-        if(color == ChessGame.TeamColor.WHITE)
-            newGame = new GameData(gameID,username,game.blackUsername(),game.gameName(),game.ChessGame());
-        else
-            newGame = new GameData(gameID,game.whiteUsername(),username,game.gameName(),game.ChessGame());
+        if(color == ChessGame.TeamColor.WHITE){
+            newGame = new GameData(gameID,username,game.blackUsername(),game.gameName(),game.chessGame());}
+        else{
+            newGame = new GameData(gameID,game.whiteUsername(),username,game.gameName(),game.chessGame());}
         try
         {
             updateGame(newGame);

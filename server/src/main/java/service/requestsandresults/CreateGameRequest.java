@@ -1,3 +1,3 @@
-package Service.requestsAndResults;
+package service.requestsandresults;
 
 public record CreateGameRequest(String authToken, String gameName) {}

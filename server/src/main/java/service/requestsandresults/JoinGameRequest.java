@@ -1,4 +1,4 @@
-package Service.requestsAndResults;
+package service.requestsandresults;
 
 import chess.ChessGame;
 
