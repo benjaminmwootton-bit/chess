@@ -2,7 +2,6 @@ package service.service;
 
 import chess.ChessGame;
 import dataaccess.MemoryDataAccess;
-import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.AlreadyTakenException;
@@ -10,8 +9,10 @@ import server.BadRequestException;
 import server.UnauthorizedException;
 import service.Service;
 import service.requestsandresults.*;
+import model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ServiceTests
 {
@@ -136,8 +137,27 @@ public class ServiceTests
     }
 
     @Test
-    void joinGameMissingData() throws Exception{
+    void joinGameMissingData() throws Exception {
+        var user = registerTestUser();
+        assertThrows(BadRequestException.class, () -> service.joinGame(new JoinGameRequest(null, ChessGame.TeamColor.WHITE,1)));
+        assertThrows(BadRequestException.class, () -> service.joinGame(new JoinGameRequest(user.authToken(), null,1)));
+        assertThrows(BadRequestException.class, () -> service.joinGame(new JoinGameRequest(user.authToken(), ChessGame.TeamColor.BLACK,0)));
+    }
 
+    @Test
+    void joinGameUnauthorized() throws Exception {
+        var user = registerTestUser();
+        service.createGame(new CreateGameRequest(user.authToken(), "testGame"));
+        assertThrows(UnauthorizedException.class, () -> service.joinGame(new JoinGameRequest("These words are not accepted", ChessGame.TeamColor.WHITE,1)));
+    }
+
+    @Test
+    void gameAlreadyTaken() throws Exception {
+        var user1 = registerTestUser();
+        service.createGame(new CreateGameRequest(user1.authToken(), "testGame"));
+        service.joinGame(new JoinGameRequest(user1.authToken(), ChessGame.TeamColor.WHITE, 1));
+        var user2 = service.register(new RegisterRequest("Jack", "password321", "jack2@gmail.com"));
+        assertThrows(AlreadyTakenException.class, () -> service.joinGame(new JoinGameRequest(user2.authToken(), ChessGame.TeamColor.WHITE,1)));
     }
 
     private RegisterResult registerTestUser() throws Exception {
