@@ -46,7 +46,8 @@ public class MemoryDataAccess implements DataAccess
     //returns true if username and password match
     public boolean checkPassword(String username, String password)
     {
-        return users.get(username).password().equals(password);
+        UserData user = users.get(username);
+        return user != null && user.password().equals(password);
     }
 
     //return new authToken

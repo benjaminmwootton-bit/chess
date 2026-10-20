@@ -74,15 +74,15 @@ public class service
     //join game. Returns a joinGameResult object
     public joinGameResult joinGame(joinGameRequest request) throws Exception
     {
-        if(request == null || request.authToken() == null || request.color() == null || !dataAccess.gameExists(request.gameID()))
+        if(request == null || request.authToken() == null || request.playerColor() == null || !dataAccess.gameExists(request.gameID()))
             throw new badRequestException("bad request");
         if(!dataAccess.getAuth(request.authToken()))
             throw new unauthorizedException("unauthorized");
-        if(request.color() == ChessGame.TeamColor.WHITE && dataAccess.getGame(request.gameID()).whiteUsername() != null)
+        if(request.playerColor() == ChessGame.TeamColor.WHITE && dataAccess.getGame(request.gameID()).whiteUsername() != null)
             throw new alreadyTakenException("already taken");
-        else if (request.color() == ChessGame.TeamColor.BLACK && dataAccess.getGame(request.gameID()).blackUsername() != null)
+        else if (request.playerColor() == ChessGame.TeamColor.BLACK && dataAccess.getGame(request.gameID()).blackUsername() != null)
             throw new alreadyTakenException("already taken");
-        dataAccess.joinGame(request.gameID(),dataAccess.getUsernameWithAuthToken(request.authToken()),request.color());
+        dataAccess.joinGame(request.gameID(),dataAccess.getUsernameWithAuthToken(request.authToken()),request.playerColor());
         return new joinGameResult(true);
     }
 }

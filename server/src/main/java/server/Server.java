@@ -33,7 +33,6 @@ public class Server
             }
             catch (Exception e)
             {
-                e.printStackTrace();
                 context.status(500);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
@@ -175,7 +174,7 @@ public class Server
             {
                 String authToken = context.header("authorization");
                 joinGameRequest bodyRequest = new Gson().fromJson(context.body(), joinGameRequest.class);
-                joinGameRequest request = new joinGameRequest(authToken, bodyRequest.color(), bodyRequest.gameID());
+                joinGameRequest request = new joinGameRequest(authToken, bodyRequest.playerColor(), bodyRequest.gameID());
                 joinGameResult result = service.joinGame(request);
                 context.status(200);
                 context.json(result);
