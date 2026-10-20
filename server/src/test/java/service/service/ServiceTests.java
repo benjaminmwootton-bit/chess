@@ -5,6 +5,8 @@ import dataaccess.MemoryDataAccess;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.AlreadyTakenException;
+import server.BadRequestException;
 import service.Service;
 import service.requestsandresults.*;
 
@@ -19,6 +21,7 @@ public class ServiceTests
         service = new Service(new MemoryDataAccess());
     }
 
+    //Happy cases
     @Test
     void delete() throws Exception{
         var result = service.delete();
@@ -80,6 +83,20 @@ public class ServiceTests
         assertNotNull(result);
         assertTrue(result.joined());
     }
+
+    @Test
+    void registerMissingData() throws Exception {
+        assertThrows(BadRequestException.class, () -> service.register(new RegisterRequest(null, "password123", "ben2@gmail.com")));
+        assertThrows(BadRequestException.class, () -> service.register(new RegisterRequest("Ben", null, "ben2@gmail.com")));
+        assertThrows(BadRequestException.class, () -> service.register(new RegisterRequest("Ben", "password123", null)));
+    }
+
+    @Test
+    void userAlreadyExists() throws Exception{
+        registerTestUser();
+        assertThrows(AlreadyTakenException.class, this::registerTestUser);
+    }
+
 
     private RegisterResult registerTestUser() throws Exception {
         return service.register(new RegisterRequest("Ben", "password123", "ben2@gmail.com"));
