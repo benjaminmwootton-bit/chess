@@ -74,10 +74,14 @@ public class ServiceTests
 
     @Test
     void joinGame() throws Exception {
-
+        var testUser = registerTestUser();
+        service.createGame(new CreateGameRequest(testUser.authToken(), "testGame"));
+        var result = service.joinGame(new JoinGameRequest(testUser.authToken(), ChessGame.TeamColor.WHITE, 1));
+        assertNotNull(result);
+        assertTrue(result.joined());
     }
 
-    public RegisterResult registerTestUser() throws Exception {
+    private RegisterResult registerTestUser() throws Exception {
         return service.register(new RegisterRequest("Ben", "password123", "ben2@gmail.com"));
     }
 }
