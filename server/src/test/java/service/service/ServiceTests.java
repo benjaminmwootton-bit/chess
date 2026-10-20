@@ -38,6 +38,9 @@ public class ServiceTests
     void logIn() throws Exception {
         var testUser = registerTestUser();
         var result = service.logIn(new LogInRequest(testUser.username(), "password123"));
+        assertNotNull(result);
+        assertNotNull(result.authToken());
+        assertEquals("Ben", result.username());
     }
 
     public RegisterResult registerTestUser() throws Exception {
