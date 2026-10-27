@@ -37,3 +37,4 @@ public interface DataAccess
 
     void clear();
 }
+//mysql -u root -p
