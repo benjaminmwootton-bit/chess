@@ -91,7 +91,7 @@ public class MemoryDataAccessTests
 
 
     @Test
-    void createAndUpdateGame() throws InvalidMoveException
+    void createAndUpdateGame()
     {
         var gameID = dataAccessObject.createGame("testGame");
         assertEquals(new ChessGame(), dataAccessObject.getGame(gameID).chessGame());
@@ -130,11 +130,11 @@ public class MemoryDataAccessTests
     {
         var gameID1 = dataAccessObject.createGame("testGame1");
         var gameID2 = dataAccessObject.createGame("testGame2");
-        List<GameData> expected = new ArrayList<GameData>(List.of(dataAccessObject.getGame(gameID1), dataAccessObject.getGame(gameID2)));
+        List<GameData> expected = new ArrayList<>(List.of(dataAccessObject.getGame(gameID1), dataAccessObject.getGame(gameID2)));
         var games = dataAccessObject.listGames();
         assertEquals(expected, games);
         var gameID3 = dataAccessObject.createGame("testGame3");
-        List<GameData> notExpected = new ArrayList<GameData>(List.of(dataAccessObject.getGame(gameID3)));
+        List<GameData> notExpected = new ArrayList<>(List.of(dataAccessObject.getGame(gameID3)));
         assertNotEquals(notExpected, games);
     }
 
