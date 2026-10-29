@@ -13,9 +13,17 @@ public class Server
 {
     private final Javalin javalin;
 
-    public Server() throws Exception
+    public Server()
     {
-        var service = new Service(new SequelDataAccess());
+        Service service;
+        try
+        {
+            service = new Service(new SequelDataAccess());
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException("", e);
+        }
 
         javalin = Javalin.create(config ->
         {
