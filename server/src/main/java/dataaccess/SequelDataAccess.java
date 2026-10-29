@@ -1,7 +1,6 @@
 package dataaccess;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -9,6 +8,9 @@ import model.UserData;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import com.google.gson.Gson;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class SequelDataAccess implements DataAccess
 {
@@ -36,7 +38,8 @@ public class SequelDataAccess implements DataAccess
             String statement2 = "INSERT INTO users (username, UserData) VALUES (?,?)";
             try (var preparedStatement = conn.prepareStatement(statement2))
             {
-                String json = new Gson().toJson(user);
+                UserData encryptedUser = new UserData(user.username(), BCrypt.hashpw(user.password(), BCrypt.gensalt()), user.email());
+                String json = new Gson().toJson(encryptedUser);
                 preparedStatement.setString(1, user.username());
                 preparedStatement.setString(2, json);
                 preparedStatement.executeUpdate();
@@ -50,10 +53,6 @@ public class SequelDataAccess implements DataAccess
                 preparedStatement.setString(2, json);
                 preparedStatement.executeUpdate();
             }
-        }
-        catch (DataAccessException e)
-        {
-            throw e;
         }
         catch (SQLException e)
         {
@@ -76,12 +75,7 @@ public class SequelDataAccess implements DataAccess
                 preparedStatement.setString(2, json);
                 preparedStatement.executeUpdate();
             }
-        }
-        catch (DataAccessException e)
-        {
-            throw e;
-        }
-        catch (SQLException e)
+        } catch (SQLException e)
         {
             throw new DataAccessException("Database failure", e);
         }
@@ -107,11 +101,7 @@ public class SequelDataAccess implements DataAccess
                 }
             }
         }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (DataAccessException e)
+        catch (SQLException | DataAccessException e)
         {
             throw new RuntimeException(e);
         }
@@ -136,11 +126,7 @@ public class SequelDataAccess implements DataAccess
                 }
             }
         }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (DataAccessException e)
+        catch (SQLException | DataAccessException e)
         {
             throw new RuntimeException(e);
         }
@@ -160,11 +146,7 @@ public class SequelDataAccess implements DataAccess
                 }
             }
         }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (DataAccessException e)
+        catch (SQLException | DataAccessException e)
         {
             throw new RuntimeException(e);
         }
@@ -173,7 +155,7 @@ public class SequelDataAccess implements DataAccess
     public boolean checkPassword(String username, String password)
     {
         UserData user = getUserWithUsername(username);
-        return user != null && user.password().equals(password);
+        return user != null && BCrypt.checkpw(password, user.password());
     }
 
     //return new authToken
@@ -196,11 +178,7 @@ public class SequelDataAccess implements DataAccess
                 }
             }
         }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (DataAccessException e)
+        catch (SQLException | DataAccessException e)
         {
             throw new RuntimeException(e);
         }
@@ -216,11 +194,7 @@ public class SequelDataAccess implements DataAccess
                 preparedStatement.executeUpdate();
             }
         }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (DataAccessException e)
+        catch (SQLException | DataAccessException e)
         {
             throw new RuntimeException(e);
         }
@@ -259,12 +233,7 @@ public class SequelDataAccess implements DataAccess
                     }
                 }
             }
-        }
-        catch (DataAccessException e)
-        {
-            throw e;
-        }
-        catch (SQLException e)
+        } catch (SQLException e)
         {
             throw new DataAccessException("Database failure", e);
         }
@@ -289,11 +258,7 @@ public class SequelDataAccess implements DataAccess
                 }
             }
         }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (DataAccessException e)
+        catch (SQLException | DataAccessException e)
         {
             throw new RuntimeException(e);
         }
@@ -306,12 +271,12 @@ public class SequelDataAccess implements DataAccess
         while(true)
         {
             var game = getGame(i);
-            if(game != null){
+            if(game != null)
+            {
                 games.add(game);
                 i++;
             }
-            else{
-                break;}
+            else{break;}
         }
         return games;
     }
@@ -354,10 +319,6 @@ public class SequelDataAccess implements DataAccess
                 preparedStatement.setInt(2, gameData.gameID());
                 preparedStatement.executeUpdate();
             }
-        }
-        catch (DataAccessException e)
-        {
-            throw e;
         }
         catch (SQLException e)
         {

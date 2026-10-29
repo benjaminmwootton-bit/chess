@@ -8,6 +8,7 @@ import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class SequelDataAccessTests
         assertTrue(sequelDataAccess.userExists("Ben"));
         assertFalse(sequelDataAccess.userExists("Jack"));
         assertEquals("Ben", sequelDataAccess.getUserWithUsername("Ben").username());
-        assertEquals("password123", sequelDataAccess.getUserWithUsername("Ben").password());
+        assertTrue(BCrypt.checkpw("password123", sequelDataAccess.getUserWithUsername("Ben").password()));
         assertEquals("ben2@gmail.com", sequelDataAccess.getUserWithUsername("Ben").email());
     }
 
@@ -139,3 +140,4 @@ public class SequelDataAccessTests
         return new UserData("Ben", "password123", "ben2@gmail.com");
     }
 }
+//mysql -u root -p
