@@ -103,17 +103,20 @@ public class SequelDataAccess implements DataAccess
     //returns UserData
     public UserData getUserWithUsername(String username)
     {
-        UserData userData;
         try (Connection conn = DatabaseManager.getConnection())
         {
-            String statement1 = "Select userdata FROM users WHERE username = ?";
-            try (var preparedStatement = conn.prepareStatement(statement1))
+            String statement = "Select userdata FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement))
             {
                 preparedStatement.setString(1, username);
                 try (var resultSet = preparedStatement.executeQuery())
                 {
-                    var json = resultSet.getString("UserData");
-                    return new Gson().fromJson(json, UserData.class);
+                    if(resultSet.next())
+                    {
+                        var json = resultSet.getString("UserData");
+                        return new Gson().fromJson(json, UserData.class);
+                    }
+                    return null;
                 }
             }
         }
@@ -129,12 +132,55 @@ public class SequelDataAccess implements DataAccess
     //returns username
     public String getUsernameWithAuthToken(String authToken)
     {
-        return authTokens.get(authToken).username();
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "Select AuthData FROM authTokens WHERE authToken = ?";
+            try (var preparedStatement = conn.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, authToken);
+                try (var resultSet = preparedStatement.executeQuery())
+                {
+                    if(resultSet.next())
+                    {
+                        var json = resultSet.getString("AuthData");
+                        return new Gson().fromJson(json, AuthData.class).username();
+                    }
+                    return null;
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
     //returns if username is in users
     public boolean userExists(String username)
     {
-        return users.containsKey(username);
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "Select userdata FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, username);
+                try (var resultSet = preparedStatement.executeQuery())
+                {
+                    return resultSet.next();// && resultSet.getString(1) > 0;
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
     //returns true if username and password match
     public boolean checkPassword(String username, String password)
@@ -245,5 +291,4 @@ public class SequelDataAccess implements DataAccess
             "CREATE TABLE IF NOT EXISTS authTokens (authToken varchar(256) NOT NULL PRIMARY KEY, AuthData TEXT DEFAULT NULL) DEFAULT CHARSET=utf8mb4",
             "CREATE TABLE IF NOT EXISTS games (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, GameData TEXT DEFAULT NULL) DEFAULT CHARSET=utf8mb4"
     };
-
 }
