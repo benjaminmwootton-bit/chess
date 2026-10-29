@@ -7,9 +7,11 @@ import chess.InvalidMoveException;
 import dataaccess.sql.SequelDataAccess;
 import model.GameData;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
+import server.BadRequestException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ public class SequelDataAccessTests
         assertTrue(sequelDataAccess.listGames().isEmpty());
     }
 
+    //happy cases
     @Test
     void addAndGetUser()
     {
@@ -53,6 +56,35 @@ public class SequelDataAccessTests
     }
 
     @Test
+    void userAlreadyExists()
+    {
+        try
+        {
+            sequelDataAccess.createUser(createNewUser());
+        }
+        catch (DataAccessException e)
+        {
+            System.out.println("Username already taken");
+        }
+        assertThrows(DataAccessException.class,() -> sequelDataAccess.createUser(createNewUser()));
+    }
+
+    @Test
+    void userExists()
+    {
+        try
+        {
+            sequelDataAccess.createUser(createNewUser());
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+        assertTrue(sequelDataAccess.userExists("Ben"));
+        assertFalse(sequelDataAccess.userExists("Jack"));
+    }
+
+    @Test
     void getUserWithAuthToken()
     {
         String authToken;
@@ -66,6 +98,25 @@ public class SequelDataAccessTests
         }
         assertNotNull(sequelDataAccess);
         assertEquals("Ben", sequelDataAccess.getUserWithUsername(sequelDataAccess.getUsernameWithAuthToken(authToken)).username());
+    }
+
+    @Test
+    void getUserWithUsername()
+    {
+        var UserData1 = createNewUser();
+        try
+        {
+            sequelDataAccess.createUser(createNewUser());
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+        var UserData2 = sequelDataAccess.getUserWithUsername(UserData1.username());
+        assertEquals(UserData1.username(), UserData2.username());
+        assertTrue(BCrypt.checkpw(UserData1.password(), UserData2.password()));
+        assertEquals(UserData1.email(), UserData2.email());
+
     }
 
     @Test
@@ -92,6 +143,44 @@ public class SequelDataAccessTests
         assertNotEquals(token1,token2);
     }
 
+    @Test
+    void getAuth()
+    {
+        String authToken;
+        try
+        {
+            authToken = sequelDataAccess.createUser(createNewUser());
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+        assertTrue(sequelDataAccess.getAuth(authToken));
+        assertFalse(sequelDataAccess.getAuth("There is always another secret"));
+    }
+
+    @Test
+    void deleteAuthToken()
+    {
+        var token = sequelDataAccess.createAuth();
+        sequelDataAccess.deleteAuth(token);
+        assertFalse(sequelDataAccess.getAuth(token));
+    }
+
+    @Test
+    void checkPassword() throws DataAccessException
+    {
+        try
+        {
+            sequelDataAccess.createUser(createNewUser());
+        }
+        catch (DataAccessException e)
+        {
+            System.out.println("Username already taken");
+        }
+        assertTrue(sequelDataAccess.checkPassword("Ben", "password123"));
+        assertFalse(sequelDataAccess.checkPassword("Ben", "123password"));
+    }
 
     @Test
     void createAndUpdateGame() throws DataAccessException {
@@ -136,6 +225,14 @@ public class SequelDataAccessTests
         var gameID3 = sequelDataAccess.createGame("testGame3");
         List<GameData> notExpected = new ArrayList<>(List.of(sequelDataAccess.getGame(gameID3)));
         assertNotEquals(notExpected, games);
+    }
+
+    @Test
+    void gameExists() throws DataAccessException
+    {
+        var gameID = sequelDataAccess.createGame("testGame1");
+        assertTrue(sequelDataAccess.gameExists(gameID));
+        assertFalse(sequelDataAccess.gameExists(123));
     }
 
     public UserData createNewUser()

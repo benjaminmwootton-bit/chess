@@ -282,6 +282,7 @@ public class SequelDataAccess implements DataAccess
         }
         return games;
     }
+
     public boolean gameExists(int gameID) throws DataAccessException
     {
         int gameCount;
