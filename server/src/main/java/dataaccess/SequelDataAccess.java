@@ -71,8 +71,8 @@ public class SequelDataAccess implements DataAccess
             try (var preparedStatement = conn.prepareStatement(statement))
             {
                 String json = new Gson().toJson(new AuthData(authToken, user.username()));
-                preparedStatement.setString(1, authToken);
                 preparedStatement.setString(2, json);
+                preparedStatement.setString(1, authToken);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e)

@@ -58,7 +58,9 @@ public class SequelDataAccessTests
         try
         {
             authToken = sequelDataAccess.createUser(createNewUser());
-        } catch (DataAccessException e) {
+        }
+        catch (DataAccessException e)
+        {
             throw new RuntimeException(e);
         }
         assertNotNull(sequelDataAccess);
