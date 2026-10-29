@@ -2,16 +2,12 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import io.javalin.json.JavalinGson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class SequelDataAccess implements DataAccess
@@ -20,11 +16,6 @@ public class SequelDataAccess implements DataAccess
     {
         configureDatabase();
     }
-
-    private final Map<String, UserData> users = new HashMap<>();
-    private final Map<String, AuthData> authTokens = new HashMap<>();
-    private final Map<Integer, GameData> games = new HashMap<>();
-    private int gameCount = 0;
 
     public String createUser(UserData user) throws DataAccessException
     {
@@ -73,8 +64,7 @@ public class SequelDataAccess implements DataAccess
 
     public String logInUser(UserData user) throws DataAccessException
     {
-        String authToken = createAuth();
-        authTokens.put(authToken, new AuthData(authToken, user.username()));
+        String authToken;
         try (Connection conn = DatabaseManager.getConnection())
         {
             String statement = "INSERT INTO authTokens (authToken, AuthData) VALUES (?,?)";
@@ -223,7 +213,7 @@ public class SequelDataAccess implements DataAccess
             try (var preparedStatement = conn.prepareStatement(statement))
             {
                 preparedStatement.setString(1, authToken);
-                preparedStatement.executeQuery();
+                preparedStatement.executeUpdate();
             }
         }
         catch (SQLException e)
@@ -239,12 +229,23 @@ public class SequelDataAccess implements DataAccess
     //returns gameID
     public int createGame(String gameName) throws DataAccessException
     {
+        int gameCount = 0;
         try (Connection conn = DatabaseManager.getConnection())
         {
-            String statement = "INSERT INTO games (GameData) VALUES (?)";
-            try (var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS))
+            String statement1 = "SELECT MAX(id) FROM games";
+            try (var preparedStatement = conn.prepareStatement(statement1))
             {
-                preparedStatement.setString(1, gameName);
+                try (var resultSet = preparedStatement.executeQuery())
+                {
+                    if(resultSet.next()){
+                        gameCount = resultSet.getInt(1);}
+                }
+            }
+            String statement2 = "INSERT INTO games (GameData) VALUES (?)";
+            try (var preparedStatement = conn.prepareStatement(statement2, Statement.RETURN_GENERATED_KEYS))
+            {
+                String json = new Gson().toJson(new GameData(gameCount+1,null,null,gameName,new ChessGame()));
+                preparedStatement.setString(1, json);
                 preparedStatement.executeUpdate();
                 try(var generateKeys = preparedStatement.getGeneratedKeys())
                 {
@@ -301,7 +302,7 @@ public class SequelDataAccess implements DataAccess
     public ArrayList<GameData> listGames()
     {
         ArrayList<GameData> games = new ArrayList<>();
-        int i = 0;
+        int i = 1;
         while(true)
         {
             var game = getGame(i);
@@ -316,7 +317,7 @@ public class SequelDataAccess implements DataAccess
     }
     public boolean gameExists(int gameID) throws DataAccessException
     {
-        int gameCount = 0;
+        int gameCount;
         try (Connection conn = DatabaseManager.getConnection())
         {
             String statement = "SELECT MAX(id) FROM games";
@@ -324,7 +325,10 @@ public class SequelDataAccess implements DataAccess
             {
                 try (var resultSet = preparedStatement.executeQuery())
                 {
-                    gameCount = resultSet.getInt(1);
+                    if (resultSet.next()) {
+                        gameCount = resultSet.getInt(1);}
+                    else {
+                        return false;}
                 }
             }
         }
@@ -360,14 +364,25 @@ public class SequelDataAccess implements DataAccess
             throw new DataAccessException("Database failure", e);
         }
     }
-    public void joinGame(int gameID, String username, ChessGame.TeamColor color)
-    {
+    public void joinGame(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
+        if(username == null || color == null) {
+            throw new DataAccessException("Invalid Data");}
         var game = getGame(gameID);
         GameData newGame;
-        if(color == ChessGame.TeamColor.WHITE){
-            newGame = new GameData(gameID,username,game.blackUsername(),game.gameName(),game.chessGame());}
-        else{
+        if(color == ChessGame.TeamColor.WHITE)
+        {
+            if(game.whiteUsername() == null){
+                newGame = new GameData(gameID,username,game.blackUsername(),game.gameName(),game.chessGame());}
+            else{
+                throw new DataAccessException("White team already full");}
+        }
+        else
+        {
+            if(game.blackUsername() == null){
             newGame = new GameData(gameID,game.whiteUsername(),username,game.gameName(),game.chessGame());}
+            else{
+                throw new DataAccessException("Black team already full");}
+        }
         try
         {
             updateGame(newGame);

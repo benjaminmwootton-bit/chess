@@ -33,7 +33,7 @@ public interface DataAccess
 
     //to join a game/make a move
     void updateGame(GameData gameData) throws DataAccessException;
-    void joinGame(int gameID, String username, ChessGame.TeamColor color);
+    void joinGame(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException;
 
     void clear() throws DataAccessException;
 }
