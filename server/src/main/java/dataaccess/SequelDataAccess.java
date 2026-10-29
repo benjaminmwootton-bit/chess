@@ -8,10 +8,7 @@ import model.GameData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -240,12 +237,36 @@ public class SequelDataAccess implements DataAccess
     }
 
     //returns gameID
-    public int createGame(String gameName)
-    {
-        int gameID = ++gameCount;
-        GameData gameData = new GameData(gameID,null,null,gameName, new ChessGame());
-        games.put(gameID, gameData);
-        return gameID;
+    public int createGame(String gameName) throws DataAccessException {
+        int gameID;
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "INSERT INTO games (GameData) VALUES (?)";
+            try (var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS))
+            {
+                preparedStatement.setString(1, gameName);
+                preparedStatement.executeUpdate();
+                try(var generateKeys = preparedStatement.getGeneratedKeys())
+                {
+                    if(generateKeys.next())
+                    {
+                        return generateKeys.getInt(1);
+                    }
+                    else
+                    {
+                        throw new SQLException("Game creation failed");
+                    }
+                }
+            }
+        }
+        catch (DataAccessException e)
+        {
+            throw e;
+        }
+        catch (SQLException e)
+        {
+            throw new DataAccessException("Database failure", e);
+        }
     }
     //returns gameID
     public GameData getGame(int gameID)

@@ -24,7 +24,7 @@ public interface DataAccess
     boolean checkPassword(String username, String password);
 
     //returns gameID
-    int createGame(String gameName);
+    int createGame(String gameName) throws DataAccessException;
     //returns gameID
     GameData getGame(int gameID);
     //returns all gameData

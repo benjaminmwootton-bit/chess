@@ -71,8 +71,7 @@ public class Service
         return new ListGamesResult(games);
     }
     //create game. Returns a createGameResult object
-    public CreateGameResult createGame(CreateGameRequest request)
-    {
+    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         if(request == null || request.authToken() == null || request.gameName() == null){
             throw new BadRequestException("bad request");}
         if(!dataAccess.getAuth(request.authToken())){

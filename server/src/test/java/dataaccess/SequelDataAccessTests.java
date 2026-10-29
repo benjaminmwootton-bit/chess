@@ -90,8 +90,7 @@ public class SequelDataAccessTests
 
 
     @Test
-    void createAndUpdateGame()
-    {
+    void createAndUpdateGame() throws DataAccessException {
         var gameID = sequelDataAccess.createGame("testGame");
         assertEquals(new ChessGame(), sequelDataAccess.getGame(gameID).chessGame());
         try
@@ -107,8 +106,7 @@ public class SequelDataAccessTests
     }
 
     @Test
-    void joinGame()
-    {
+    void joinGame() throws DataAccessException {
         var gameID = sequelDataAccess.createGame("testGame");
         try
         {
@@ -125,8 +123,7 @@ public class SequelDataAccessTests
     }
 
     @Test
-    void listGames()
-    {
+    void listGames() throws DataAccessException {
         var gameID1 = sequelDataAccess.createGame("testGame1");
         var gameID2 = sequelDataAccess.createGame("testGame2");
         List<GameData> expected = new ArrayList<>(List.of(sequelDataAccess.getGame(gameID1), sequelDataAccess.getGame(gameID2)));
