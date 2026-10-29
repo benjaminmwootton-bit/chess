@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.DataAccess;
+import dataaccess.DataAccessException;
 import model.UserData;
 import server.AlreadyTakenException;
 import server.BadRequestException;
@@ -17,8 +18,7 @@ public class Service
         this.dataAccess = dataAccess;
     }
     //clear
-    public DeleteResult delete(DeleteRequest request)
-    {
+    public DeleteResult delete(DeleteRequest request) throws DataAccessException {
         dataAccess.clear();
         return new DeleteResult(true);
     }

@@ -65,8 +65,7 @@ public class SequelDataAccessTests
     }
 
     @Test
-    void clear()
-    {
+    void clear() throws DataAccessException {
         try
         {
             sequelDataAccess.createUser(createNewUser());

@@ -35,6 +35,6 @@ public interface DataAccess
     void updateGame(GameData gameData) throws DataAccessException;
     void joinGame(int gameID, String username, ChessGame.TeamColor color);
 
-    void clear();
+    void clear() throws DataAccessException;
 }
 //mysql -u root -p

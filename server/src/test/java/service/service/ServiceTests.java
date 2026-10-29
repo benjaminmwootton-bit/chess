@@ -1,6 +1,7 @@
 package service.service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ public class ServiceTests
 
     //Happy cases
     @Test
-    void delete(){
+    void delete() throws DataAccessException {
         var result = service.delete(new DeleteRequest());
         assertTrue(result.deleted());
     }

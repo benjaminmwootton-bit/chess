@@ -206,12 +206,21 @@ public class SequelDataAccess implements DataAccess
         }
     }
     //clears all data
-    public void clear()
+    public void clear() throws DataAccessException
     {
-        users.clear();
-        games.clear();
-        authTokens.clear();
-        gameCount = 0;
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String[] statements = {"TRUNCATE users","TRUNCATE authTokens","TRUNCATE games"};
+            for(String statement: statements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     private void configureDatabase() throws Exception
