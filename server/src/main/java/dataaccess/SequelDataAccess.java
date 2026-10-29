@@ -300,7 +300,19 @@ public class SequelDataAccess implements DataAccess
     //returns all gameData
     public ArrayList<GameData> listGames()
     {
-        return new ArrayList<>(games.values());
+        ArrayList<GameData> games = new ArrayList<>();
+        int i = 0;
+        while(true)
+        {
+            var game = getGame(i);
+            if(game != null){
+                games.add(game);
+                i++;
+            }
+            else{
+                break;}
+        }
+        return games;
     }
     public boolean gameExists(int gameID)
     {
