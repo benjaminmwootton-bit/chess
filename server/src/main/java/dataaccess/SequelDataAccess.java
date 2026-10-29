@@ -344,14 +344,7 @@ public class SequelDataAccess implements DataAccess
             else{
                 throw new DataAccessException("Black team already full");}
         }
-        try
-        {
-            updateGame(newGame);
-        }
-        catch (Exception e)
-        {
-            System.out.println("GameID not found");
-        }
+        updateGame(newGame);
     }
     //clears all data
     public void clear() throws DataAccessException

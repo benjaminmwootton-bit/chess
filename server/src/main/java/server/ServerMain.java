@@ -2,7 +2,7 @@ package server;
 
 public class ServerMain
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
         var port = 8080;
         Server server = new Server();

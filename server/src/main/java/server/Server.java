@@ -1,6 +1,7 @@
 package server;
 
 import dataaccess.MemoryDataAccess;
+import dataaccess.SequelDataAccess;
 import io.javalin.*;
 import java.util.Map;
 import com.google.gson.Gson;
@@ -8,11 +9,13 @@ import service.requestsandresults.*;
 import service.Service;
 import io.javalin.json.JavalinGson;
 
-public class Server {
+public class Server
+{
     private final Javalin javalin;
 
-    public Server() {
-        var service = new Service(new MemoryDataAccess());
+    public Server() throws Exception
+    {
+        var service = new Service(new SequelDataAccess());
 
         javalin = Javalin.create(config ->
         {
