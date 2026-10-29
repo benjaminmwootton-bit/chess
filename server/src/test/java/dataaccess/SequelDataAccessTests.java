@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
+import dataaccess.sql.SequelDataAccess;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;

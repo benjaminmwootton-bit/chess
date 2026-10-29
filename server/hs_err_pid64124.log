@@ -2,7 +2,7 @@
 # A fatal error has been detected by the Java Runtime Environment:
 #
 #  Internal Error (method.cpp:1830), pid=64124, tid=3587
-#  fatal error: no original bytecode found in dataaccess.SequelDataAccess.configureDatabase()V at bci 111
+#  fatal error: no original bytecode found in dataaccess.sql.SequelDataAccess.configureDatabase()V at bci 111
 #
 # JRE version: OpenJDK Runtime Environment Temurin-23.0.2+7 (23.0.2+7) (build 23.0.2+7)
 # Java VM: OpenJDK 64-Bit Server VM Temurin-23.0.2+7 (23.0.2+7, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, bsd-aarch64)
@@ -29,8 +29,8 @@ V  [libjvm.dylib+0xa7c3e8]  VMError::report_and_die(int, char const*, char const
 V  [libjvm.dylib+0x2d38d8]  DebuggingContext::~DebuggingContext()+0x0
 V  [libjvm.dylib+0x7be9a8]  Method::orig_bytecode_at(int) const+0x4c
 V  [libjvm.dylib+0x49367c]  InterpreterRuntime::get_original_bytecode_at(JavaThread*, Method*, unsigned char*)+0x60
-j  dataaccess.SequelDataAccess.configureDatabase()V+111
-j  dataaccess.SequelDataAccess.<init>()V+66
+j  dataaccess.sql.SequelDataAccess.configureDatabase()V+111
+j  dataaccess.sql.SequelDataAccess.<init>()V+66
 j  dataaccess.SequelDataAccessTests.setUp()V+5
 j  java.lang.invoke.LambdaForm$DMH+0x00000ffc01118800.invokeVirtual(Ljava/lang/Object;Ljava/lang/Object;)V+10 java.base@23.0.2
 j  java.lang.invoke.LambdaForm$MH+0x00000ffc01119000.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+31 java.base@23.0.2
@@ -127,8 +127,8 @@ j  com.intellij.rt.execution.junit.TestsRepeater.repeat(IZLcom/intellij/rt/execu
 j  com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(Lcom/intellij/rt/junit/IdeaTestRunner;[Ljava/lang/String;Ljava/util/ArrayList;Ljava/lang/String;IZ)I+25
 ...<more frames>...
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
-j  dataaccess.SequelDataAccess.configureDatabase()V+111
-j  dataaccess.SequelDataAccess.<init>()V+66
+j  dataaccess.sql.SequelDataAccess.configureDatabase()V+111
+j  dataaccess.sql.SequelDataAccess.<init>()V+66
 j  dataaccess.SequelDataAccessTests.setUp()V+5
 j  java.lang.invoke.LambdaForm$DMH+0x00000ffc01118800.invokeVirtual(Ljava/lang/Object;Ljava/lang/Object;)V+10 java.base@23.0.2
 j  java.lang.invoke.LambdaForm$MH+0x00000ffc01119000.invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;+31 java.base@23.0.2

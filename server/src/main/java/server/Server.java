@@ -1,7 +1,6 @@
 package server;
 
-import dataaccess.MemoryDataAccess;
-import dataaccess.SequelDataAccess;
+import dataaccess.sql.SequelDataAccess;
 import io.javalin.*;
 import java.util.Map;
 import com.google.gson.Gson;
