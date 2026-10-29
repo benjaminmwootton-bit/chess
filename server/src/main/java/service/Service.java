@@ -79,8 +79,7 @@ public class Service
         return new CreateGameResult(dataAccess.createGame(request.gameName()));
     }
     //join game. Returns a joinGameResult object
-    public JoinGameResult joinGame(JoinGameRequest request)
-    {
+    public JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
         if(request == null || request.authToken() == null || request.playerColor() == null || !dataAccess.gameExists(request.gameID())){
             throw new BadRequestException("bad request");}
         if(!dataAccess.getAuth(request.authToken())){

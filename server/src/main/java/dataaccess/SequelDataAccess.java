@@ -338,9 +338,27 @@ public class SequelDataAccess implements DataAccess
     //to join a game/make a move
     public void updateGame(GameData gameData) throws DataAccessException
     {
-        if (!games.containsKey(gameData.gameID())){
+        if (!gameExists(gameData.gameID())){
             throw new DataAccessException("Game does not exist");}
-        games.put(gameData.gameID(), gameData);
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "UPDATE games SET GameData = ? where id = ?";
+            try (var preparedStatement = conn.prepareStatement(statement))
+            {
+                String json = new Gson().toJson(gameData);
+                preparedStatement.setString(1, json);
+                preparedStatement.setInt(2, gameData.gameID());
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (DataAccessException e)
+        {
+            throw e;
+        }
+        catch (SQLException e)
+        {
+            throw new DataAccessException("Database failure", e);
+        }
     }
     public void joinGame(int gameID, String username, ChessGame.TeamColor color)
     {
