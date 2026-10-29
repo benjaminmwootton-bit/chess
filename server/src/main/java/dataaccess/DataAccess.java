@@ -29,7 +29,7 @@ public interface DataAccess
     GameData getGame(int gameID);
     //returns all gameData
     ArrayList<GameData> listGames();
-    boolean gameExists(int gameID);
+    boolean gameExists(int gameID) throws DataAccessException;
 
     //to join a game/make a move
     void updateGame(GameData gameData) throws DataAccessException;

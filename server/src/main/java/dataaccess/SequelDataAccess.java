@@ -28,7 +28,7 @@ public class SequelDataAccess implements DataAccess
 
     public String createUser(UserData user) throws DataAccessException
     {
-        String authToken = null;
+        String authToken;
         try (Connection conn = DatabaseManager.getConnection())
         {
             String statement1 = "Select COUNT(*) FROM users WHERE username = ?";
@@ -166,7 +166,7 @@ public class SequelDataAccess implements DataAccess
                 preparedStatement.setString(1, username);
                 try (var resultSet = preparedStatement.executeQuery())
                 {
-                    return resultSet.next();// && resultSet.getString(1) > 0;
+                    return resultSet.next();
                 }
             }
         }
@@ -314,8 +314,24 @@ public class SequelDataAccess implements DataAccess
         }
         return games;
     }
-    public boolean gameExists(int gameID)
+    public boolean gameExists(int gameID) throws DataAccessException
     {
+        int gameCount = 0;
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "SELECT MAX(id) FROM games";
+            try (var preparedStatement = conn.prepareStatement(statement))
+            {
+                try (var resultSet = preparedStatement.executeQuery())
+                {
+                    gameCount = resultSet.getInt(1);
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
         return gameID > 0 && gameID <= gameCount;
     }
 
