@@ -56,6 +56,21 @@ public class SequelDataAccessTests
     }
 
     @Test
+    void logInUser() throws DataAccessException {
+        String authToken;
+        try
+        {
+            authToken = sequelDataAccess.createUser(createNewUser());
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+        UserData ben = new UserData("Ben", "password123", "ben2@gmail.com");
+        assertNotEquals(authToken, sequelDataAccess.logInUser(ben));
+    }
+
+    @Test
     void userAlreadyExists()
     {
         try
@@ -91,19 +106,19 @@ public class SequelDataAccessTests
         try
         {
             authToken = sequelDataAccess.createUser(createNewUser());
+            assertNotNull(sequelDataAccess);
+        assertEquals("Ben", sequelDataAccess.getUserWithUsername(sequelDataAccess.getUsernameWithAuthToken(authToken)).username());
         }
         catch (DataAccessException e)
         {
             throw new RuntimeException(e);
         }
-        assertNotNull(sequelDataAccess);
-        assertEquals("Ben", sequelDataAccess.getUserWithUsername(sequelDataAccess.getUsernameWithAuthToken(authToken)).username());
     }
 
     @Test
     void getUserWithUsername()
     {
-        var UserData1 = createNewUser();
+        var userData = createNewUser();
         try
         {
             sequelDataAccess.createUser(createNewUser());
@@ -112,11 +127,10 @@ public class SequelDataAccessTests
         {
             throw new RuntimeException(e);
         }
-        var UserData2 = sequelDataAccess.getUserWithUsername(UserData1.username());
-        assertEquals(UserData1.username(), UserData2.username());
-        assertTrue(BCrypt.checkpw(UserData1.password(), UserData2.password()));
-        assertEquals(UserData1.email(), UserData2.email());
-
+        var userData2 = sequelDataAccess.getUserWithUsername(userData.username());
+        assertEquals(userData.username(), userData2.username());
+        assertTrue(BCrypt.checkpw(userData.password(), userData2.password()));
+        assertEquals(userData.email(), userData2.email());
     }
 
     @Test
@@ -225,6 +239,16 @@ public class SequelDataAccessTests
         var gameID3 = sequelDataAccess.createGame("testGame3");
         List<GameData> notExpected = new ArrayList<>(List.of(sequelDataAccess.getGame(gameID3)));
         assertNotEquals(notExpected, games);
+    }
+
+    @Test
+    void getGame() throws DataAccessException
+    {
+        var gameID = sequelDataAccess.createGame("testGame");
+        GameData game1 = new GameData(1,null,null,"testGame",new ChessGame());
+        GameData game2 = new GameData(1,"Ben","Jack","gameTest",new ChessGame());
+        assertEquals(sequelDataAccess.getGame(gameID), game1);
+        assertNotEquals(sequelDataAccess.getGame(gameID), game2);
     }
 
     @Test
