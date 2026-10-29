@@ -1,11 +1,14 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,13 +29,49 @@ public class SequelDataAccess implements DataAccess
 
     public String createUser(UserData user) throws DataAccessException
     {
-        if(users.containsKey(user.username())){
-            throw new DataAccessException("Username already taken");}
-        users.put(user.username(), user);
-        String authToken = createAuth();
-        authTokens.put(authToken, new AuthData(authToken, user.username()));
+        String authToken = null;
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement1 = "Select COUNT(*) FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement1))
+            {
+                preparedStatement.setString(1, user.username());
+                try(var resultSet = preparedStatement.executeQuery())
+                {
+                    if (resultSet.next() && resultSet.getInt(1) > 0) {
+                        throw new DataAccessException("User already exists");
+                    }
+                }
+            }
+            String statement2 = "INSERT INTO users (username, UserData) VALUES (?,?)";
+            try (var preparedStatement = conn.prepareStatement(statement2))
+            {
+                String json = new Gson().toJson(user);
+                preparedStatement.setString(1, user.username());
+                preparedStatement.setString(2, json);
+                preparedStatement.executeUpdate();
+            }
+            String statement3 = "INSERT INTO authTokens (authToken, AuthData) VALUES (?,?)";
+            authToken = createAuth();
+            try (var preparedStatement = conn.prepareStatement(statement3))
+            {
+                String json = new Gson().toJson(new AuthData(authToken, user.username()));
+                preparedStatement.setString(1, authToken);
+                preparedStatement.setString(2, json);
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (DataAccessException e)
+        {
+            throw e;
+        }
+        catch (SQLException e)
+        {
+            throw new DataAccessException("Database failure", e);
+        }
         return authToken;
     }
+
     public String logInUser(UserData user)
     {
         String authToken = createAuth();
@@ -132,12 +171,6 @@ public class SequelDataAccess implements DataAccess
         gameCount = 0;
     }
 
-    private final String[] createStatements = {
-            "CREATE TABLE IF NOT EXISTS users (username varchar(256) NOT NULL PRIMARY KEY, UserData TEXT DEFAULT NULL)",
-            "CREATE TABLE IF NOT EXISTS authTokens (authToken varchar(256) NOT NULL PRIMARY KEY, AuthData TEXT DEFAULT NULL)",
-            "CREATE TABLE IF NOT EXISTS games (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, GameData TEXT DEFAULT NULL)"
-    };
-
     private void configureDatabase() throws Exception
     {
         DatabaseManager.createDatabase();
@@ -154,4 +187,11 @@ public class SequelDataAccess implements DataAccess
             throw new Exception(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
+
+    private final String[] createStatements = {
+            "CREATE TABLE IF NOT EXISTS users (username varchar(256) NOT NULL PRIMARY KEY, UserData TEXT DEFAULT NULL) DEFAULT CHARSET=utf8mb4",
+            "CREATE TABLE IF NOT EXISTS authTokens (authToken varchar(256) NOT NULL PRIMARY KEY, AuthData TEXT DEFAULT NULL) DEFAULT CHARSET=utf8mb4",
+            "CREATE TABLE IF NOT EXISTS games (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, GameData TEXT DEFAULT NULL) DEFAULT CHARSET=utf8mb4"
+    };
+
 }
