@@ -39,7 +39,15 @@ public class Service
             throw new BadRequestException("bad request");}
         if(!dataAccess.checkPassword(request.username(),request.password())){
             throw new UnauthorizedException("unauthorized");}
-        var authToken = dataAccess.logInUser(dataAccess.getUserWithUsername(request.username()));
+        String authToken = null;
+        try
+        {
+            authToken = dataAccess.logInUser(dataAccess.getUserWithUsername(request.username()));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Log in error");
+        }
         return new LogInResult(request.username(), authToken);
     }
     //logOut. Return logOutResult object

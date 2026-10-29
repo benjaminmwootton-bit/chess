@@ -10,7 +10,7 @@ public interface DataAccess
 {
     //return authToken
     String createUser(UserData userData) throws DataAccessException;
-    String logInUser(UserData user);
+    String logInUser(UserData user) throws DataAccessException;
     //returns UserData
     UserData getUserWithUsername(String username);
     String getUsernameWithAuthToken(String authToken);

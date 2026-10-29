@@ -2,9 +2,11 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import io.javalin.json.JavalinGson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -72,16 +74,57 @@ public class SequelDataAccess implements DataAccess
         return authToken;
     }
 
-    public String logInUser(UserData user)
+    public String logInUser(UserData user) throws DataAccessException
     {
         String authToken = createAuth();
         authTokens.put(authToken, new AuthData(authToken, user.username()));
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "INSERT INTO authTokens (authToken, AuthData) VALUES (?,?)";
+            authToken = createAuth();
+            try (var preparedStatement = conn.prepareStatement(statement))
+            {
+                String json = new Gson().toJson(new AuthData(authToken, user.username()));
+                preparedStatement.setString(1, authToken);
+                preparedStatement.setString(2, json);
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (DataAccessException e)
+        {
+            throw e;
+        }
+        catch (SQLException e)
+        {
+            throw new DataAccessException("Database failure", e);
+        }
         return authToken;
     }
     //returns UserData
     public UserData getUserWithUsername(String username)
     {
-        return users.get(username);
+        UserData userData;
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement1 = "Select userdata FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement1))
+            {
+                preparedStatement.setString(1, username);
+                try (var resultSet = preparedStatement.executeQuery())
+                {
+                    var json = resultSet.getString("UserData");
+                    return new Gson().fromJson(json, UserData.class);
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
     //returns username
     public String getUsernameWithAuthToken(String authToken)
