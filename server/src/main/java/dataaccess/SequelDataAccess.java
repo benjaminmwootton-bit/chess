@@ -185,7 +185,7 @@ public class SequelDataAccess implements DataAccess
     //returns true if username and password match
     public boolean checkPassword(String username, String password)
     {
-        UserData user = users.get(username);
+        UserData user = getUserWithUsername(username);
         return user != null && user.password().equals(password);
     }
 
