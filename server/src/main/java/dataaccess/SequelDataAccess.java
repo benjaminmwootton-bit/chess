@@ -197,11 +197,46 @@ public class SequelDataAccess implements DataAccess
     //return if authorization token exists
     public boolean getAuth(String authToken)
     {
-        return authTokens.containsKey(authToken);
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "Select authData FROM authTokens WHERE authToken = ?";
+            try (var preparedStatement = conn.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, authToken);
+                try (var resultSet = preparedStatement.executeQuery())
+                {
+                    return resultSet.next();
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
     public void deleteAuth(String authToken)
     {
-        authTokens.remove(authToken);
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "DELETE FROM authTokens WHERE authToken = ?";
+            try (var preparedStatement = conn.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, authToken);
+                preparedStatement.executeQuery();
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     //returns gameID
