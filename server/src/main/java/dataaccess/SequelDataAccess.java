@@ -237,8 +237,8 @@ public class SequelDataAccess implements DataAccess
     }
 
     //returns gameID
-    public int createGame(String gameName) throws DataAccessException {
-        int gameID;
+    public int createGame(String gameName) throws DataAccessException
+    {
         try (Connection conn = DatabaseManager.getConnection())
         {
             String statement = "INSERT INTO games (GameData) VALUES (?)";
@@ -271,7 +271,31 @@ public class SequelDataAccess implements DataAccess
     //returns gameID
     public GameData getGame(int gameID)
     {
-        return games.get(gameID);
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "Select gameData FROM games WHERE id = ?";
+            try (var preparedStatement = conn.prepareStatement(statement))
+            {
+                preparedStatement.setInt(1, gameID);
+                try (var resultSet = preparedStatement.executeQuery())
+                {
+                    if(resultSet.next())
+                    {
+                        var json = resultSet.getString("GameData");
+                        return new Gson().fromJson(json, GameData.class);
+                    }
+                    return null;
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
     //returns all gameData
     public ArrayList<GameData> listGames()
