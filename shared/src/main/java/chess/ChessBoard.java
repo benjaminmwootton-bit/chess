@@ -133,6 +133,35 @@ public class ChessBoard
         return str.toString();
     }
 
+    public String toStringBlack()
+    {
+        StringBuilder str = new StringBuilder();
+        for (int i = 7; i >= 0; i--) {
+            for (int x = 7; x >= 0; x--)
+            {
+                if ((i + x) % 2 == 0) {
+                    str.append("\u001b[104m");}
+                else {
+                    str.append("\u001b[44m");}
+
+                if (board[i][x] != null)
+                {
+                    if (board[i][x].getTeamColor() == WHITE) {
+                        str.append("\u001b[37m"); }
+                    else {
+                        str.append("\u001b[30m");}
+                    str.append("|");
+                    str.append(board[i][x]);
+                }
+                else {
+                    str.append("| ");}
+                str.append("|");
+                str.append("\u001b[0m");
+            }
+            str.append("\n");
+        }
+        return str.toString();
+    }
 
     @Override
     public boolean equals(Object o)
