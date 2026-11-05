@@ -1,6 +1,7 @@
 package client;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -36,7 +37,7 @@ public class ChessClient {
             case "quit" -> quit();
             case "login" -> login(params);
             case "register" -> register(params);
-            case "love" -> warGames();
+            case "love" -> warGames(); //Love to. How about Global Thermonuclear War?
             default -> improperInput(false);
         };
     }
@@ -90,11 +91,26 @@ public class ChessClient {
         }
     }
 
+    private static State quit()
+    {
+        return State.QUIT;
+    }
+
     private static State warGames()
     {
         System.out.println("Wouldn't you prefer a good game of chess?");
         Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();//Later. Let's play Global Thermonuclear War.
+        System.out.println("Fine.\n Which side do you want?");
+        System.out.println("1. United States\n 2. Soviet Union\n Please Choose One:");
         scanner.nextLine();
-        System.out.println("Fine.");
+        System.out.println("Awaiting first strike command");
+        System.out.println("Please list primary targets by city/or country name:");
+        String city = "";
+        while (!city.equals("Utah"))
+        {
+            city = scanner.nextLine();//Las Vegas
+        }
+        return State.SIGNEDOUT;
     }
 }
