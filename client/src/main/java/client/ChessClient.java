@@ -1,11 +1,11 @@
 package client;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class ChessClient {
-    public enum State {SIGNEDOUT, SIGNEDIN, QUIT}
+
+    private static final ServerFacade facade = new ServerFacade("http://localhost:8080");
 
     public static void main(String[] args) {
         System.out.println("♕ 240 Chess Client: ♙");
@@ -35,8 +35,8 @@ public class ChessClient {
         return switch (cmd) {
             case "help" -> help(false);
             case "quit" -> quit();
-            case "login" -> login(params);
-            case "register" -> register(params);
+            case "login" -> facade.login(params);
+            case "register" -> facade.register(params);
             case "love" -> warGames(); //Love to. How about Global Thermonuclear War?
             default -> improperInput(false);
         };
@@ -55,11 +55,11 @@ public class ChessClient {
 
         return switch (cmd) {
             case "help" -> help(true);
-            case "logout" -> logout();
-            case "create" -> create(params);
-            case "list" -> list();
-            case "join" -> join(params);
-            case "observe" -> observe();
+            case "logout" -> facade.logout();
+            case "create" -> facade.create(params);
+            case "list" -> facade.list();
+            case "join" -> facade.join(params);
+            case "observe" -> facade.observe(params);
             default -> improperInput(true);
         };
     }
