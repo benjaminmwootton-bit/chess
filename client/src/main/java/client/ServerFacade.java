@@ -59,7 +59,34 @@ public class ServerFacade
     }
 
     public State register(String[] params) {
-        return null;
+        if(params.length != 3){
+            System.out.println("To register enter your username, password, and email");
+            return State.SIGNEDOUT;
+        }
+        RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
+        String json = gson.toJson(request);
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/user"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                RegisterResult result = gson.fromJson(response.body(), RegisterResult.class);
+                authToken = result.authToken();
+                System.out.println("Registered!");
+                return State.SIGNEDIN;
+            }
+            if (response.statusCode() == 403) {
+                System.out.println("Username already taken");
+            } else {
+                System.out.println("Registration failed: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("Could not connect to server: " + e.getMessage());
+        }
+        return State.SIGNEDOUT;
     }
 
     public State logout() {
