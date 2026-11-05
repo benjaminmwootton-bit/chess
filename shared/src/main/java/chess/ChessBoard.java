@@ -106,7 +106,10 @@ public class ChessBoard
     public String toString()
     {
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
+        str.append("\u001b[31;100;1m    a  b  c  d  e  f  g  h    \u001b[0m");
+        for (int i = 0; i < 8; i++)
+        {
+            str.append(" ").append(8 - i).append(" ");
             for (int x = 0; x < 8; x++)
             {
                 if ((i + x) % 2 == 0) {
@@ -128,15 +131,19 @@ public class ChessBoard
                 str.append("|");
                 str.append("\u001b[0m");
             }
-            str.append("\n");
+            str.append(" ").append(8 - i).append(" \n");
         }
+        str.append("\u001b[31;100;1m    a  b  c  d  e  f  g  h    \u001b[0m");
         return str.toString();
     }
 
     public String toStringBlack()
     {
         StringBuilder str = new StringBuilder();
-        for (int i = 7; i >= 0; i--) {
+        str.append("\u001b[31;100;1m    h  g  f  e  d  c  b  a    \u001b[0m");
+        for (int i = 7; i >= 0; i--)
+        {
+            str.append(" ").append(8 - i).append(" ");
             for (int x = 7; x >= 0; x--)
             {
                 if ((i + x) % 2 == 0) {
@@ -158,8 +165,9 @@ public class ChessBoard
                 str.append("|");
                 str.append("\u001b[0m");
             }
-            str.append("\n");
+            str.append(" ").append(8 - i).append(" \n");
         }
+        str.append("\u001b[31;100;1m    h  g  f  e  d  c  b  a    \u001b[0m");
         return str.toString();
     }
 
