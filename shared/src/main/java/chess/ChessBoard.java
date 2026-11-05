@@ -106,24 +106,33 @@ public class ChessBoard
     public String toString()
     {
         StringBuilder str = new StringBuilder();
-        for(int i = 1; i < 9;i++)
-        {
-            for (int x = 1; x < 9; x++)
+        for (int i = 0; i < 8; i++) {
+            for (int x = 0; x < 8; x++)
             {
-                if (board[i - 1][x - 1] != null)
+                if ((i + x) % 2 == 0) {
+                    str.append("\u001b[104m");}
+                else {
+                    str.append("\u001b[44m");}
+
+                if (board[i][x] != null)
                 {
-                    String temp = ("|" + board[i - 1][x - 1] + "|");
-                    str.append(temp);
+                    if (board[i][x].getTeamColor() == WHITE) {
+                        str.append("\u001b[37m"); }
+                    else {
+                        str.append("\u001b[30m");}
+                    str.append("|");
+                    str.append(board[i][x]);
                 }
-                else{
-                    str.append("| |");}
+                else {
+                    str.append("| ");}
+                str.append("|");
+                str.append("\u001b[0m");
             }
-            if (i != 8) {
-                str.append("\n");
-            }
+            str.append("\n");
         }
         return str.toString();
     }
+
 
     @Override
     public boolean equals(Object o)
