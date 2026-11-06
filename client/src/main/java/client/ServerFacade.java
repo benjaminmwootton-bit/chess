@@ -1,6 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
+import model.GameData;
 import service.requestsandresults.*;
 
 import java.net.URI;
@@ -106,7 +107,7 @@ public class ServerFacade
         } catch (Exception e) {
             System.out.println("Could not connect to server: " + e.getMessage());
         }
-        return State.SIGNEDIN;
+        return State.SIGNEDOUT;
     }
 
     public State create(String[] params) {
@@ -140,7 +141,40 @@ public class ServerFacade
     }
 
     public State list() {
-        return null;
+        ListGamesRequest request = new ListGamesRequest(authToken);
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/game"))
+                .header("Content-Type", "application/json")
+                .header("authorization", authToken)
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                ListGamesResult result = gson.fromJson(response.body(), ListGamesResult.class);
+                int x = 1;
+                for(GameData game : result.games()) {
+                    System.out.print(x + ". " + game.gameName());
+                    if(game.whiteUsername() != null){
+                        System.out.print(". " + game.whiteUsername());
+                    }
+                    if(game.blackUsername() != null){
+                        System.out.print(". " + game.blackUsername());
+                    }
+                    System.out.print("\n");
+                    x++;
+                }
+                return State.SIGNEDIN;
+            }
+            if (response.statusCode() == 401) {
+                System.out.println("You are not authorized");
+            } else {
+                System.out.println("List games failed: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("Could not connect to server: " + e.getMessage());
+        }
+        return State.SIGNEDIN;
     }
 
     public State join(String[] params) {
