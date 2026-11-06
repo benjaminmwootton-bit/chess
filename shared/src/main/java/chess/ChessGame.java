@@ -503,4 +503,5 @@ public class ChessGame
 
     @Override
     public String toString() {return board.toString();}
+    public String toStringBlack() {return board.toStringBlack();}
 }

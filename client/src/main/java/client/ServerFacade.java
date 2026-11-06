@@ -1,8 +1,6 @@
 package client;
 
 import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import dataaccess.sql.SequelDataAccess;
@@ -26,37 +24,6 @@ public class ServerFacade
         this.gson = new Gson();
         this.serverUrl = serverUrl;
         this.authToken = null;
-    }
-
-    public State login(String[] params) {
-        if(params.length != 2){
-            System.out.println("To login enter your username and password");
-            return State.SIGNEDOUT;
-        }
-        LogInRequest request = new LogInRequest(params[0], params[1]);
-        String json = gson.toJson(request);
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl + "/session"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-        try {
-            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                LogInResult result = gson.fromJson(response.body(), LogInResult.class);
-                authToken = result.authToken();
-                System.out.println("Logged in!");
-                return State.SIGNEDIN;
-            }
-            if (response.statusCode() == 401) {
-                System.out.println("Invalid username or password");
-            } else {
-                System.out.println("Login failed: " + response.body());
-            }
-        } catch (Exception e) {
-            System.out.println("Could not connect to server: " + e.getMessage());
-        }
-        return State.SIGNEDOUT;
     }
 
     public State register(String[] params) {
@@ -83,6 +50,37 @@ public class ServerFacade
                 System.out.println("Username already taken");
             } else {
                 System.out.println("Registration failed: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("Could not connect to server: " + e.getMessage());
+        }
+        return State.SIGNEDOUT;
+    }
+
+    public State login(String[] params) {
+        if(params.length != 2){
+            System.out.println("To login enter your username and password");
+            return State.SIGNEDOUT;
+        }
+        LogInRequest request = new LogInRequest(params[0], params[1]);
+        String json = gson.toJson(request);
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/session"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                LogInResult result = gson.fromJson(response.body(), LogInResult.class);
+                authToken = result.authToken();
+                System.out.println("Logged in!");
+                return State.SIGNEDIN;
+            }
+            if (response.statusCode() == 401) {
+                System.out.println("Invalid username or password");
+            } else {
+                System.out.println("Login failed: " + response.body());
             }
         } catch (Exception e) {
             System.out.println("Could not connect to server: " + e.getMessage());
@@ -213,7 +211,10 @@ public class ServerFacade
             if (response.statusCode() == 200) {
                 System.out.println("Game joined!");
                 DataAccess dataAccess = new SequelDataAccess();
-                System.out.println(dataAccess.getGame(Integer.parseInt(params[1])).chessGame().toString());
+                if(params[0].equalsIgnoreCase("white")){
+                    System.out.println(dataAccess.getGame(Integer.parseInt(params[1])).chessGame().toString());}
+                else{
+                    System.out.println(dataAccess.getGame(Integer.parseInt(params[1])).chessGame().toStringBlack());}
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {

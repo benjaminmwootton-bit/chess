@@ -7,11 +7,9 @@ import chess.InvalidMoveException;
 import dataaccess.sql.SequelDataAccess;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
-import server.BadRequestException;
 
 import java.util.ArrayList;
 import java.util.List;
