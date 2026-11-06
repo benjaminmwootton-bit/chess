@@ -1,12 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
-import server.Server;
-import service.requestsandresults.RegisterRequest;
-import service.requestsandresults.LogInRequest;
-import service.requestsandresults.LogInResult;
-import service.requestsandresults.RegisterRequest;
-import service.requestsandresults.RegisterResult;
+import service.requestsandresults.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -75,7 +70,7 @@ public class ServerFacade
             if (response.statusCode() == 200) {
                 RegisterResult result = gson.fromJson(response.body(), RegisterResult.class);
                 authToken = result.authToken();
-                System.out.println("Registered!");
+                System.out.println("Registered and Logged In!");
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 403) {
@@ -90,7 +85,29 @@ public class ServerFacade
     }
 
     public State logout() {
-        return null;
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/session"))
+                .header("Content-Type", "application/json")
+                .header("authorization", authToken)
+                .DELETE()
+                .build();
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                RegisterResult result = gson.fromJson(response.body(), RegisterResult.class);
+                authToken = result.authToken();
+                System.out.println("Logged Out");
+                return State.SIGNEDOUT;
+            }
+            if (response.statusCode() == 401) {
+                System.out.println("You are not authorized");
+            } else {
+                System.out.println("Logout Failed: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("Could not connect to server: " + e.getMessage());
+        }
+        return State.SIGNEDIN;
     }
 
     public State create(String[] params) {
@@ -106,6 +123,10 @@ public class ServerFacade
     }
 
     public State observe(String[] params) {
+        return null;
+    }
+
+    public State clear() {
         return null;
     }
 }

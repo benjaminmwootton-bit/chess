@@ -60,6 +60,7 @@ public class ChessClient {
             case "list" -> facade.list();
             case "join" -> facade.join(params);
             case "observe" -> facade.observe(params);
+            case "clear" -> facade.clear();
             default -> improperInput(true);
         };
     }
