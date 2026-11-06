@@ -23,7 +23,7 @@ public class ServerFacade
         this.client = HttpClient.newHttpClient();
         this.gson = new Gson();
         this.serverUrl = serverUrl;
-        this.authToken = null;
+        this.authToken = "";
     }
 
     public State register(String[] params) {
@@ -102,9 +102,7 @@ public class ServerFacade
                 System.out.println("Logged Out");
                 return State.SIGNEDOUT;
             }
-            if (response.statusCode() == 401) {
-                System.out.println("You are not authorized");
-            } else {
+            else {
                 System.out.println("Logout Failed: " + response.body());
             }
         } catch (Exception e) {
