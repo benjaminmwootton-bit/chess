@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 import service.requestsandresults.*;
@@ -156,10 +157,10 @@ public class ServerFacade
                 for(GameData game : result.games()) {
                     System.out.print(x + ". " + game.gameName());
                     if(game.whiteUsername() != null){
-                        System.out.print(". " + game.whiteUsername());
+                        System.out.print(". White Player: " + game.whiteUsername());
                     }
                     if(game.blackUsername() != null){
-                        System.out.print(". " + game.blackUsername());
+                        System.out.print(". Black Player: " + game.blackUsername());//#not racist
                     }
                     System.out.print("\n");
                     x++;
@@ -178,7 +179,42 @@ public class ServerFacade
     }
 
     public State join(String[] params) {
-        return null;
+        if(params.length != 2){
+            System.out.println("To join a game enter white/black and a gameID.");
+            return State.SIGNEDIN;
+        }
+        JoinGameRequest request;
+        try{
+            request = new JoinGameRequest(authToken, ChessGame.TeamColor.valueOf(params[0].toUpperCase()), Integer.parseInt(params[1]));}
+        catch(Exception e){
+            System.out.println("Invalid team color or gameID");
+            return State.SIGNEDIN;
+        }
+        String json = gson.toJson(request);
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/game"))
+                .header("Content-Type", "application/json")
+                .header("authorization", authToken)
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                System.out.println("Game joined!");
+                return State.SIGNEDIN;
+            }
+            if (response.statusCode() == 401) {
+                System.out.println("Invalid team color or gameID");
+            }
+            else if (response.statusCode() == 403) {
+                System.out.println("Position already taken");
+            }else {
+                System.out.println("Login failed: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("Could not connect to server: " + e.getMessage());
+        }
+        return State.SIGNEDOUT;
     }
 
     public State observe(String[] params) {
