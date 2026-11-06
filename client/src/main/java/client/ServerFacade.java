@@ -94,8 +94,7 @@ public class ServerFacade
         try {
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                RegisterResult result = gson.fromJson(response.body(), RegisterResult.class);
-                authToken = result.authToken();
+                authToken = "";
                 System.out.println("Logged Out");
                 return State.SIGNEDOUT;
             }
@@ -111,7 +110,33 @@ public class ServerFacade
     }
 
     public State create(String[] params) {
-        return null;
+        if(params.length != 1){
+            System.out.println("To create a game enter a game name");
+            return State.SIGNEDIN;
+        }
+        CreateGameRequest request = new CreateGameRequest(authToken, params[0]);
+        String json = gson.toJson(request);
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/game"))
+                .header("Content-Type", "application/json")
+                .header("authorization", authToken)
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                System.out.println("Game Created!\nGameID: " + gson.fromJson(response.body(), CreateGameResult.class).gameID());
+                return State.SIGNEDIN;
+            }
+            if (response.statusCode() == 401) {
+                System.out.println("You are not authorized");
+            } else {
+                System.out.println("Create game failed: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("Could not connect to server: " + e.getMessage());
+        }
+        return State.SIGNEDIN;
     }
 
     public State list() {
