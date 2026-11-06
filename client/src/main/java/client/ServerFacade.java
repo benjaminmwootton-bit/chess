@@ -2,6 +2,8 @@ package client;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.DataAccess;
+import dataaccess.sql.SequelDataAccess;
 import model.GameData;
 import service.requestsandresults.*;
 
@@ -128,6 +130,9 @@ public class ServerFacade
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 System.out.println("Game Created!\nGameID: " + gson.fromJson(response.body(), CreateGameResult.class).gameID());
+                CreateGameResult result = gson.fromJson(response.body(), CreateGameResult.class);
+                DataAccess dataAccess = new SequelDataAccess();
+                System.out.println(dataAccess.getGame(result.gameID()).chessGame().toString());
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {
@@ -205,6 +210,8 @@ public class ServerFacade
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 System.out.println("Game joined!");
+                DataAccess dataAccess = new SequelDataAccess();
+                System.out.println(dataAccess.getGame(Integer.parseInt(params[1])).chessGame().toString());
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {
@@ -218,7 +225,7 @@ public class ServerFacade
         } catch (Exception e) {
             System.out.println("Could not connect to server: " + e.getMessage());
         }
-        return State.SIGNEDOUT;
+        return State.SIGNEDIN;
     }
 
     public State clear() {

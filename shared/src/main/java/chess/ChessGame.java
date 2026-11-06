@@ -500,4 +500,7 @@ public class ChessGame
     public int hashCode() {
         return Objects.hash(whiteTurn, board, turnCount) * 17;
     }
+
+    @Override
+    public String toString() {return board.toString();}
 }
