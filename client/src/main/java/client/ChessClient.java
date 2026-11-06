@@ -1,5 +1,9 @@
 package client;
 
+import chess.ChessGame;
+import dataaccess.DataAccess;
+import dataaccess.sql.SequelDataAccess;
+
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -81,7 +85,7 @@ public class ChessClient {
             System.out.println("logout - Logs you out");
             System.out.println("create <name> - Creates a new Chess Game");
             System.out.println("list - Lists all Chess Games");
-            System.out.println("join <gameID> <white/black> - Join a Chess Game");
+            System.out.println("join <white/black> <gameID>  - Join a Chess Game");
             System.out.println("observe <gameID> - Observe a Chess Game");
             return State.SIGNEDIN;
         } else {
@@ -94,6 +98,20 @@ public class ChessClient {
 
     private static State observe(String[] params)
     {
+        try {
+            DataAccess dataAccess = new SequelDataAccess();
+            ChessGame game;
+            try {
+                game = dataAccess.getGame(Integer.parseInt(params[1])).chessGame();}
+            catch (Exception e) {
+            System.out.println("Couldn't find game");
+                return State.SIGNEDIN;
+            }
+            System.out.println(game.toString());
+        }
+        catch(Exception e) {
+            System.out.println("Could not connect to server: " + e.getMessage());
+        }
         return State.SIGNEDIN;
     }
 

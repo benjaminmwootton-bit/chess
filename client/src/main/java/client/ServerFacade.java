@@ -217,7 +217,7 @@ public class ServerFacade
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {
-                System.out.println("Invalid team color or gameID");
+                System.out.println("You are not authorized");
             }
             else if (response.statusCode() == 403) {
                 System.out.println("Position already taken");
