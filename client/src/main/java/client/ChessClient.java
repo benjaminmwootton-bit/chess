@@ -102,7 +102,7 @@ public class ChessClient {
             DataAccess dataAccess = new SequelDataAccess();
             ChessGame game;
             try {
-                game = dataAccess.getGame(Integer.parseInt(params[1])).chessGame();}
+                game = dataAccess.getGame(Integer.parseInt(params[0])).chessGame();}
             catch (Exception e) {
             System.out.println("Couldn't find game");
                 return State.SIGNEDIN;
