@@ -5,8 +5,12 @@ import dataaccess.sql.SequelDataAccess;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
 import server.Server;
-import service.Service;s
+import service.Service;
 
+import java.util.ArrayList;
+
+import static client.State.SIGNEDIN;
+import static client.State.SIGNEDOUT;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ServerFacadeTests
@@ -21,14 +25,15 @@ public class ServerFacadeTests
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade.clear();
     }
+
+    @BeforeEach
+    public void setup() {facade.clear();}
 
     @AfterAll
     static void stopServer() {
         server.stop();
     }
-
 
     @Test
     public void sampleTest() {
@@ -40,21 +45,21 @@ public class ServerFacadeTests
     void register() throws Exception {
         DataAccess dataAccess = new SequelDataAccess();
         assertFalse(dataAccess.userExists("Ben"));
-        registerUser();
+        assertEquals(SIGNEDIN, facade.register(new String[]{"Ben", "password123", "email"}));
         assertTrue(dataAccess.userExists("Ben"));
     }
 
     @Test
     void login(){
         registerUser();
-        loginUser();
+        assertEquals(SIGNEDIN, facade.login(new String[]{"Ben", "password123"}));
     }
 
     @Test
     void logout(){
         registerUser();
         loginUser();
-        facade.logout();
+        assertEquals(SIGNEDOUT, facade.logout());
     }
 
     @Test
@@ -62,15 +67,37 @@ public class ServerFacadeTests
         DataAccess dataAccess = new SequelDataAccess();
         assertFalse(dataAccess.gameExists(1));
         registerUser();
-        facade.create(new String[]{"game1"});
+        assertEquals(SIGNEDIN, facade.create(new String[]{"game1"}));
         assertTrue(dataAccess.gameExists(1));
     }
 
     @Test
-    void listGames() throws Exception {
+    void listGames(){
+        registerUser();
+        createNewGame();
+        assertEquals(SIGNEDIN, facade.list());
+    }
+
+    @Test
+    void joinGame() throws Exception{
         DataAccess dataAccess = new SequelDataAccess();
         registerUser();
-        assertEquals("SIGNEDIN", facade.list());
+        createNewGame();
+        assertEquals(SIGNEDIN, facade.join(new String[]{"white", "1"}));
+        facade.register(new String[]{"Jack", "123password", "email"});
+        assertEquals(SIGNEDIN, facade.join(new String[]{"black", "1"}));
+        assertTrue(dataAccess.gameExists(1));
+        assertEquals("Ben", dataAccess.getGame(1).whiteUsername());
+        assertEquals("Jack", dataAccess.getGame(1).blackUsername());
+    }
+
+    @Test
+    void clear() throws Exception{
+        DataAccess dataAccess = new SequelDataAccess();
+        registerUser();
+        createNewGame();
+        facade.clear();
+        assertEquals(new ArrayList<>(), dataAccess.listGames());
     }
 
     void registerUser() {
@@ -78,5 +105,8 @@ public class ServerFacadeTests
     }
     void loginUser() {
         facade.login(new String[]{"Ben", "password123"});
+    }
+    void createNewGame() {
+        facade.create(new String[]{"game1"});
     }
 }
