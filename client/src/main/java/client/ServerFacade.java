@@ -153,6 +153,10 @@ public class ServerFacade
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 ListGamesResult result = gson.fromJson(response.body(), ListGamesResult.class);
+                if(result.games() == null){
+                    System.out.println("There are currently no games");
+                    return State.SIGNEDIN;
+                }
                 int x = 1;
                 for(GameData game : result.games()) {
                     System.out.print(x + ". " + game.gameName());
@@ -217,11 +221,23 @@ public class ServerFacade
         return State.SIGNEDOUT;
     }
 
-    public State observe(String[] params) {
-        return null;
-    }
-
     public State clear() {
-        return null;
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/db"))
+                .header("Content-Type", "application/json")
+                .DELETE()
+                .build();
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                System.out.println("Deleted");
+                return State.SIGNEDOUT;
+            } else {
+                System.out.println("Deletion failed: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("Could not connect to server: " + e.getMessage());
+        }
+        return State.SIGNEDOUT;
     }
 }

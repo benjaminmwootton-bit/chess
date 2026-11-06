@@ -38,6 +38,16 @@ public class Server
         joinGameRoute(service);
     }
 
+    public int run(int desiredPort)
+    {
+        javalin.start(desiredPort);
+        return javalin.port();
+    }
+
+    public void stop() {
+        javalin.stop();
+    }
+
     private void clearRoute(Service service) {
         //Clear
         javalin.delete("/db", context ->
@@ -51,16 +61,6 @@ public class Server
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
         });
-    }
-
-    public int run(int desiredPort)
-    {
-        javalin.start(desiredPort);
-        return javalin.port();
-    }
-
-    public void stop() {
-        javalin.stop();
     }
 
     private void registerRoute(Service service) {

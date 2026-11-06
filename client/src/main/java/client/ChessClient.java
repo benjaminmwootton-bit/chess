@@ -59,7 +59,7 @@ public class ChessClient {
             case "create" -> facade.create(params);
             case "list" -> facade.list();
             case "join" -> facade.join(params);
-            case "observe" -> facade.observe(params);
+            case "observe" -> observe(params);
             case "clear" -> facade.clear();
             default -> improperInput(true);
         };
@@ -90,6 +90,11 @@ public class ChessClient {
             System.out.println("register <username> <password> <email> - Registers a New User");
             return State.SIGNEDOUT;
         }
+    }
+
+    private static State observe(String[] params)
+    {
+        return State.SIGNEDIN;
     }
 
     private static State quit()
