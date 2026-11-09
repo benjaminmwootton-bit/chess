@@ -94,23 +94,36 @@ public class ChessBoard
     {
         StringBuilder str = new StringBuilder();
         str.append("\n\u001b[31;100;1m    a  b  c  d  e  f  g  h    \u001b[0m\n");
-        for (int i = 7; i >= 0; i--) {
+        for (int i = 7; i >= 0; i--)
+        {
             str.append("\u001b[31;100;1m ").append(i + 1).append(" \u001b[0m");
-            for (int x = 0; x < 8; x++) {
-                if ((i + x) % 2 == 0) {
-                    str.append("\u001b[104m");}
-                else {
-                    str.append("\u001b[44m");}
-                if (board[i][x] != null) {
-                    if (board[i][x].getTeamColor() == WHITE) {
-                        str.append("\u001b[31m");}
-                    else {
-                        str.append("\u001b[30m");}
+            for (int x = 0; x < 8; x++)
+            {
+                if ((i + x) % 2 == 0)
+                {
+                    str.append("\u001b[104m");
+                }
+                else
+                {
+                    str.append("\u001b[44m");
+                }
+                if (board[i][x] != null)
+                {
+                    if (board[i][x].getTeamColor() == WHITE)
+                    {
+                        str.append("\u001b[31m");
+                    }
+                    else
+                    {
+                        str.append("\u001b[30m");
+                    }
                     str.append(" ");
                     str.append(board[i][x]);
                 }
-                else {
-                    str.append("  ");}
+                else
+                {
+                    str.append("  ");
+                }
                 str.append(" ");
                 str.append("\u001b[0m");
             }
@@ -120,8 +133,7 @@ public class ChessBoard
         return str.toString();
     }
 
-    public String toStringBlack()
-    {
+    public String toStringBlack() {
         StringBuilder str = new StringBuilder();
         str.append("\n\u001b[31;100;1m    h  g  f  e  d  c  b  a    \u001b[0m\n");
         for (int i = 0; i < 8; i++) {

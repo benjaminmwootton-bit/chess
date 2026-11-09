@@ -210,13 +210,7 @@ public class ServerFacade
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 System.out.println("Game joined!");
-                /*
-                DataAccess dataAccess = new SequelDataAccess();
-                if(params[0].equalsIgnoreCase("white")){
-                    System.out.println(dataAccess.getGame(Integer.parseInt(params[1])).chessGame().toString());}
-                else{
-                    System.out.println(dataAccess.getGame(Integer.parseInt(params[1])).chessGame().toStringBlack());}
-                */
+                //temp
                 if(params[0].equalsIgnoreCase("white")){
                     System.out.println(new ChessBoard());}
                 else{
@@ -246,6 +240,7 @@ public class ServerFacade
         try {
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
+                authToken = "";
                 System.out.println("Deleted");
                 return State.SIGNEDOUT;
             } else {

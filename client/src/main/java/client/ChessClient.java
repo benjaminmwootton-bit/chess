@@ -1,14 +1,13 @@
 package client;
 
 import chess.ChessBoard;
-import chess.ChessGame;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class ChessClient {
 
-    private static final ServerFacade facade = new ServerFacade("http://localhost:8080");
+    private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
 
     public static void main(String[] args) {
         System.out.println("♕ 240 Chess Client: ♙");
@@ -38,8 +37,8 @@ public class ChessClient {
         return switch (cmd) {
             case "help" -> help(false);
             case "quit" -> quit();
-            case "login" -> facade.login(params);
-            case "register" -> facade.register(params);
+            case "login" -> FACADE.login(params);
+            case "register" -> FACADE.register(params);
             case "love" -> warGames(); //Love to. How about Global Thermonuclear War?
             default -> improperInput(false);
         };
@@ -58,12 +57,12 @@ public class ChessClient {
 
         return switch (cmd) {
             case "help" -> help(true);
-            case "logout" -> facade.logout();
-            case "create" -> facade.create(params);
-            case "list" -> facade.list();
-            case "join" -> facade.join(params);
+            case "logout" -> FACADE.logout();
+            case "create" -> FACADE.create(params);
+            case "list" -> FACADE.list();
+            case "join" -> FACADE.join(params);
             case "observe" -> observe(params);
-            case "clear" -> facade.clear();
+            case "clear" -> FACADE.clear();
             default -> improperInput(true);
         };
     }
@@ -97,23 +96,7 @@ public class ChessClient {
 
     private static State observe(String[] params)
     {
-
-            /*
-        try {
-            DataAccess dataAccess = new SequelDataAccess();
-            ChessGame game;
-            try {
-                game = dataAccess.getGame(Integer.parseInt(params[0])).chessGame();}
-            catch (Exception e) {
-            System.out.println("Couldn't find game");
-                return State.SIGNEDIN;
-            }
-            System.out.println(game.toString());
-        }
-        catch(Exception e) {
-            System.out.println("Could not connect to server: " + e.getMessage());
-        }
-        */
+        //temp
         System.out.println(new ChessBoard());
         return State.SIGNEDIN;
     }
