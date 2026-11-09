@@ -1,8 +1,7 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
-import dataaccess.DataAccess;
-import dataaccess.sql.SequelDataAccess;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -98,6 +97,8 @@ public class ChessClient {
 
     private static State observe(String[] params)
     {
+
+            /*
         try {
             DataAccess dataAccess = new SequelDataAccess();
             ChessGame game;
@@ -112,6 +113,8 @@ public class ChessClient {
         catch(Exception e) {
             System.out.println("Could not connect to server: " + e.getMessage());
         }
+        */
+        System.out.println(new ChessBoard());
         return State.SIGNEDIN;
     }
 

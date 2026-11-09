@@ -1,11 +1,10 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import client.requestsandresults.*;
 import com.google.gson.Gson;
-import dataaccess.DataAccess;
-import dataaccess.sql.SequelDataAccess;
 import model.GameData;
-import service.requestsandresults.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -129,8 +128,11 @@ public class ServerFacade
             if (response.statusCode() == 200) {
                 System.out.println("Game Created!\nGameID: " + gson.fromJson(response.body(), CreateGameResult.class).gameID());
                 CreateGameResult result = gson.fromJson(response.body(), CreateGameResult.class);
+                /*
                 DataAccess dataAccess = new SequelDataAccess();
                 System.out.println(dataAccess.getGame(result.gameID()).chessGame().toString());
+                */
+                System.out.println(new ChessBoard());
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {
@@ -208,11 +210,17 @@ public class ServerFacade
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 System.out.println("Game joined!");
+                /*
                 DataAccess dataAccess = new SequelDataAccess();
                 if(params[0].equalsIgnoreCase("white")){
                     System.out.println(dataAccess.getGame(Integer.parseInt(params[1])).chessGame().toString());}
                 else{
                     System.out.println(dataAccess.getGame(Integer.parseInt(params[1])).chessGame().toStringBlack());}
+                */
+                if(params[0].equalsIgnoreCase("white")){
+                    System.out.println(new ChessBoard());}
+                else{
+                    System.out.println(new ChessBoard().toStringBlack());}
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {
