@@ -92,6 +92,14 @@ public class ServerFacadeTests
     }
 
     @Test
+    void observe()
+    {
+        registerUser();
+        createNewGame();
+        assertEquals(SIGNEDIN, facade.observe(new String[]{"1"}));
+    }
+
+    @Test
     void clear() throws Exception{
         DataAccess dataAccess = new SequelDataAccess();
         registerUser();
@@ -188,6 +196,14 @@ public class ServerFacadeTests
         assertEquals("Ben", dataAccess.getGame(1).whiteUsername());
         assertNotEquals("Jack", dataAccess.getGame(1).whiteUsername());
         assertNull(dataAccess.getGame(1).blackUsername());
+    }
+
+    @Test
+    void observeWrongParameters()
+    {
+        registerUser();
+        createNewGame();
+        assertEquals(SIGNEDIN, facade.observe(new String[]{"1"}));
     }
 
     void registerUser() {

@@ -11,18 +11,22 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import java.util.*;
+
 public class ServerFacade
 {
     private final HttpClient client;
     private final Gson gson;
     private final String serverUrl;
     private String authToken;
+    private final Map<Integer, ChessBoard> games;
 
     public ServerFacade(String serverUrl) {
         this.client = HttpClient.newHttpClient();
         this.gson = new Gson();
         this.serverUrl = serverUrl;
         this.authToken = "";
+        this.games = new HashMap<>() {};
     }
 
     public State register(String[] params) {
@@ -126,9 +130,11 @@ public class ServerFacade
         try {
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                System.out.println("Game Created!\nGameID: " + gson.fromJson(response.body(), CreateGameResult.class).gameID());
+                Integer gameID = gson.fromJson(response.body(), CreateGameResult.class).gameID();
+                System.out.println("Game Created!\nGameID: " + gameID);
                 ChessBoard board = new ChessBoard();
                 board.resetBoard();
+                games.put(gameID, board);
                 System.out.println(board);
                 return State.SIGNEDIN;
             }
@@ -207,16 +213,11 @@ public class ServerFacade
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 System.out.println("Game joined!");
-                //temp
                 if(params[0].equalsIgnoreCase("white")){
-                    ChessBoard board = new ChessBoard();
-                    board.resetBoard();
-                    System.out.println(board);
+                    System.out.println(games.get(Integer.valueOf(params[1])));
                 }
                 else{
-                    ChessBoard board = new ChessBoard();
-                    board.resetBoard();
-                    System.out.println(board.toStringBlack());
+                    System.out.println(games.get(Integer.valueOf(params[1])).toStringBlack());
                 }
                 return State.SIGNEDIN;
             }
@@ -231,6 +232,20 @@ public class ServerFacade
         } catch (Exception e) {
             System.out.println("Could not connect to server: " + e.getMessage());
         }
+        return State.SIGNEDIN;
+    }
+
+    public State observe(String[] params)
+    {
+        var game = games.get(Integer.valueOf(params[0]));
+        if(params.length != 1 || game == null) {
+            System.out.println("To observe a game enter a valid gameID");
+            return State.SIGNEDIN;
+        }
+        try {
+            System.out.println(game);
+        } catch (Exception e) {
+            System.out.println("To observe a game enter a valid gameID");}
         return State.SIGNEDIN;
     }
 
