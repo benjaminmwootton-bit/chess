@@ -36,7 +36,7 @@ public class ChessClient {
         }
         return switch (cmd) {
             case "help" -> help(false);
-            case "quit" -> quit();
+            case "quit", "exit" -> quit();
             case "login" -> FACADE.login(params);
             case "register" -> FACADE.register(params);
             case "love" -> warGames(); //Love to. How about Global Thermonuclear War?
