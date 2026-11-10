@@ -1,15 +1,20 @@
 package client;
 
 import chess.ChessBoard;
+import server.Server;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class ChessClient {
-
     private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
 
     public static void main(String[] args) {
+
+        var port = 8080;
+        Server server = new Server();
+        server.run(port);
+
         System.out.println("♕ 240 Chess Client: ♙");
         System.out.println("Shall we play a game? Type Help to get started");
         Scanner scanner = new Scanner(System.in);
