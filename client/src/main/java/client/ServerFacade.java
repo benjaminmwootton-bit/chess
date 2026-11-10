@@ -127,12 +127,9 @@ public class ServerFacade
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 System.out.println("Game Created!\nGameID: " + gson.fromJson(response.body(), CreateGameResult.class).gameID());
-                CreateGameResult result = gson.fromJson(response.body(), CreateGameResult.class);
-                /*
-                DataAccess dataAccess = new SequelDataAccess();
-                System.out.println(dataAccess.getGame(result.gameID()).chessGame().toString());
-                */
-                System.out.println(new ChessBoard());
+                ChessBoard board = new ChessBoard();
+                board.resetBoard();
+                System.out.println(board);
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {
@@ -212,9 +209,15 @@ public class ServerFacade
                 System.out.println("Game joined!");
                 //temp
                 if(params[0].equalsIgnoreCase("white")){
-                    System.out.println(new ChessBoard());}
+                    ChessBoard board = new ChessBoard();
+                    board.resetBoard();
+                    System.out.println(board);
+                }
                 else{
-                    System.out.println(new ChessBoard().toStringBlack());}
+                    ChessBoard board = new ChessBoard();
+                    board.resetBoard();
+                    System.out.println(board.toStringBlack());
+                }
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {

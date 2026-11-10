@@ -97,7 +97,9 @@ public class ChessClient {
     private static State observe(String[] params)
     {
         //temp
-        System.out.println(new ChessBoard());
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        System.out.println(board);
         return State.SIGNEDIN;
     }
 
