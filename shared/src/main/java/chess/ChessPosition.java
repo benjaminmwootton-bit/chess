@@ -8,13 +8,9 @@ package chess;
  */
 public record ChessPosition(int row, int column)
 {
-    public int getRow() {
-        return row;
-    }
+    public int getRow() {return row;}
 
-    public int getColumn() {
-        return column;
-    }
+    public int getColumn() {return column;}
 
     @Override
     public String toString()

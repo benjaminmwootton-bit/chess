@@ -334,7 +334,7 @@ public class ChessGame
                 if (piece != null && piece.getPieceType() == KING && piece.getTeamColor() == teamColor){
                     return new ChessPosition(i,x);}
             }}
-        return null;
+        return null;//you lost your king?!
     }
     /**
      * Determines if the given team is in stalemate, which here is defined as having

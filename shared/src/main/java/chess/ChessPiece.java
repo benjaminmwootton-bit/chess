@@ -74,17 +74,15 @@ public class ChessPiece
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
-        Collection<ChessMove> moves = new ArrayList<>();
-        switch (board.getPiece(myPosition).type)
+        return switch (board.getPiece(myPosition).type)
         {
-            case PAWN -> moves = pawnMoves(board, myPosition);
-            case ROOK -> moves = rookMoves(board, myPosition);
-            case KNIGHT -> moves = knightMoves(board, myPosition);
-            case BISHOP -> moves = bishopMoves(board, myPosition);
-            case QUEEN -> moves = queenMoves(board, myPosition);
-            case KING -> moves =kingMoves(board, myPosition);
-        }
-        return moves;
+            case PAWN -> pawnMoves(board, myPosition);
+            case ROOK -> rookMoves(board, myPosition);
+            case KNIGHT -> knightMoves(board, myPosition);
+            case BISHOP -> bishopMoves(board, myPosition);
+            case QUEEN -> queenMoves(board, myPosition);
+            case KING -> kingMoves(board, myPosition);
+        };
     }
     //handles movement for rooks, bishops, and queens
     public Collection<ChessMove> linearMoves(ChessBoard board, ChessPosition myPosition, int[][] directions)
@@ -94,7 +92,8 @@ public class ChessPiece
         ChessGame.TeamColor color = piece.getTeamColor();
         for(int[] dir:directions)
         {
-            int row = myPosition.row() + dir[0]; int col = myPosition.column() + dir[1];
+            int row = myPosition.row() + dir[0];
+            int col = myPosition.column() + dir[1];
             while (bounds(row, col))
             {
                 ChessPiece target = board.getPiece(row,col);
@@ -119,7 +118,8 @@ public class ChessPiece
         ChessGame.TeamColor color = piece.getTeamColor();
         for(int[] dir:directions)
         {
-            int row = myPosition.row() + dir[0]; int col = myPosition.column() + dir[1];
+            int row = myPosition.row() + dir[0];
+            int col = myPosition.column() + dir[1];
             if(bounds(row,col))
             {
                 ChessPiece target = board.getPiece(row,col);

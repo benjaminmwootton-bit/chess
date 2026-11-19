@@ -131,11 +131,11 @@ public class ServerFacade
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 Integer gameID = gson.fromJson(response.body(), CreateGameResult.class).gameID();
-                System.out.println("Game Created!\nGameID: " + gameID);
                 ChessBoard board = new ChessBoard();
                 board.resetBoard();
                 games.put(gameID, board);
                 System.out.println(board);
+                System.out.println("Game Created!\nGameID: " + gameID);
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {
@@ -177,6 +177,8 @@ public class ServerFacade
                     System.out.print("\n");
                     x++;
                 }
+                if(result.games().isEmpty()){
+                    System.out.println("There are currently no games");}
                 return State.SIGNEDIN;
             }
             if (response.statusCode() == 401) {
@@ -237,7 +239,13 @@ public class ServerFacade
 
     public State observe(String[] params)
     {
-        var game = games.get(Integer.valueOf(params[0]));
+        ChessBoard game;
+        try{
+            game = games.get(Integer.valueOf(params[0]));}
+        catch(Exception e) {
+            System.out.println("To observe a game enter a valid gameID");
+            return State.SIGNEDIN;
+        }
         if(params.length != 1 || game == null) {
             System.out.println("To observe a game enter a valid gameID");
             return State.SIGNEDIN;

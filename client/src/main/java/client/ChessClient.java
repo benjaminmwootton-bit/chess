@@ -1,13 +1,25 @@
 package client;
 
-import chess.ChessBoard;
+import client.websocket.NotificationHandler;
+import exception.ResponseException;
+
+import client.websocket.WebSocketFacade;
 import server.Server;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class ChessClient {
-    private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
+
+    private final ServerFacade server;
+    private final WebSocketFacade ws;
+    //private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
+
+
+    public ChessClient(String serverUrl) throws ResponseException{
+        server = new ServerFacade(serverUrl);
+        ws = new WebSocketFacade(serverUrl, (NotificationHandler) this);
+    }
 
     public static void main(String[] args) {
 
@@ -23,7 +35,8 @@ public class ChessClient {
             String input = scanner.nextLine();
             if (state == State.SIGNEDOUT) {
                 state = handlePreLogin(input);
-            } else {
+            }
+            else {
                 state = handlePostLogin(input);
             }
         }
@@ -36,7 +49,8 @@ public class ChessClient {
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         if (tokens.length > 0) {
             cmd = tokens[0];
-        } else {
+        }
+        else {
             return improperInput(false);
         }
         return switch (cmd) {
@@ -56,7 +70,8 @@ public class ChessClient {
 
         if (tokens.length > 0) {
             cmd = tokens[0];
-        } else {
+        }
+        else {
             return improperInput(true);
         }
 
@@ -76,7 +91,8 @@ public class ChessClient {
         if (signedIn) {
             System.out.println("Enter Help, Logout, Create, List, Play, or Observe");
             return State.SIGNEDIN;
-        } else {
+        }
+        else {
             System.out.println("Enter Help, Quit, Login, or Register");
             return State.SIGNEDOUT;
         }
@@ -91,7 +107,8 @@ public class ChessClient {
             System.out.println("join <white/black> <gameID>  - Join a Chess Game");
             System.out.println("observe <gameID> - Observe a Chess Game");
             return State.SIGNEDIN;
-        } else {
+        }
+        else {
             System.out.println("quit - Quits the Program");
             System.out.println("login <username> <password> - Logs into the Program");
             System.out.println("register <username> <password> <email> - Registers a New User");
@@ -115,8 +132,7 @@ public class ChessClient {
         System.out.println("Awaiting first strike command");
         System.out.println("Please list primary targets by city/or country name:");
         String city = "";
-        while (!city.equals("Utah"))
-        {
+        while (!city.equals("Utah")) {
             city = scanner.nextLine();//Las Vegas
         }
         return State.SIGNEDOUT;

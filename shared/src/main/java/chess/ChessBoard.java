@@ -33,13 +33,13 @@ public class ChessBoard
         board[row-1][column-1] = piece;
     }
     //set piece to null
-    public void removePiece(int row, int column)
-    {
-        board[row-1][column-1] = null;
-    }
     public void removePiece(ChessPosition pos)
     {
         int row = pos.row(); int column = pos.column();
+        board[row-1][column-1] = null;
+    }
+    public void removePiece(int row, int column)
+    {
         board[row-1][column-1] = null;
     }
     /**
@@ -73,12 +73,10 @@ public class ChessBoard
         addPiece(8, 6, new ChessPiece(BLACK, BISHOP));
         addPiece(8, 7, new ChessPiece(BLACK, KNIGHT));
         addPiece(8, 8, new ChessPiece(BLACK, ROOK));
-
         for (int column = 1; column <= 8; column++) {
             addPiece(7, column, new ChessPiece(BLACK, PAWN));
             addPiece(2, column, new ChessPiece(WHITE, PAWN));
         }
-
         addPiece(1, 1, new ChessPiece(WHITE, ROOK));
         addPiece(1, 2, new ChessPiece(WHITE, KNIGHT));
         addPiece(1, 3, new ChessPiece(WHITE, BISHOP));
