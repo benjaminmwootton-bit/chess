@@ -37,7 +37,7 @@ public class Server
         listGamesRoute(service);
         createGameRoute(service);
         joinGameRoute(service);
-        webSocketRoute();
+        webSocketRoute(service);
     }
 
     public int run(int desiredPort)
@@ -200,10 +200,10 @@ public class Server
         });
     }
 
-    private void webSocketRoute() {
+    private void webSocketRoute(Service service) {
         javalin.ws("/ws", ws ->
         {
-            new WebSocketHandler().configure(ws);
+            new WebSocketHandler(service).configure(ws);
         });
     }
 }

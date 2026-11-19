@@ -87,4 +87,11 @@ public class Service
         dataAccess.joinGame(request.gameID(),dataAccess.getUsernameWithAuthToken(request.authToken()),request.playerColor());
         return new JoinGameResult(true);
     }
+    //retrieve username w/ authToken
+    public String getUsername(String authToken) {
+        if (authToken == null || !dataAccess.getAuth(authToken)) {
+            throw new UnauthorizedException("unauthorized");
+        }
+        return dataAccess.getUsernameWithAuthToken(authToken);
+    }
 }
