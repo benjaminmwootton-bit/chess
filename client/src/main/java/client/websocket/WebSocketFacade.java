@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import websocket.commands.UserGameCommand;
+
 public class WebSocketFacade extends Endpoint {
 
     Session session;
@@ -54,5 +56,12 @@ public class WebSocketFacade extends Endpoint {
     public void close() throws ResponseException, IOException {
         if(session.isOpen()){
             session.close();}
+    }
+
+    public void connect(String authToken, Integer gameID) throws ResponseException, IOException {
+        Gson gson = new Gson();
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        String json = gson.toJson(command);
+        session.getBasicRemote().sendText(json);
     }
 }
