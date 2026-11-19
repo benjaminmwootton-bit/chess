@@ -21,11 +21,18 @@ public class ChessClient {
         ws = new WebSocketFacade(serverUrl, (NotificationHandler) this);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ResponseException {
 
-        var port = 8080;
-        Server server = new Server();
-        server.run(port);
+        //var port = 8080;
+        //Server server = new Server();
+        //server.run(port);
+
+        NotificationHandler handler = System.out::println;
+        WebSocketFacade websocket = new WebSocketFacade(
+                "http://localhost:8080",
+                handler
+        );
+        System.out.println("WebSocket client started!");
 
         System.out.println("♕ 240 Chess Client: ♙");
         System.out.println("Shall we play a game? Type Help to get started");
@@ -56,8 +63,8 @@ public class ChessClient {
         return switch (cmd) {
             case "help" -> help(false);
             case "quit", "exit" -> quit();
-            case "login" -> FACADE.login(params);
-            case "register" -> FACADE.register(params);
+            //case "login" -> FACADE.login(params);
+            //case "register" -> FACADE.register(params);
             case "love" -> warGames(); //Love to. How about Global Thermonuclear War?
             default -> improperInput(false);
         };
@@ -77,12 +84,12 @@ public class ChessClient {
 
         return switch (cmd) {
             case "help" -> help(true);
-            case "logout" -> FACADE.logout();
-            case "create" -> FACADE.create(params);
-            case "list" -> FACADE.list();
-            case "join" -> FACADE.join(params);
-            case "observe" -> FACADE.observe(params);
-            case "clear" -> FACADE.clear();
+            //case "logout" -> FACADE.logout();
+            //case "create" -> FACADE.create(params);
+            //case "list" -> FACADE.list();
+            //case "join" -> FACADE.join(params);
+            //case "observe" -> FACADE.observe(params);
+            //case "clear" -> FACADE.clear();
             default -> improperInput(true);
         };
     }

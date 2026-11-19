@@ -41,6 +41,7 @@ public class WebSocketFacade extends Endpoint {
                     notificationHandler.notify(serverMessage);
                 }
         );
+        System.out.println("WebSocket connection established");
     }
 
     public void sendMessage(UserGameCommand command) throws ResponseException {
@@ -59,9 +60,8 @@ public class WebSocketFacade extends Endpoint {
     }
 
     public void connect(String authToken, Integer gameID) throws ResponseException, IOException {
-        Gson gson = new Gson();
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
-        String json = gson.toJson(command);
-        session.getBasicRemote().sendText(json);
+        sendMessage(command);
     }
+
 }

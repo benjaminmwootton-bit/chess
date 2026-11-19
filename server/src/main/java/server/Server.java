@@ -4,6 +4,7 @@ import dataaccess.sql.SequelDataAccess;
 import io.javalin.*;
 import java.util.Map;
 import com.google.gson.Gson;
+import server.websocket.WebSocketHandler;
 import service.requestsandresults.*;
 import service.Service;
 import io.javalin.json.JavalinGson;
@@ -36,6 +37,7 @@ public class Server
         listGamesRoute(service);
         createGameRoute(service);
         joinGameRoute(service);
+        webSocketRoute();
     }
 
     public int run(int desiredPort)
@@ -195,6 +197,13 @@ public class Server
                 context.status(500);
                 context.json(Map.of("message", "Error: " + e.getMessage()));
             }
+        });
+    }
+
+    private void webSocketRoute() {
+        javalin.ws("/ws", ws ->
+        {
+            new WebSocketHandler().configure(ws);
         });
     }
 }
