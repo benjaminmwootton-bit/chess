@@ -10,6 +10,7 @@ import static websocket.commands.UserGameCommand.CommandType.*;
 public class WebSocketHandler {
 
     private final Service service;
+    private final ConnectionManager connections = new ConnectionManager();
 
     public WebSocketHandler(Service service) {
         this.service = service;
