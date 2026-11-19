@@ -6,6 +6,7 @@ import exception.ResponseException;
 import client.websocket.WebSocketFacade;
 import server.Server;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -21,7 +22,7 @@ public class ChessClient {
         ws = new WebSocketFacade(serverUrl, (NotificationHandler) this);
     }
 
-    public static void main(String[] args) throws ResponseException {
+    public static void main(String[] args) throws ResponseException, IOException {
 
         var port = 8080;
         Server server = new Server();

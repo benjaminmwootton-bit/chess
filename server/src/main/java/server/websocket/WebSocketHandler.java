@@ -1,6 +1,8 @@
 package server.websocket;
 
 import io.javalin.websocket.WsConfig;
+import com.google.gson.Gson;
+import websocket.commands.UserGameCommand;
 
 public class WebSocketHandler {
 
@@ -11,7 +13,11 @@ public class WebSocketHandler {
         });
 
         ws.onMessage(ctx -> {
-            System.out.println("Received: " + ctx.message());
+            String json = ctx.message();
+            Gson gson = new Gson();
+            UserGameCommand command = gson.fromJson(json, UserGameCommand.class);
+            //System.out.println("Received command: " + command.getCommandType());
+            //System.out.println("Game ID: " + command.getGameID());
         });
 
         ws.onClose(ctx -> {
