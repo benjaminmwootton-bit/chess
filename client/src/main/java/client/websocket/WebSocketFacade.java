@@ -51,5 +51,8 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void close() throws ResponseException {}
+    public void close() throws ResponseException, IOException {
+        if(session.isOpen()){
+            session.close();}
+    }
 }
