@@ -23,16 +23,15 @@ public class ChessClient {
 
     public static void main(String[] args) throws ResponseException {
 
-        //var port = 8080;
-        //Server server = new Server();
-        //server.run(port);
+        var port = 8080;
+        Server server = new Server();
+        server.run(port);
 
         NotificationHandler handler = System.out::println;
         WebSocketFacade websocket = new WebSocketFacade(
                 "http://localhost:8080",
                 handler
         );
-        System.out.println("WebSocket client started!");
 
         System.out.println("♕ 240 Chess Client: ♙");
         System.out.println("Shall we play a game? Type Help to get started");

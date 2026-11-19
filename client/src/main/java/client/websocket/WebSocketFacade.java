@@ -41,7 +41,6 @@ public class WebSocketFacade extends Endpoint {
                     notificationHandler.notify(serverMessage);
                 }
         );
-        System.out.println("WebSocket connection established");
     }
 
     public void sendMessage(UserGameCommand command) throws ResponseException {
