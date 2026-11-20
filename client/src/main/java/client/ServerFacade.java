@@ -223,7 +223,7 @@ public class ServerFacade
                 else{
                     System.out.println(games.get(Integer.valueOf(params[1])).toStringBlack());
                 }
-                return State.SIGNEDIN;
+                return State.INGAME;
             }
             if (response.statusCode() == 401) {
                 System.out.println("You are not authorized");

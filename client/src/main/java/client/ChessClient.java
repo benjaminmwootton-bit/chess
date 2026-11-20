@@ -15,19 +15,19 @@ import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class ChessClient implements NotificationHandler{
 
-    private final ServerFacade server;
     private static WebSocketFacade ws;
     private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
     private static int gameID;
 
     public ChessClient(String serverUrl) throws ResponseException{
-        server = new ServerFacade(serverUrl);
         ws = new WebSocketFacade(serverUrl, this);
     }
 
     public static void main(String[] args) throws ResponseException, IOException {
         Server server = new Server();
         server.run(8080);
+
+        ChessClient chessClient = new ChessClient("http://localhost:8080");
 
         System.out.println("♕ 240 Chess Client: ♙");
         System.out.println("Shall we play a game? Type Help to get started");
@@ -114,9 +114,9 @@ public class ChessClient implements NotificationHandler{
             case "help" -> help(State.INGAME);
             case "redraw" -> ws.redraw(authToken, gameID);
             case "leave" -> ws.leave(authToken, gameID);
-            case "move" -> ws.move(authToken, gameID, params[1]);
+            case "move" -> ws.move(authToken, gameID, params[0]);
             case "resign" -> ws.resign(authToken, gameID);
-            case "highlight" -> ws.highlight(authToken, gameID, params[1]);
+            case "highlight" -> ws.highlight(authToken, gameID, params[0]);
             case "nuke" -> warGames();
             default -> improperInput(State.INGAME);
         };
@@ -129,7 +129,7 @@ public class ChessClient implements NotificationHandler{
 
         }
         else if(state == State.SIGNEDIN){
-            System.out.println("Enter Help, Logout, Create, List, Play, or Observe");
+            System.out.println("Enter Help, Logout, Create, List, Join, or Observe");
             return State.SIGNEDIN;
         }
         else if(state == State.INGAME){
@@ -150,7 +150,6 @@ public class ChessClient implements NotificationHandler{
             return State.SIGNEDOUT;
         }
         else if (state == State.SIGNEDIN){
-            System.out.println("Help - gives possible commands");
             System.out.println("logout - Logs you out");
             System.out.println("create <name> - Creates a new Chess Game");
             System.out.println("list - Lists all Chess Games");
@@ -159,12 +158,11 @@ public class ChessClient implements NotificationHandler{
             return State.SIGNEDIN;
         }
         else if(state == State.INGAME){
-            System.out.println("help - gives possible commands");
-            System.out.println("redraw - Redraws the Chess Board");
-            System.out.println("leave - Leaves the game without resigning");
             System.out.println("move <chess move> - Make a chess move. Ex:e2e4");
-            System.out.println("resign - Resign the game");
+            System.out.println("redraw - Redraws the Chess Board");
             System.out.println("highlight <square> - Highlights all possible moves for a piece. Ex:e2");
+            System.out.println("leave - Leaves the game without resigning");
+            System.out.println("resign - Resign the game");
             return State.INGAME;
         }
         else{

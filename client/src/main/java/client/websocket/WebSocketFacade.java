@@ -101,9 +101,9 @@ public class WebSocketFacade extends Endpoint{
             square = translateSquare(rawSquare);}
         catch(Exception e){
             System.out.println(e.getMessage());
-        return State.INGAME;
+            return State.SIGNEDIN;
         }
-        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, square);
+        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.HIGHLIGHT, authToken, gameID, square);
         sendMessage(cmd);
         return State.INGAME;
     }
@@ -121,7 +121,7 @@ public class WebSocketFacade extends Endpoint{
     }
 
     private int[] translateSquare(String rawSquare){
-        if(rawSquare.length() != 2){
+        if(rawSquare.length() != 2 || rawSquare.charAt(0) > 'h' || rawSquare.charAt(0) < 'a' || rawSquare.charAt(1) < 1 || rawSquare.charAt(1) > 8){
             throw new IllegalArgumentException("Invalid square format");
         }
         return new int[]{rawSquare.charAt(0) - 'a' + 1, rawSquare.charAt(1)};

@@ -46,7 +46,8 @@ public class UserGameCommand {
         MAKE_MOVE,
         LEAVE,
         RESIGN,
-        REDRAW
+        REDRAW,
+        HIGHLIGHT
     }
 
     public ChessMove getMove(){return move;}
@@ -62,6 +63,8 @@ public class UserGameCommand {
     public Integer getGameID() {
         return gameID;
     }
+
+    public int[] getSquare(){return square;}
 
     @Override
     public boolean equals(Object o) {
