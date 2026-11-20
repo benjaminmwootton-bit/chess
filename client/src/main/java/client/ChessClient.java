@@ -17,8 +17,8 @@ public class ChessClient implements NotificationHandler{
 
     private final ServerFacade server;
     private static WebSocketFacade ws;
-    //private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
-
+    private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
+    private static int gameID;
 
     public ChessClient(String serverUrl) throws ResponseException{
         server = new ServerFacade(serverUrl);
@@ -39,8 +39,11 @@ public class ChessClient implements NotificationHandler{
             if (state == State.SIGNEDOUT) {
                 state = handlePreLogin(input);
             }
-            else {
+            else if (state == State.SIGNEDIN){
                 state = handlePostLogin(input);
+            }
+            else if(state == State.INGAME){
+                state = handleInGame(input);
             }
         }
         System.out.println("Goodbye :)");
@@ -54,19 +57,19 @@ public class ChessClient implements NotificationHandler{
             cmd = tokens[0];
         }
         else {
-            return improperInput(false);
+            return improperInput(State.SIGNEDOUT);
         }
         return switch (cmd) {
-            case "help" -> help(false);
+            case "help" -> help(State.SIGNEDOUT);
             case "quit", "exit" -> quit();
-            case "login" -> login(params);
-            case "register" -> register(params);
+            case "login" -> FACADE.login(params);
+            case "register" -> FACADE.register(params);
             case "love" -> warGames(); //Love to. How about Global Thermonuclear War?
-            default -> improperInput(false);
+            default -> improperInput(State.SIGNEDOUT);
         };
     }
 
-    private static State handlePostLogin(String input) {
+    private State handlePostLogin(String input) {
         String[] tokens = input.toLowerCase().split(" ");
         String cmd;
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -75,35 +78,77 @@ public class ChessClient implements NotificationHandler{
             cmd = tokens[0];
         }
         else {
-            return improperInput(true);
+            return improperInput(State.SIGNEDIN);
         }
-
+        if(cmd.equals("join")){
+            this.gameID = Integer.parseInt(params[1]);
+        }
         return switch (cmd) {
-            case "help" -> help(true);
-            case "logout" -> logout();
-            case "create" -> create(params);
-            case "list" -> list();
-            case "join" -> join(params);
-            case "observe" -> observe(params);
-            case "clear" -> clear();
-            default -> improperInput(true);
+            case "help" -> help(State.SIGNEDIN);
+            case "logout" -> FACADE.logout();
+            case "create" -> FACADE.create(params);
+            case "list" -> FACADE.list();
+            case "join" -> FACADE.join(params);
+            case "observe" -> FACADE.observe(params);
+            case "clear" -> FACADE.clear();
+            default -> improperInput(State.SIGNEDIN);
         };
     }
 
-    private static State improperInput(boolean signedIn) {
-        if (signedIn) {
+    private static State handleInGame(String input) throws ResponseException {
+        String[] tokens = input.toLowerCase().split(" ");
+        String cmd;
+        String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+        if (tokens.length > 0) {
+            cmd = tokens[0];
+        }
+        else{
+            return improperInput(State.INGAME);
+        }
+
+        String authToken = FACADE.getAuthToken();
+
+        return switch (cmd){
+            case "help" -> help(State.INGAME);
+            case "redraw" -> ws.redraw(authToken, gameID);
+            case "leave" -> ws.leave(authToken, gameID);
+            case "move" -> ws.move(authToken, gameID, params[1]);
+            case "resign" -> ws.resign(authToken, gameID);
+            case "highlight" -> ws.highlight(authToken, gameID, params[1]);
+            default -> improperInput(State.INGAME);
+        };
+    }
+
+    private static State improperInput(State state) {
+        if (state == State.SIGNEDOUT) {
+            System.out.println("Enter Help, Quit, Login, or Register");
+            return State.SIGNEDOUT;
+
+        }
+        else if(state == State.SIGNEDIN){
             System.out.println("Enter Help, Logout, Create, List, Play, or Observe");
             return State.SIGNEDIN;
         }
-        else {
-            System.out.println("Enter Help, Quit, Login, or Register");
-            return State.SIGNEDOUT;
+        else if(state == State.INGAME){
+            System.out.println("Enter Help, Redraw, Leave, Move, Resign, or Highlight");
+            return State.INGAME;
+        }
+        else{
+            return State.QUIT;
         }
     }
 
-    private static State help(boolean signedIn) {
+    private static State help(State state) {
         System.out.println("help - gives possible commands");
-        if (signedIn) {
+        if (state == State.SIGNEDOUT) {
+            System.out.println("quit - Quits the Program");
+            System.out.println("login <username> <password> - Logs into the Program");
+            System.out.println("register <username> <password> <email> - Registers a New User");
+            return State.SIGNEDOUT;
+        }
+        else if (state == State.SIGNEDIN){
+            System.out.println("Help - gives possible commands");
             System.out.println("logout - Logs you out");
             System.out.println("create <name> - Creates a new Chess Game");
             System.out.println("list - Lists all Chess Games");
@@ -111,22 +156,18 @@ public class ChessClient implements NotificationHandler{
             System.out.println("observe <gameID> - Observe a Chess Game");
             return State.SIGNEDIN;
         }
-        else {
-            System.out.println("quit - Quits the Program");
-            System.out.println("login <username> <password> - Logs into the Program");
-            System.out.println("register <username> <password> <email> - Registers a New User");
-            return State.SIGNEDOUT;
+        else if(state == State.INGAME){
+            System.out.println("help - gives possible commands");
+            System.out.println("redraw - Redraws the Chess Board");
+            System.out.println("leave - Leaves the game without resigning");
+            System.out.println("move <chess move> - Make a chess move. Ex:e2e4");
+            System.out.println("resign - Resign the game");
+            System.out.println("highlight <square> - Highlights all possible moves for a piece. Ex:e2");
+            return State.INGAME;
         }
+        else{
+            return State.QUIT;}
     }
-
-    private static State login(String[] params){return State.SIGNEDIN;}
-    private static State register(String[] params){return State.SIGNEDIN;}
-    private static State logout(){return State.SIGNEDOUT;}
-    private static State create(String[] params){return State.SIGNEDIN;}
-    private static State list(){return State.SIGNEDIN;}
-    private static State join(String[] params){return State.SIGNEDIN;}
-    private static State observe(String[] params){return State.SIGNEDIN;}
-    private static State clear(){return State.SIGNEDOUT;}
 
     private static State quit()
     {

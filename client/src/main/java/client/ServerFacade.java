@@ -20,6 +20,7 @@ public class ServerFacade
     private final String serverUrl;
     private String authToken;
     private final Map<Integer, ChessBoard> games;
+    private int gameID;
 
     public ServerFacade(String serverUrl) {
         this.client = HttpClient.newHttpClient();
@@ -27,6 +28,7 @@ public class ServerFacade
         this.serverUrl = serverUrl;
         this.authToken = "";
         this.games = new HashMap<>() {};
+        this.gameID = 0;
     }
 
     public State register(String[] params) {
@@ -276,5 +278,9 @@ public class ServerFacade
             System.out.println("Could not connect to server: " + e.getMessage());
         }
         return State.SIGNEDOUT;
+    }
+
+    public String getAuthToken(){
+        return authToken;
     }
 }

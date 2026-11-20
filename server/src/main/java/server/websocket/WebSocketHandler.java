@@ -51,12 +51,15 @@ public class WebSocketHandler {
 
     private void commandHelper(UserGameCommand command, WsMessageContext ctx) throws IOException {
         if(command.getCommandType() == CONNECT) {
-        connectHelper(command, ctx);}
+            connectHelper(command, ctx);}
         else if (command.getCommandType() == MAKE_MOVE) {
         }
         else if (command.getCommandType() == LEAVE) {
         leaveHelper(command, ctx);}
         else if (command.getCommandType() == RESIGN) {
+        }
+        else if(command.getCommandType() == REDRAW){
+
         }
     }
 

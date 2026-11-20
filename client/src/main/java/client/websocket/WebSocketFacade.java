@@ -1,5 +1,7 @@
 package client.websocket;
 
+import chess.ChessMove;
+import client.State;
 import com.google.gson.Gson;
 
 import exception.ResponseException;
@@ -60,4 +62,18 @@ public class WebSocketFacade extends Endpoint{
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
         sendMessage(command);
     }
+
+    public State redraw(String authToken, int gameID) throws ResponseException {
+        UserGameCommand cmd = new UserGameCommand(UserGameCommand.CommandType.REDRAW, authToken, gameID);
+        sendMessage(cmd);
+        return State.INGAME;
+    }
+
+    public State move(String authToken, Integer gameID, String move){return State.INGAME;}
+
+    public State leave(String authToken, Integer gameID){return State.SIGNEDIN;}
+
+    public State resign(String authToken, Integer gameID){return State.SIGNEDIN;}
+
+    public State highlight(String authToken, Integer gameID, String square){return State.INGAME;}
 }
