@@ -2,6 +2,7 @@ package server.websocket;
 
 import chess.*;
 import dataaccess.DataAccess;
+import dataaccess.DataAccessException;
 import dataaccess.sql.SequelDataAccess;
 import io.javalin.websocket.WsConfig;
 import com.google.gson.Gson;
@@ -51,7 +52,7 @@ public class WebSocketHandler {
         });
     }
 
-    private void commandHelper(UserGameCommand command, WsMessageContext ctx) throws IOException {
+    private void commandHelper(UserGameCommand command, WsMessageContext ctx) throws IOException, DataAccessException {
         if(command.getCommandType() == CONNECT) {
             connectHelper(command, ctx);}
         else if (command.getCommandType() == MAKE_MOVE) {
@@ -65,7 +66,6 @@ public class WebSocketHandler {
         else if(command.getCommandType() == HIGHLIGHT){
             highlightHelper(command);}
     }
-
 
     private void connectHelper(UserGameCommand command, WsMessageContext ctx){
         String authToken = command.getAuthToken();
@@ -127,7 +127,7 @@ public class WebSocketHandler {
             System.out.println(highlightedBoard(chessGame.getBoard(), moves));}
     }
 
-    private void moveHelper(UserGameCommand command) throws IOException{
+    private void moveHelper(UserGameCommand command) throws IOException, DataAccessException {
         int gameID = command.getGameID();
         GameData game = dataAccess.getGame(gameID);
         if(game == null) {
@@ -136,10 +136,12 @@ public class WebSocketHandler {
         }
         ChessGame chessGame = game.chessGame();
         try{
-            chessGame.makeMove(command.getMove());
+            chessGame = chessGame.makeMove(command.getMove());
         }
         catch (InvalidMoveException e) {
             System.out.println(e.getMessage());}
+
+        dataAccess.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame));
 
         redrawHelper(command);
     }

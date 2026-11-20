@@ -127,7 +127,7 @@ public class ChessGame
      * @param move chess move to perform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException {
+    public ChessGame makeMove(ChessMove move) throws InvalidMoveException {
         if (board.getPiece(move.getStartPosition()) == null){
             throw new InvalidMoveException("No piece to move");}//no piece to move
         if(board.getPiece(move.getStartPosition()).getTeamColor() != getTeamTurn()){
@@ -164,6 +164,7 @@ public class ChessGame
             switchTurn();
             turnCount++;
         }
+        return this;
     }
     //make a chess move to see if King is in check
     public void tryMove(ChessMove move) {
