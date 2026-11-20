@@ -53,62 +53,13 @@ public class WebSocketHandler {
         if(command.getCommandType() == CONNECT) {
             connectHelper(command, ctx);}
         else if (command.getCommandType() == MAKE_MOVE) {
-        }
+            moveHelper(command, ctx);}
         else if (command.getCommandType() == LEAVE) {
-        leaveHelper(command, ctx);}
+            resignAndLeaveHelper(command, ctx, true);}
         else if (command.getCommandType() == RESIGN) {
-        }
+            resignAndLeaveHelper(command, ctx, false);}
         else if(command.getCommandType() == REDRAW){
-
-        }
-    }
-
-    private void leaveHelper(UserGameCommand command, WsMessageContext ctx) throws IOException {
-        int gameID = command.getGameID();
-        GameData game = dataAccess.getGame(gameID);
-        if(game == null){
-            System.out.println("Game doesn't exist");
-            return;
-        }
-
-        String authToken = command.getAuthToken();
-        if(authToken == null){
-            System.out.println("Not authorized");
-            return;
-        }
-
-        String username = dataAccess.getUsernameWithAuthToken(authToken);
-        if(username == null){
-            System.out.println("Username doesn't exist");
-            return;
-        }
-
-        Connection connection = null;
-        Set<Connection> cons = connectionManager.getConnections(gameID);
-        if (cons != null) {
-            for (Connection c : cons) {
-                if (c.username().equals(username)) {
-                    connection = c;
-                    break;
-                }
-            }
-        }
-        if (connection != null) {
-            connectionManager.removeConnection(gameID, connection);}
-        else{
-        return;}
-
-        Set<Connection> rest = connectionManager.getConnections(gameID);
-        ServerMessage message = new ServerMessage(ServerMessageType.NOTIFICATION, username + " has left the game");
-
-        Gson gson = new Gson();
-        String json = gson.toJson(message);
-
-        if (rest != null) {
-            for (Connection c : rest) {
-                c.session().getBasicRemote().sendText(json);
-            }
-        }
+            redrawHelper(command, ctx);}
     }
 
     private void connectHelper(UserGameCommand command, WsMessageContext ctx){
@@ -141,5 +92,88 @@ public class WebSocketHandler {
         int gameID = game.gameID();
 
         connectionManager.addConnection(gameID,new Connection(username, (Session) ctx.session,gameID, teamColor));
+    }
+
+    private void moveHelper(UserGameCommand command, WsMessageContext ctx) throws IOException{
+    }
+
+    private void redrawHelper(UserGameCommand command, WsMessageContext ctx) throws IOException{
+        int gameID = command.getGameID();
+        GameData game = dataAccess.getGame(gameID);
+        if(game == null){
+            System.out.println("Game doesn't exist");
+            return;
+        }
+
+        String authToken = command.getAuthToken();
+        if(authToken == null){
+            System.out.println("Not authorized");
+            return;
+        }
+
+        String username = dataAccess.getUsernameWithAuthToken(authToken);
+        if(username == null){
+            System.out.println("Username doesn't exist");
+            return;
+        }
+        if(username.equals(game.blackUsername())){
+            System.out.println(dataAccess.getGame(command.getGameID()).chessGame().toStringBlack());}
+        else{
+            System.out.println(dataAccess.getGame(command.getGameID()).chessGame());}
+    }
+
+    //still need to disable game
+    private void resignAndLeaveHelper(UserGameCommand command, WsMessageContext ctx, boolean leave) throws IOException {
+        int gameID = command.getGameID();
+        GameData game = dataAccess.getGame(gameID);
+        if(game == null){
+            System.out.println("Game doesn't exist");
+            return;
+        }
+
+        String authToken = command.getAuthToken();
+        if(authToken == null){
+            System.out.println("Not authorized");
+            return;
+        }
+
+        String username = dataAccess.getUsernameWithAuthToken(authToken);
+        if(username == null){
+            System.out.println("Username doesn't exist");
+            return;
+        }
+
+        Connection connection = null;
+        Set<Connection> cons = connectionManager.getConnections(gameID);
+        if (cons != null) {
+            for (Connection c : cons) {
+                if (c.username().equals(username)) {
+                    connection = c;
+                    break;
+                }
+            }
+        }
+        if (connection != null) {
+            connectionManager.removeConnection(gameID, connection);}
+        else{
+            return;}
+
+        Set<Connection> rest = connectionManager.getConnections(gameID);
+        ServerMessage message;
+        if(leave){
+            message = new ServerMessage(ServerMessageType.NOTIFICATION, username + " has left the game");}
+        else{
+            message = new ServerMessage(ServerMessageType.NOTIFICATION, username + " has resigned the game");}
+
+        Gson gson = new Gson();
+        String json = gson.toJson(message);
+
+        if (rest != null) {
+            for (Connection c : rest) {
+                c.session().getBasicRemote().sendText(json);
+            }
+        }
+        if(!leave){
+            connection.session().getBasicRemote().sendText(json);}
     }
 }
