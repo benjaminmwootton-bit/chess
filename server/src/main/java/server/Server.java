@@ -4,6 +4,7 @@ import dataaccess.sql.SequelDataAccess;
 import io.javalin.*;
 import java.util.Map;
 import com.google.gson.Gson;
+import server.websocket.ConnectionManager;
 import server.websocket.WebSocketHandler;
 import service.requestsandresults.*;
 import service.Service;
@@ -12,6 +13,7 @@ import io.javalin.json.JavalinGson;
 public class Server
 {
     private final Javalin javalin;
+    private final ConnectionManager connectionManager = new ConnectionManager();
 
     public Server()
     {
@@ -203,7 +205,11 @@ public class Server
     private void webSocketRoute(Service service) {
         javalin.ws("/ws", ws ->
         {
-            new WebSocketHandler(service).configure(ws);
+            try {
+                new WebSocketHandler(connectionManager).configure(ws);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 }
