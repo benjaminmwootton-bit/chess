@@ -11,7 +11,9 @@ import java.util.Objects;
  * methods.
  */
 public class ServerMessage {
-    ServerMessageType serverMessageType;
+    final ServerMessageType serverMessageType;
+    private final ChessGame game;
+    private final String message;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -21,15 +23,29 @@ public class ServerMessage {
 
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
+        this.game = null;
+        this.message = null;
     }
 
-    public ServerMessage(ServerMessageType type, ChessGame game){};
+    public ServerMessage(ServerMessageType type, ChessGame game){
+        this.serverMessageType = type;
+        this.game = game;
+        this.message = null;
+    }
 
-    public ServerMessage(ServerMessageType type, String message){};
+    public ServerMessage(ServerMessageType type, String message){
+        this.serverMessageType = type;
+        this.message = message;
+        this.game = null;
+    };
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
     }
+
+    public ChessGame getGame(){return game;}
+
+    public String getMessage(){return message;}
 
     @Override
     public boolean equals(Object o) {

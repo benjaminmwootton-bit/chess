@@ -10,6 +10,7 @@ import model.GameData;
 import websocket.commands.UserGameCommand;
 import jakarta.websocket.Session;
 import websocket.messages.ServerMessage;
+import websocket.messages.ServerMessage.ServerMessageType;
 
 import java.io.IOException;
 import java.util.Set;
@@ -91,12 +92,15 @@ public class WebSocketHandler {
         }
         if (connection != null) {
             connectionManager.removeConnection(gameID, connection);}
+        else{
+        return;}
 
         Set<Connection> rest = connectionManager.getConnections(gameID);
-        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        ServerMessage message = new ServerMessage(ServerMessageType.NOTIFICATION, username + " has left the game");
+
         Gson gson = new Gson();
         String json = gson.toJson(message);
-        assert connection != null;
+
         if (rest != null) {
             for (Connection c : rest) {
                 c.session().getBasicRemote().sendText(json);

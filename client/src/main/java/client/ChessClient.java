@@ -5,38 +5,34 @@ import exception.ResponseException;
 
 import client.websocket.WebSocketFacade;
 import server.Server;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class ChessClient {
+import static websocket.messages.ServerMessage.ServerMessageType.*;
+
+public class ChessClient implements NotificationHandler{
 
     private final ServerFacade server;
-    private final WebSocketFacade ws;
+    private static WebSocketFacade ws;
     //private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
 
 
     public ChessClient(String serverUrl) throws ResponseException{
         server = new ServerFacade(serverUrl);
-        ws = new WebSocketFacade(serverUrl, (NotificationHandler) this);
+        ws = new WebSocketFacade(serverUrl, this);
     }
 
     public static void main(String[] args) throws ResponseException, IOException {
-
-        var port = 8080;
         Server server = new Server();
-        server.run(port);
-
-        NotificationHandler handler = System.out::println;
-        WebSocketFacade websocket = new WebSocketFacade(
-                "http://localhost:8080",
-                handler
-        );
+        server.run(8080);
 
         System.out.println("♕ 240 Chess Client: ♙");
         System.out.println("Shall we play a game? Type Help to get started");
         Scanner scanner = new Scanner(System.in);
+
         State state = State.SIGNEDOUT;
         while (!state.equals(State.QUIT)) {
             String input = scanner.nextLine();
@@ -63,8 +59,8 @@ public class ChessClient {
         return switch (cmd) {
             case "help" -> help(false);
             case "quit", "exit" -> quit();
-            //case "login" -> FACADE.login(params);
-            //case "register" -> FACADE.register(params);
+            case "login" -> login(params);
+            case "register" -> register(params);
             case "love" -> warGames(); //Love to. How about Global Thermonuclear War?
             default -> improperInput(false);
         };
@@ -84,12 +80,12 @@ public class ChessClient {
 
         return switch (cmd) {
             case "help" -> help(true);
-            //case "logout" -> FACADE.logout();
-            //case "create" -> FACADE.create(params);
-            //case "list" -> FACADE.list();
-            //case "join" -> FACADE.join(params);
-            //case "observe" -> FACADE.observe(params);
-            //case "clear" -> FACADE.clear();
+            case "logout" -> logout();
+            case "create" -> create(params);
+            case "list" -> list();
+            case "join" -> join(params);
+            case "observe" -> observe(params);
+            case "clear" -> clear();
             default -> improperInput(true);
         };
     }
@@ -123,6 +119,15 @@ public class ChessClient {
         }
     }
 
+    private static State login(String[] params){return State.SIGNEDIN;}
+    private static State register(String[] params){return State.SIGNEDIN;}
+    private static State logout(){return State.SIGNEDOUT;}
+    private static State create(String[] params){return State.SIGNEDIN;}
+    private static State list(){return State.SIGNEDIN;}
+    private static State join(String[] params){return State.SIGNEDIN;}
+    private static State observe(String[] params){return State.SIGNEDIN;}
+    private static State clear(){return State.SIGNEDOUT;}
+
     private static State quit()
     {
         return State.QUIT;
@@ -143,5 +148,16 @@ public class ChessClient {
             city = scanner.nextLine();//Las Vegas
         }
         return State.SIGNEDOUT;
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        ServerMessage.ServerMessageType messageType = message.getServerMessageType();
+        if(messageType == LOAD_GAME){
+            System.out.println("Game Loaded");}
+        else if (messageType == NOTIFICATION){
+            System.out.println(message.getMessage());}
+        else if(messageType == ERROR){
+            System.out.println("Error: " + message.getMessage());}
     }
 }

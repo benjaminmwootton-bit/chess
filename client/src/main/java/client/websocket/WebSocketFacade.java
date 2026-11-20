@@ -11,9 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import websocket.commands.UserGameCommand;
-
-public class WebSocketFacade extends Endpoint {
+public class WebSocketFacade extends Endpoint{
 
     Session session;
     NotificationHandler notificationHandler;
@@ -62,5 +60,4 @@ public class WebSocketFacade extends Endpoint {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
         sendMessage(command);
     }
-
 }
