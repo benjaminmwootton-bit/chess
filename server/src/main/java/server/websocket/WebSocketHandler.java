@@ -7,9 +7,12 @@ import io.javalin.websocket.WsConfig;
 import com.google.gson.Gson;
 import io.javalin.websocket.WsMessageContext;
 import model.GameData;
-import service.Service;
 import websocket.commands.UserGameCommand;
 import jakarta.websocket.Session;
+import websocket.messages.ServerMessage;
+
+import java.io.IOException;
+import java.util.Set;
 
 import static websocket.commands.UserGameCommand.CommandType.*;
 
@@ -45,50 +48,91 @@ public class WebSocketHandler {
         });
     }
 
-    private void commandHelper(UserGameCommand command, WsMessageContext ctx){
-        if(command.getCommandType() == CONNECT)
-        {
-            String authToken = command.getAuthToken();
-            if(authToken == null){
-                System.out.println("Not authorized");
-                return;
-            }
+    private void commandHelper(UserGameCommand command, WsMessageContext ctx) throws IOException {
+        if(command.getCommandType() == CONNECT) {
+        connectHelper(command, ctx);}
+        else if (command.getCommandType() == MAKE_MOVE) {
+        }
+        else if (command.getCommandType() == LEAVE) {
+        leaveHelper(command, ctx);}
+        else if (command.getCommandType() == RESIGN) {
+        }
+    }
 
-            String username = dataAccess.getUsernameWithAuthToken(authToken);
-            if(username == null){
-                System.out.println("Username doesn't exist");
-                return;
-            }
+    private void leaveHelper(UserGameCommand command, WsMessageContext ctx) throws IOException {
+        int gameID = command.getGameID();
+        GameData game = dataAccess.getGame(gameID);
+        if(game == null){
+            System.out.println("Game doesn't exist");
+            return;
+        }
 
-            GameData game = dataAccess.getGame(command.getGameID());
-            if(game == null){
-                System.out.println("Game doesn't exist");
-                return;
-            }
+        String authToken = command.getAuthToken();
+        if(authToken == null){
+            System.out.println("Not authorized");
+            return;
+        }
 
-            ChessGame.TeamColor teamColor;
-            if(username.equals(game.whiteUsername())){
-                teamColor = ChessGame.TeamColor.WHITE;}
-            else if(username.equals(game.blackUsername())){
-                teamColor = ChessGame.TeamColor.BLACK;}
-            else{
+        String username = dataAccess.getUsernameWithAuthToken(authToken);
+        if(username == null){
+            System.out.println("Username doesn't exist");
+            return;
+        }
+
+        Connection connection = null;
+        Set<Connection> cons = connectionManager.getConnections(gameID);
+        if (cons != null) {
+            for (Connection c : cons) {
+                if (c.username().equals(username)) {
+                    connection = c;
+                    break;
+                }
+            }
+        }
+        if (connection != null) {
+            connectionManager.removeConnection(gameID, connection);}
+
+        Set<Connection> rest = connectionManager.getConnections(gameID);
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        Gson gson = new Gson();
+        String json = gson.toJson(message);
+        assert connection != null;
+        if (rest != null) {
+            for (Connection c : rest) {
+                c.session().getBasicRemote().sendText(json);
+            }
+        }
+    }
+
+    private void connectHelper(UserGameCommand command, WsMessageContext ctx){
+        String authToken = command.getAuthToken();
+        if(authToken == null){
+            System.out.println("Not authorized");
+            return;
+        }
+
+        String username = dataAccess.getUsernameWithAuthToken(authToken);
+        if(username == null){
+            System.out.println("Username doesn't exist");
+            return;
+        }
+
+        GameData game = dataAccess.getGame(command.getGameID());
+        if(game == null){
+            System.out.println("Game doesn't exist");
+            return;
+        }
+
+        ChessGame.TeamColor teamColor;
+        if(username.equals(game.whiteUsername())){
+            teamColor = ChessGame.TeamColor.WHITE;}
+        else if(username.equals(game.blackUsername())){
+            teamColor = ChessGame.TeamColor.BLACK;}
+        else{
             teamColor = null;}
 
-            int gameID = game.gameID();
+        int gameID = game.gameID();
 
-            connectionManager.addConnection(gameID,new Connection(username, (Session) ctx.session,gameID, teamColor));
-        }
-        else if (command.getCommandType() == MAKE_MOVE)
-        {
-
-        }
-        else if (command.getCommandType() == LEAVE)
-        {
-
-        }
-        else if (command.getCommandType() == RESIGN)
-        {
-
-        }
+        connectionManager.addConnection(gameID,new Connection(username, (Session) ctx.session,gameID, teamColor));
     }
 }
