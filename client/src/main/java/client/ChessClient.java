@@ -69,7 +69,7 @@ public class ChessClient implements NotificationHandler{
         };
     }
 
-    private State handlePostLogin(String input) {
+    private static State handlePostLogin(String input) {
         String[] tokens = input.toLowerCase().split(" ");
         String cmd;
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -81,7 +81,7 @@ public class ChessClient implements NotificationHandler{
             return improperInput(State.SIGNEDIN);
         }
         if(cmd.equals("join")){
-            this.gameID = Integer.parseInt(params[1]);
+            gameID = Integer.parseInt(params[1]);
         }
         return switch (cmd) {
             case "help" -> help(State.SIGNEDIN);
@@ -91,6 +91,7 @@ public class ChessClient implements NotificationHandler{
             case "join" -> FACADE.join(params);
             case "observe" -> FACADE.observe(params);
             case "clear" -> FACADE.clear();
+            case "thermonuclear" -> warGames();
             default -> improperInput(State.SIGNEDIN);
         };
     }
@@ -116,6 +117,7 @@ public class ChessClient implements NotificationHandler{
             case "move" -> ws.move(authToken, gameID, params[1]);
             case "resign" -> ws.resign(authToken, gameID);
             case "highlight" -> ws.highlight(authToken, gameID, params[1]);
+            case "nuke" -> warGames();
             default -> improperInput(State.INGAME);
         };
     }
